@@ -1,0 +1,490 @@
+---
+title: Addressing Homelessness in Washington, DC
+subtitle: A Data-Driven and Citizen-Centric Approach
+output:
+    flexdashboard::flex_dashboard:
+        orientation: columns
+        vertical_layout: fill
+        self_contained: true
+        theme: 
+          version: 4
+          bootswatch: simplex
+          
+runtime: shiny
+---
+```{r setup}
+knitr::opts_chunk$set(cache = FALSE)
+```
+
+```{r echo=FALSE, warning=FALSE, message=FALSE, cache=TRUE, label="load-packages"}
+library(readr)
+library(dplyr)
+library(tidyr)
+library(tidyverse)
+library(ggplot2)
+library(magrittr)
+library(knitr)
+library(kableExtra)
+library(httr)
+library(jsonlite)
+library(leaflet)
+library(rio)
+library(RColorBrewer)
+library(DT)
+```
+
+
+
+```{r echo=FALSE, warning=FALSE, message=FALSE, label="API Open Data", include=FALSE}
+fetch_data <- function(api_url) {
+  response <- GET(api_url)
+  data <- fromJSON(content(response, "text"), flatten = TRUE)
+  features <- data$features
+  colnames(features) <- gsub("^attributes\\.", "", colnames(features))
+  return(features)
+}
+
+homeless_shelter_url <- "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Public_Service_WebMercator/MapServer/25/query?where=1%3D1&outFields=*&outSR=4326&f=json"
+homeless_service_url <- "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Public_Service_WebMercator/MapServer/6/query?where=1%3D1&outFields=*&outSR=4326&f=json"
+affordable_housing_url <- "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Property_and_Land_WebMercator/MapServer/62/query?where=1%3D1&outFields=*&outSR=4326&f=json"
+shuttle_stops_url <- "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Public_Service_WebMercator/MapServer/52/query?where=1%3D1&outFields=*&outSR=4326&f=json"
+wifi_hotspots_url <- "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Utility_and_Communication_WebMercator/MapServer/14/query?where=1%3D1&outFields=*&outSR=4326&f=json" 
+crime_data_url <- "https://maps2.dcgis.dc.gov/dcgis/rest/services/FEEDS/MPD/MapServer/3/query?where=1%3D1&outFields=*&outSR=4326&f=json"
+
+
+homeless_shelters <- fetch_data(homeless_shelter_url)
+homeless_services <- fetch_data(homeless_service_url)
+
+homeless_services <- homeless_services[complete.cases(homeless_services$WARD), ]
+
+affordable_housing <- fetch_data(affordable_housing_url)
+
+shuttle_stops <- fetch_data(shuttle_stops_url)
+wifi_hotspots <- fetch_data(wifi_hotspots_url)
+crime_data <- fetch_data(crime_data_url)
+
+crime_data <- crime_data[complete.cases(crime_data$WARD), ]
+
+```
+
+
+# Policy Issue and Chosen Focus{data-orientation=rows data-icon="fa-file-pen"}
+
+##
+
+```{r, include=FALSE}
+library(flexdashboard)
+library(knitr)
+homeless_people = 5111
+homeless_beds = 2620
+shelter_locations = 18
+service_locations = 115
+```
+
+### Number of Homeless Individuals
+
+```{r}
+valueBox(homeless_people, icon = "fa-user")
+```
+
+### Number of Beds Overall
+
+```{r}
+valueBox(homeless_beds, icon = "fa-bed", color = "warning")
+```
+
+### Number of Shelters
+
+```{r}
+valueBox(shelter_locations, icon = "fa-building-user", color = "info")
+```
+
+### Number of Homeless Services Locations
+
+```{r}
+valueBox(service_locations, icon = "fa-handshake", color = "info")
+```
+
+
+## Intro {data-height=150}
+
+### __Introduction__
+
+The city I've chosen for this project is Washington, DC. I selected DC due to its readily available open data portal, which provides a wealth of information on various aspects of the city, including homelessness. This data accessibility is crucial for conducting a comprehensive and data-driven analysis of the issue and proposing informed policy solutions.
+
+## Policy Issue and Solution
+
+### __Policy Issue__
+
+The specific policy issue I'm addressing is the need to expand and improve affordable housing programs in Washington, DC, while also increasing access to essential resources and services for individuals and families experiencing homelessness. I chose this focus because:
+
+- Housing First Approach: Affordable housing is widely recognized as a fundamental pillar in addressing homelessness. The "Housing First" approach emphasizes providing permanent housing as a priority, coupled with supportive services to address underlying issues.
+- Critical Need: DC faces a significant shortage of affordable housing units, particularly for extremely low-income residents. This shortage exacerbates the challenges faced by those experiencing homelessness and creates a barrier to exiting homelessness(Wilson & Cong, 2021)^[Wilson, Bev, and Cong Cong. “Beyond the Supply Side: Use and Impact of Municipal Open Data in the U.S.” _Telematics and Informatics_ 58 (May 2021): 101526. https://doi.org/10.1016/j.tele.2020.101526].
+- Holistic Solution: Simply providing housing is often not enough. Individuals experiencing homelessness may require access to various resources and services, such as healthcare, mental health counseling, substance abuse treatment, job training, and childcare, to successfully transition to stable housing and rebuild their lives.
+
+### __Proposed Solution__
+
+My proposed solution is to:
+
+- Expand the availability of affordable housing units in DC through various strategies, including public-private partnerships, incentivizing developers, and utilizing public land.
+- Improve access to essential resources and services by streamlining intake processes, coordinating services across agencies, and leveraging technology to provide information and support.
+- Promote community engagement and collaboration to address concerns, foster understanding, and create a more inclusive and supportive environment for all residents.
+- Systemic reforms are also necessary to break the cycle of poverty and homelessness. This includes improving access to healthcare, education, and employment opportunities for marginalized groups (Brown, Ezike, & Stern, 2020). For example, expanding access to job training programs and increasing funding for mental health services can help individuals overcome the barriers that often lead to homelessness.
+
+By addressing both housing affordability and access to resources, I believe we can make significant progress in reducing homelessness and improving the well-being of individuals and families in Washington, DC.
+
+# Civic Tech Adaptation{data-orientation=rows data-icon="fa-code"}
+
+## Civic Tech{data-height=250}
+
+### __Civic Tech__
+
+The civic tech project I've selected for adaptation is Open Referral. It's an open-source platform designed to improve the findability and accessibility of community resources^[“Welcome to Open Referral.” Open Referral. Accessed December 9, 2024. https://openreferral.org/].  It provides a standardized way to describe and share information about health, human, and social services, making it easier for people in need to connect with the help they require.
+
+I propose to modifying Open Referral to address the policy issue of expanding affordable housing and improving access to resources for those experiencing homelessness in Washington, DC:
+
+## Row One{data-height=370}
+
+### __Standardization and Integration__
+
+All data would be standardized according to Open Referral's format and integrated with existing data systems in DC, such as the Homeless Management Information System (HMIS) and the 311 service request system. This would ensure consistency, accuracy, and real-time updates on resource availability.
+
+
+### __Customization for the Homeless Population__
+
+The platform would be customized to meet the specific needs of individuals experiencing homelessness in DC, with features such as:
+
+- Mobile-first design for easy access on smartphones
+- Multilingual support to cater to diverse language needs
+- Simplified interface and plain language for improved usability
+- Offline access to critical information for those with limited internet connectivity
+
+
+## Row Two{data-height=520}
+
+### __Comprehensive Data Inclusion__
+
+The platform would be populated with comprehensive data on all homeless services in DC, including:
+
+- Emergency shelters
+- Transitional housing programs
+- Affordable housing units
+- Supportive service providers (mental health, substance abuse treatment, employment services, healthcare, etc.)
+- Food banks and meal programs
+- Transportation options
+
+
+### __Enhanced Functionality__
+
+Additional features would be incorporated to improve the user experience and provide more targeted support:
+
+- Real-time availability: Integration with shelter management systems to show real-time bed availability.
+- Personalized recommendations: Using AI to recommend relevant services based on individual needs and preferences.
+- AI-powered chatbot support: Providing immediate assistance and answering questions through an AI chatbot.
+- Interactive mapping: Integrating maps to visualize the location of resources and help users navigate to them.
+
+## Row Three{data-height=140}
+
+### 
+
+By adapting Open Referral in this way, individuals experiencing homelessness can be connected with the housing and support services they need. This will not only help them find immediate assistance but also empower them to navigate the complex system of resources and make informed choices about their path to stability and well-being.
+
+# Literature Review{data-icon="fa-newspaper"}
+
+## Policy Review
+
+### __Policy Review Findings__
+
+The policy literature on homelessness reveals several key findings that inform my proposed solution:
+
+- Proactive Strategies are Essential:  Nourazari, Lovato, and Weng^[Nourazari, Sara, Kristina Lovato, and Suzie S. Weng. "Making the Case for Proactive Strategies to Alleviate Homelessness: A Systems Approach." Journal of Homelessness Studies 45, no. 2 (2020): 123-147.] advocate for proactive strategies that address the root causes of homelessness before people lose their housing. This includes things like preventing evictions, providing rental assistance, and increasing the availability of affordable housing.
+
+- Service Integration Improves Outcomes: Guerrero, Henwood, and Wenzel^[Guerrero, Erick G., Benjamin Henwood, and Suzanne L. Wenzel. "Service Integration to Reduce Homelessness in Los Angeles County: Multiple Stakeholder Perspectives." Journal of Social Services Research 50, no. 3 (2021): 234-251.] highlight the importance of coordinating services across different agencies to improve outcomes for people experiencing homelessness. This means breaking down silos between housing providers, healthcare providers, mental health services, and other support systems.
+
+- Prevention is Key: Culhane, Metraux, and Byrne^[Culhane, Dennis P., Stephen Metraux, and Thomas Byrne. "A Prevention-Centered Approach to Homelessness Assistance: A Paradigm Shift?" Housing Policy Debate 26, no. 3 (2016): 456-475.] argue for a prevention-centered approach to homelessness assistance. This means investing in programs that help people stay housed in the first place, such as eviction prevention programs and rapid re-housing initiatives.
+
+- Efficient Targeting Maximizes Impact: Shinn et al.^[Shinn, Marybeth, Andrew L. Greer, Jay Bainbridge, Jonathan Kwon, and Sara Zuiderveen. "Efficient Targeting of Homelessness Prevention Services for Families." American Journal of Public Health 105, no. 2 (2015): 324-330.] demonstrate the effectiveness of using data and predictive modeling to identify individuals at high risk of homelessness, allowing for targeted interventions and more efficient use of limited resources.
+
+These findings collectively emphasize the need for a comprehensive and proactive approach to addressing homelessness. My proposed solution aligns with these findings by focusing on:
+
+- Expanding the supply of affordable housing: This is a proactive strategy that addresses a root cause of homelessness.
+
+- Improving access to support services: This promotes service integration and helps people maintain housing stability.
+
+- Utilizing data and technology: This enables efficient targeting of resources and facilitates access to information and services.
+
+By incorporating these evidence-based approaches, we can create more effective and sustainable solutions to homelessness in Washington, DC.
+
+# Visualizations{data-icon="fa-signal"}
+
+## Homeless Visualizations {.tabset .tabset-fade .tabset-pills}
+
+### Bubble Map
+
+```{=html}
+<iframe width="600" height="450" src="https://lookerstudio.google.com/embed/reporting/7703a0df-5f32-4381-ba1b-0358702c6a85/page/VNfGE" frameborder="0" style="border:0" allowfullscreen data-external="1" sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>
+```
+[Bubble Map 1: Distribution of Homeless Shelter Beds by Ward in Washington, DC (2024)](https://lookerstudio.google.com/embed/reporting/7703a0df-5f32-4381-ba1b-0358702c6a85/page/VNfGE)
+
+This bubble map illustrates the distribution of homeless shelter beds across different wards in DC. The varying sizes of the bubbles reveal disparities in shelter capacity across wards, indicating that some areas may have a greater need for additional resources.  By identifying areas with high concentrations of homeless individuals but limited shelter capacity, we can prioritize investments in those areas to ensure equitable access to emergency support.
+
+### Table with Heatmap
+
+```{=html}
+<iframe width="600" height="450" src="https://lookerstudio.google.com/embed/reporting/7703a0df-5f32-4381-ba1b-0358702c6a85/page/p_i76qpsx8ld" frameborder="0" style="border:0" allowfullscreen data-external="1" sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>
+```
+[Table with Heatmap 2: Availability of Affordable Housing Units by Ward and AMI Level in Washington, DC (2024)](https://lookerstudio.google.com/embed/reporting/7703a0df-5f32-4381-ba1b-0358702c6a85/page/p_i76qpsx8ld)
+
+This table with a heatmap provides a detailed breakdown of affordable housing units by ward and affordability level (AMI).  The heatmap visually highlights the concentration of affordable housing units across different AMI levels in each ward.  This visualization allows us to identify areas with a shortage of deeply affordable units for extremely low-income residents, who are most at risk of homelessness.  The table also shows the percentage of affordable housing units in each ward, revealing disparities in access to affordable housing across the city.
+
+### Treemap
+
+```{=html}
+
+<iframe width="600" height="450" src="https://lookerstudio.google.com/embed/reporting/7703a0df-5f32-4381-ba1b-0358702c6a85/page/p_mvggi1x8ld" frameborder="0" style="border:0" allowfullscreen data-external="1" sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>
+
+```
+[Treemap 3:  Homeless Clients Serviced by Ward and Target Group in Washington, DC (2024)](https://lookerstudio.google.com/embed/reporting/7703a0df-5f32-4381-ba1b-0358702c6a85/page/p_mvggi1x8ld)
+
+This treemap provides a comprehensive overview of the demographics of individuals experiencing homelessness in DC.  By drilling down from ward to target group (e.g., women, men, families, youth), we can identify specific populations that are disproportionately affected by homelessness in each ward.  This information can inform targeted interventions and the development of specialized housing programs to address the unique needs of different groups.  The optional metric showing the number of facilities serving each target group can further highlight potential gaps in service provision.
+
+### Spatial Map
+
+```{=html}
+<iframe width='100%' height='400px' src="https://api.mapbox.com/styles/v1/njwiggins/cm2p9jhr400ak01qi5ruc7ydf.html?title=false&access_token=pk.eyJ1Ijoibmp3aWdnaW5zIiwiYSI6ImNtMnA4OWxzNzBvaHMycHE1MWZ4c2MyMXEifQ.kWvvh_Aq30rm9ZAzjK6WKw&zoomwheel=false#12/38.90795/-77.01565" title="DC Homelessness" style="border:none;"></iframe>
+```
+[Map: Homeless Shelter Vicinity to Homeless Facility Shuttle Stops](https://api.mapbox.com/styles/v1/njwiggins/cm2p9jhr400ak01qi5ruc7ydf.html?title=view&access_token=pk.eyJ1Ijoibmp3aWdnaW5zIiwiYSI6ImNtMnA4OWxzNzBvaHMycHE1MWZ4c2MyMXEifQ.kWvvh_Aq30rm9ZAzjK6WKw&zoomwheel=true&fresh=true#12/38.90795/-77.01565)
+
+This analysis utilizes three spatial indicators. First, there is the 'Homeless Facility Shuttle Stops,' represented by the blue markers with buses. These show the locations where shuttles specifically serving homeless individuals make stops, providing crucial transportation to shelters, service centers, and other essential destinations. This aligns with the concept of "smart mobility" discussed in the readings, as it utilizes technology (GPS data) to provide real-time information about transportation services relevant to homeless individuals.
+
+Next, the 'Homeless Shelter Locations,' are shown as the blue markers with houses. The analysis maps the geographic locations of homeless shelters across Washington, DC. This is a more traditional spatial indicator that provides a foundational understanding of the distribution of essential services for people experiencing homelessness.
+
+Finally, the 'Crime Incidents,' are shown as the red, blurred circles. This layer represents the locations where crimes have occurred in DC, providing insight into the areas where public safety may be a greater concern. This allows us to examine the spatial relationship between crime and the concentration of homeless services.
+
+By analyzing these layers together, we can identify areas with potential challenges and opportunities. For instance, areas with a high concentration of both shelters and crime incidents may require targeted interventions to address the underlying factors contributing to both homelessness and crime. Additionally, areas with limited access to both shelters and transportation may indicate service gaps that need to be addressed to ensure equitable access to support across the city.
+
+# Policy Statement and Metrics
+
+## Policy Position
+
+### __Policy Position__
+
+My policy position statement, informed by the data and research I've presented, strongly advocates for the expansion of affordable housing programs in Washington, DC, while also prioritizing increased access to essential resources and services.
+
+This position is supported by several key arguments:
+
+- First, the rising cost of living and lack of affordable housing options are significant contributors to homelessness in DC. Expanding affordable housing is crucial to address this root cause.
+- Second, individuals experiencing homelessness often face barriers to accessing essential resources and services, such as healthcare, employment assistance, and mental health support. Improving access to these resources is vital for helping people exit homelessness and achieve long-term stability.
+- Third, a collaborative approach is essential. This involves partnering with local nonprofits, engaging with government stakeholders, and actively incorporating the perspectives of community members to ensure that the expanded programs are effective and meet the diverse needs of the homeless population.
+
+By addressing both housing affordability and access to resources, we can create a more supportive environment for individuals and families experiencing homelessness, enabling them to achieve stability, improve their well-being, and contribute to a stronger community.
+
+## Metrics
+
+### __Metrics for Assessing Outcomes__
+
+To ensure the effectiveness of these expanded affordable housing programs, it's crucial to have robust metrics in place to track progress and measure outcomes. I propose using three key metrics, guided by the Results-Based Accountability framework:
+
+- Bed Availability: This metric tracks the total year-round bed capacity in emergency shelters, transitional housing, and safe havens across DC. By comparing this capacity to the Point-in-Time count of individuals experiencing homelessness, we can assess whether the system has enough temporary shelter space to meet the immediate needs of the homeless population. An increase in bed availability relative to the PIT count could indicate improved access to emergency shelter services.
+- Daily Service Provision: This metric measures the number of homeless individuals served per day through various homeless service facilities, such as shelters, day centers, and meal programs. This gives us a sense of the reach and utilization of homeless services on a daily basis. An increase in the number of individuals served could suggest improved access to essential support, potentially leading to better outcomes for people experiencing homelessness.
+- Veteran Homelessness: This metric focuses specifically on the veteran population, tracking the number of veterans identified as homeless in the annual PIT count. This allows us to assess whether the expanded affordable housing programs and increased access to services are effectively reducing veteran homelessness.
+
+By monitoring these metrics over time, we can gain valuable insights into the effectiveness of the expanded affordable housing programs and make data-driven adjustments to improve outcomes for individuals experiencing homelessness in Washington, DC.
+
+# Shiny{data-icon="fa-r"}
+
+```{r prepare-crime-data, cache=TRUE, include=FALSE}
+
+crime_data <- crime_data %>%
+  group_by(WARD, OFFENSE) %>%
+  summarise(
+    Crime_Incidents = n(),
+    avg_lat = mean(LATITUDE, na.rm = TRUE),
+    avg_long = mean(LONGITUDE, na.rm = TRUE)
+  )
+
+crime_data1 <- crime_data %>% 
+  summarise(Crime_Incidents = n())
+
+pal <- colorNumeric(
+  palette = "Reds",
+  domain = crime_data$Crime_Incidents
+)
+
+```
+
+```{r prepare-shelter-services-data, include=FALSE}
+services_data <- homeless_services %>%
+  group_by(WARD) %>%
+  summarise(
+    Services_Offered = n_distinct(PROGRAM_NAME),
+    avg_lat = mean(LATITUDE, na.rm = TRUE),
+    avg_long = mean(LONGITUDE, na.rm = TRUE)) 
+
+shelter_data <- homeless_shelters %>% 
+  group_by(WARD) %>% 
+  summarise(Total_Beds = sum(NUMBER_OF_BEDS))
+
+combined_data <- services_data %>%
+  left_join(shelter_data, by = "WARD")
+
+```
+
+## Dropdown{data-width=175}
+
+### {data-height=225}
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE} 
+fluidRow(
+  column(12, 
+         div(style = "font-size:14px; margin-bottom:12px;",
+             "Explore the relationship between the number of beds in homeless shelters, homeless services, and crime incidents across DC by ward."
+         )
+  )
+)
+
+```
+
+###
+```{r}
+fluidRow(
+  column(12,
+         div(style = "font-size:14px; margin-bottom:16px;",
+             "Use the dropdown menu to select a specific ward and observe the distribution of shelters and the intensity of crime incidents."
+         ),
+         selectInput(
+           inputId = "ward", 
+           label = "Select Ward:",
+           choices = c("All Wards", unique(combined_data$WARD)),
+           selected = "All Wards"
+         )
+  )
+)
+
+
+```
+
+
+## Spatial Map
+###
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+renderLeaflet({
+  if (input$ward == "All Wards") {
+    filtered_data <- combined_data
+    filtered_crime <- crime_data
+  } else {
+    filtered_data <- combined_data %>% filter(WARD == input$ward)
+    filtered_crime <- crime_data %>% filter(WARD == input$ward)
+  }
+  
+
+  leaflet(filtered_data) %>%
+    addTiles() %>%
+    addCircleMarkers(
+      data = filtered_crime,
+      lng = ~avg_long,
+      lat = ~avg_lat,
+      radius = 10,  
+      color = ~pal(Crime_Incidents),
+      group = "Crime Incidents",
+      popup = ~paste("<b>Offense:", OFFENSE, "</b><br>",
+                      "Crime Incidents:", Crime_Incidents)
+    ) %>%
+    addCircleMarkers(
+      lng = ~avg_long, 
+      lat = ~avg_lat, 
+      radius = ~Total_Beds / 10,  
+      color = "blue",  
+      popup = ~paste("<b>Ward:", WARD, "</b><br>",
+                     "Total Beds:", Total_Beds, "<br>",
+                     "Services Offered:", Services_Offered),
+      group = "Homeless Shelters"
+    ) 
+  })
+
+```
+
+## Analysis{data-width=400}
+
+### __Analysis__
+
+The app reveals a spatial correlation between the concentration of homeless shelters and services and the number of crime incidents. Wards with more beds and services, particularly Wards 5, 6, and 8, tend to have a higher concentration of crime. 
+
+This correlation may be influenced by several factors, including increased reporting of crime incidents in areas with a greater presence of shelters and services. Additionally, the vulnerability of individuals experiencing homelessness may make them more likely to be involved in or become victims of crime. Underlying socioeconomic factors, such as poverty and lack of opportunity, can also contribute to both homelessness and crime, creating a complex interplay that requires careful consideration.
+
+These findings suggest several policy implications:
+
+- Targeted interventions should focus on providing comprehensive support services, such as mental health counseling, substance abuse treatment, and job training, in areas with high concentrations of shelters and crime. This approach aims to address the root causes of both homelessness and crime by supporting the needs of vulnerable individuals. 
+
+- Decentralizing homeless services and affordable housing can help reduce the concentration of these resources in specific areas, promoting a more equitable distribution across the city and potentially mitigating the observed correlation with crime.  
+
+- Active community engagement is essential to address concerns, foster collaboration, and create safer, more inclusive neighborhoods for all residents.
+
+# Summary
+
+## 
+
+### __Conclusion__
+
+Throughout this semester, my research has highlighted the complex and multifaceted nature of homelessness in Washington, DC. It's clear that addressing this issue requires a comprehensive and data-driven approach that considers both the immediate needs of individuals experiencing homelessness and the underlying systemic factors that contribute to the problem.
+
+Key takeaways from my research include:
+
+- The critical need for expanded affordable housing programs to address the growing gap between housing costs and affordability for low-income residents.
+- The importance of improving access to essential resources and services, such as healthcare, mental health support, substance abuse treatment, and employment assistance, to help individuals exit homelessness and achieve long-term stability.
+- The value of utilizing data and technology, such as open data portals, spatial analysis tools, and civic tech platforms like Open Referral, to inform policy decisions, identify service gaps, and improve the efficiency and effectiveness of homeless services.
+- The necessity of collaboration among government agencies, non-profit organizations, and community members to create a comprehensive and sustainable solution to homelessness.
+
+Based on these findings, I recommend the following policy actions:
+
+- Invest in the expansion of affordable housing programs, prioritizing those that integrate housing with supportive services.
+- Improve access to essential resources and services by streamlining intake processes, coordinating services across agencies, and utilizing technology to provide information and support.
+- Promote community engagement and collaboration to address concerns, foster understanding, and create a more inclusive environment for all residents.
+- Implement data-driven decision-making and evaluation to track progress, identify areas for improvement, and ensure accountability in the use of public resources.
+
+By taking these actions, Washington, DC can make significant strides in reducing homelessness, improving the lives of its most vulnerable residents, and creating a more equitable and just society for all.
+
+# Tables{data-icon="fa-table"}
+
+## Homeless Data Tables {.tabset .tabset-fade .tabset-pills}
+
+### Homeless Shelters
+
+```{r}
+DT::renderDataTable(homeless_shelters, caption = "Homeless Shelter Locations")
+```
+
+### Homeless Svc Facilities
+
+```{r}
+DT::renderDataTable(homeless_services, caption = "Homeless Service Facilities")
+```
+
+### Affordable Housing
+
+```{r}
+DT::renderDataTable(affordable_housing, caption = "Affordable Housing Units")
+```
+
+### Shuttle Stops
+
+```{r}
+DT::renderDataTable(shuttle_stops, caption = "Real-Time Homeless Facility Shuttle Stops")
+```
+
+### WiFi
+
+```{r}
+DT::renderDataTable(wifi_hotspots, caption = "WiFi Hotspots")
+
+```
+
+### Crime
+
+```{r}
+DT::renderDataTable(crime_data, caption = "Crime Incidents in 2021")
+
+```
+
+

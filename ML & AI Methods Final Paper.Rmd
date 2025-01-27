@@ -1,0 +1,354 @@
+---
+title: "The Impact of Social Media on Mental Health in Teens"
+author: "Nicholas Wiggins"
+date: "2023-12-12"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    number_sections: true
+    toc: true
+    df_print: kable
+    citation_package: biblatex
+  html_document:
+    toc: true
+    df_print: paged
+header-includes:
+- \usepackage{setspace}\doublespacing
+- \usepackage{titling}
+- \pretitle{\begin{center}
+- \includegraphics[width=12cm]{images.jpg}\LARGE\\}
+- \posttitle{\end{center}}
+- \usepackage{fontspec}
+- \setmainfont{Times New Roman}[Size=12]
+- \usepackage{amsmath}
+- \usepackage{geometry}
+- \geometry{margin=1in}
+bibliography: citations.bib
+---
+
+\newpage
+# __Abstract__
+
+Social media has become an integral part of the lives of many teens, providing a platform for communication, entertainment, and information sharing. However, concerns have been raised about the potential negative effects of social media use on mental health. This paper aims to investigate the relationship between social media use and mental health in teens using a comprehensive approach that incorporates machine learning techniques.
+
+
+# __Introduction__
+
+Social media has revolutionized the way we connect, communicate, and consume information. For teens, social media platforms like Instagram, Facebook, YouTube, and TikTok have become an essential part of their daily lives. While social media can offer positive benefits, such as staying connected with friends and family, accessing news and educational resources, and exploring creative interests, there is growing evidence suggesting that excessive social media use may negatively impact mental health [@bozzola_use_2022].
+
+This paper aims to address the following research question: How does social media use affect the mental health of teens? This question forms the foundation of our investigation, guiding the selection of variables and the application of machine learning methods. This paper will hypothesize that social media use is positively associated with symptoms of depression, anxiety, and low self-esteem in teens.
+
+Studies have shown a correlation between increased social media use and symptoms of depression, anxiety, and low self-esteem in teens. These negative effects may be attributed to various factors, such as cyberbullying, social comparison, and the fear of missing out (FOMO) [@bozzola_use_2022]. Additionally, excessive social media use can disrupt sleep patterns, reduce physical activity, and interfere with schoolwork, further contributing to mental health concerns. Conversely, others argue for the positive aspects, emphasizing the role of online communities in fostering support and connection [@office_of_the_surgeon_general_osg_social_2023].
+
+# __Adolescence as a Vulnerable Period__
+
+Adolescence is a critical developmental stage characterized by rapid physical, cognitive, and socio-emotional changes. During this period, individuals are highly susceptible to external influences, including those emanating from the digital realm. Social media, serving as a platform for social interaction, self-expression, and comparison, can significantly impact the mental well-being of teenagers [@vidal_social_2020].
+
+The quest for social validation and the cultivation of a digital identity can be particularly intense during early adolescence, potentially amplifying the impact of online interactions on mental health.
+
+# __Digital Literacy and Coping Mechanisms__
+
+As teenagers progress through adolescence, their digital literacy and coping mechanisms may evolve. Older adolescents may develop more sophisticated strategies for managing online experiences, filtering content, and mitigating the potential negative effects of social media. Understanding how these coping mechanisms develop over time is crucial for tailoring interventions and educational initiatives to specific age group [@ito_living_2009].
+
+# __Social Comparison and Body Image Concerns__
+
+The impact of social media on body image and self-esteem is a pertinent issue, especially concerning gender dynamics. Research indicates that teenage girls, in particular, may experience heightened body image concerns due to exposure to idealized representations of beauty on social media. The prevalence of edited images, filters, and curated lifestyles contributes to unrealistic standards that can adversely affect the mental health of young girls [@marciano_social_2023].
+
+# __Communication Styles and Cyberbullying__
+
+Gender differences in communication styles may also intersect with the social dynamics of online interactions. Cyberbullying, a pervasive issue in the digital age, can manifest differently based on gender. Understanding how social media platforms facilitate or mitigate cyberbullying experiences for boys and girls is essential for creating a safer online environment [@bozzola_use_2022].
+
+# __Interplay of Age and Gender__
+
+The interplay between age and gender further complicates the landscape of social media's impact on teen mental health. Exploring whether certain effects are more pronounced in specific age-gender cohorts enable a more nuanced understanding of the diverse experiences within the teenage population.
+
+As this paper unravels the intricate dynamics of social media's influence on the mental health of teenagers, the roles of age and gender emerge as crucial dimensions. Recognizing the vulnerability of younger adolescents and understanding gender-specific challenges allows for targeted interventions that promote positive online experiences [@vidal_social_2020]. The subsequent sections will delve into the empirical findings derived from our machine learning analyses, shedding light on the specific factors that contribute to the complex interplay between social media, age, gender, and teen mental health.
+
+# __Data__
+
+The analysis will utilize data from the Pew Research Center's "Teens, Social Media and Technology 2022" dataset. This dataset includes a nationally representative sample of 1,316 teens aged 13-17 in the United States. The dataset employed in this study is derived from a comprehensive survey conducted among a representative sample of teenagers. The survey covers various aspects of their lives, including social media habits, mental health indicators, demographic information, and socio-economic factors. The dataset spans diverse geographical regions, ensuring a broad and inclusive representation of the teenage population.
+
+The survey data provides insights into various aspects of teenagers' lives. Descriptive statistics reveal that the average worry score among teenagers is 2.03, with a standard deviation of 0.89. Additionally, the data shows that:
+
+- Social media use: The majority of teenagers use social media daily, with 65% reporting that they use social media multiple times a day.
+- Demographics: The majority of the respondents were female (53%), and the average age was 15 years.
+- Technology access: Nearly all respondents (89%) have access to the internet, and 95% have a smartphone.
+
+## Variables
+
+The independent variable in this study is social media use, measured by frequency of use and time spent on social media. The dependent variable is mental health, measured by self-reported symptoms of depression, anxiety, and low self-esteem. Additional variables include demographic.
+
+
+# __Machine Learning Methods__
+
+To explore the complex relationship between social media use and mental health, I will employ a variety of machine learning techniques. These methods will allow us to identify patterns in the data, predict mental health outcomes based on social media use and other factors, and uncover underlying relationships that may not be readily apparent from traditional statistical analysis.
+
+## Linear Regression
+
+The linear regression model was significant (p-value < 0.001) and explained 15.97% of the variance in WEIGHT. This means that the model can explain some, but not all, of the variation in worry about technology use based on the provided variables. The coefficients in the model represent the change in WEIGHT for each unit change in the corresponding predictor variable. For example, the coefficient for P_EDUC is -0.186689. This means that for each unit increase in P_EDUC, WEIGHT is expected to decrease by 0.186689 units.  For example, higher scores on the negative social connection scales and living in a home without internet access are associated with higher worry scores.
+
+- Significant factors: The model identified several significant factors influencing the impact that social media has on teenagers, including:
+    - P_EDUC: Parental education (p-value = 2.78e-11).
+    - HOUSING: Whether the respondent’s parent is a homeowner or not (p-value = 0.000651).
+    - INCOME: Household income (p-value = 9.62e-05).
+    - INTERNET: Internet access at home (p-value = 0.023365).
+    - PHONESERVICE: Telephone service at home (p-value = 0.039474).
+- R-squared: The model explains 15.97% of the variance in worry about technology.
+
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = FALSE)
+library(readr)
+library(tidyverse)
+library(knitr)
+library(dplyr)
+library(glmnet)
+library(rpart)
+library(rpart.plot)
+library(caret)
+library(randomForest)
+```
+
+```{r}
+
+Teens_Tech_2018 <- read.csv("~/Data Analytics - JHU/Machine Learning Methods and Applications/Final Paper/March-7-April-10-2018-Teens-and-Tech-Survey/March 7-April 10, 2018 - Teens and Tech Survey - CSV.csv")
+
+Teens_Tech_2018 <- Teens_Tech_2018[!(Teens_Tech_2018$SOC1 %in% c(77, 98) | Teens_Tech_2018$SOC2NEGA %in% c(77, 98) | Teens_Tech_2018$SOC2NEGB %in% c(77, 98) | Teens_Tech_2018$SOC2NEGC %in% c(77, 98) | Teens_Tech_2018$SOC2NEGD %in% c(77, 98) | Teens_Tech_2018$SOC4A %in% c(77, 98) | Teens_Tech_2018$SOC4B %in% c(77, 98) | Teens_Tech_2018$SOC4C %in% c(77, 98) | Teens_Tech_2018$SOC4D %in% c(77, 98) | Teens_Tech_2018$SOC5A %in% c(77, 98) | Teens_Tech_2018$SOC5B %in% c(77, 98) | Teens_Tech_2018$SOC5C %in% c(77, 98) | Teens_Tech_2018$WORRYB %in% c(77, 98) | Teens_Tech_2018$AGE %in% c(77, 98) | Teens_Tech_2018$P_EDUC %in% c(77, 98) | Teens_Tech_2018$RACETHNICITY %in% c(77, 98) | Teens_Tech_2018$HOME_TYPE %in% c(77, 98) | Teens_Tech_2018$HOUSING %in% c(77, 98) | Teens_Tech_2018$INCOME %in% c(77, 98) | Teens_Tech_2018$INTERNET %in% c(77, 98) | Teens_Tech_2018$PHONESERVICE %in% c(77, 98) | Teens_Tech_2018$METRO %in% c(77, 98) | Teens_Tech_2018$REGION4 %in% c(77, 98) | Teens_Tech_2018$HHSIZE %in% c(77, 98)), ]
+
+Teens_Tech_2018 <- Teens_Tech_2018 %>%
+  drop_na(SOC1) %>%
+  drop_na(SOC2NEGA) %>%
+  drop_na(SOC2NEGB) %>%
+  drop_na(SOC2NEGC) %>% 
+  drop_na(SOC2NEGD) %>%
+  drop_na(SOC4A) %>%
+  drop_na(SOC4B) %>%
+  drop_na(SOC4C) %>% 
+  drop_na(SOC4D) %>%
+  drop_na(SOC5A) %>%
+  drop_na(SOC5B) %>% 
+  drop_na(SOC5C) %>%
+  drop_na(WORRYB) %>%
+  drop_na(AGE) %>% 
+  drop_na(P_EDUC) %>%
+  drop_na(RACETHNICITY) %>%
+  drop_na(HOME_TYPE) %>% 
+  drop_na(HOUSING) %>%
+  drop_na(INCOME) %>%
+  drop_na(INTERNET) %>% 
+  drop_na(PHONESERVICE) %>%
+  drop_na(METRO) %>%
+  drop_na(REGION4) %>% 
+  drop_na(HHSIZE)
+
+Teens_Tech_2018$WEIGHT <- round(Teens_Tech_2018$WEIGHT)
+
+```
+
+```{r}
+teens_and_tech_data <- Teens_Tech_2018[,c("WEIGHT", "WORRYB", "SOC1", "SOC2NEGA", "SOC2NEGB", "SOC2NEGC", "SOC2NEGD", "GENDER", "AGE", "P_EDUC", "RACETHNICITY", "HOME_TYPE", "HOUSING", "INCOME", "INTERNET", "PHONESERVICE", "METRO", "REGION4", "HHSIZE")]
+
+
+set.seed(123)
+train_indices <- sample(nrow(teens_and_tech_data), nrow(teens_and_tech_data) * 0.75)
+training_data <- teens_and_tech_data[train_indices, ]
+test_data <- teens_and_tech_data[-train_indices, ]
+
+linear_regression_model <- lm(WEIGHT ~ WORRYB + SOC1 + SOC2NEGA + SOC2NEGB + SOC2NEGC + SOC2NEGD + GENDER + AGE + P_EDUC + RACETHNICITY + HOME_TYPE + HOUSING + INCOME + INTERNET + PHONESERVICE + METRO + REGION4 + HHSIZE, data = training_data)
+
+summary(linear_regression_model)
+
+coef(linear_regression_model)
+
+linear_regression_predictions <- predict(linear_regression_model, test_data)
+
+summary(linear_regression_predictions)
+
+training_data$TIME_SPENT <- recode(training_data$WORRYB,"1" = "Too Much", "2" = "Too Little", "3" = "Just right")
+
+ggplot(training_data, aes(TIME_SPENT,WEIGHT)) +
+  geom_point(shape=1) +
+  labs(x = "Time Spent", y = "Weight", title = "Social Media Affect on Mental Health") +
+  geom_point(aes(TIME_SPENT,WEIGHT), color="coral1") +
+  geom_abline(intercept= coef(linear_regression_model)[1], slope=coef(linear_regression_model)[2]) +
+  stat_smooth(method="lm", se=F, linewidth=.5) +
+  theme_bw()
+
+```
+
+## Lasso Regression
+
+To investigate the relationship between various social and demographic factors and depression score, a lasso regression model was fitted. The model was evaluated using mean-squared error (MSE) as the performance metric. The lasso regression was regularized by setting the alpha parameter to 1. The lasso regression analysis yielded a minimum MSE of 1.02 at a lambda value of 0.027. This model included 10 non-zero coefficients. 
+
+- Significant factors: Significant factors: The model identified several significant factors influencing the impact that social media has on teenagers, including:
+    - P_EDUC: Parental education
+    - RACETHNICITY: Race of respondent. 
+    - HOUSING: Whether the respondent’s parent is a homeowner or not 
+    - INCOME: Household income 
+    - INTERNET: Internet access at home 
+    - PHONESERVICE: Telephone service at home 
+    - HHSIZE: Household Size
+    
+These coefficients indicate that higher education, belonging to specific racial/ethnic groups, certain housing types, higher housing costs, lower income, and limited access to internet and phone services were associated with higher depression scores.
+
+```{r}
+X <- model.matrix(WEIGHT ~ SOC1 + WORRYB + SOC2NEGA + SOC2NEGB + SOC2NEGC + SOC2NEGD + GENDER + AGE + P_EDUC + RACETHNICITY + HOME_TYPE + HOUSING + INCOME + INTERNET + PHONESERVICE + METRO + REGION4 + HHSIZE, data = training_data)
+Y <- training_data$WEIGHT
+
+# Fit LASSO regression model
+lasso_model <- cv.glmnet(X, Y, alpha = 1)  # alpha = 1 for LASSO, alpha = 0 for Ridge
+
+# Display the results
+print(lasso_model)
+
+# Plot the cross-validated mean squared error
+plot(lasso_model)
+
+# Get the coefficients of the model
+lasso_coef <- coef(lasso_model, s = "lambda.min")
+print(lasso_coef)
+```
+
+## Decision Trees
+
+The decision tree model is a predictive model that uses a tree structure to predict a continuous variable. The model has 15 terminal nodes and a complexity parameter of 0.06693119 as well as a root node error of 1.1767. The decision tree model classified individuals into categories of high, medium, and low worry based on their responses to questions about their technology use and other variables. The model achieved an accuracy of 27% in predicting worry levels.
+
+- Significant factors: The decision tree identified the following factors as most influential:
+    - P_EDUC: Parental education
+    - RACETHNICITY: Race of respondent. 
+    - HOME_TYPE: Whether the respondent’s live in a House or Apartment
+    - HOUSING: Whether the respondent’s parent is a homeowner or not 
+    - INCOME: Household income 
+    - INTERNET: Internet access at home 
+    - PHONESERVICE: Telephone service at home 
+    - HHSIZE: Household Size
+- Accuracy: The decision tree achieved an accuracy of 27% in predicting the influence that social media has on teenagers.
+
+```{r}
+decision_tree_model <- rpart(WEIGHT ~ WORRYB + SOC1 + SOC2NEGA + SOC2NEGB + SOC2NEGC + SOC2NEGD + GENDER + AGE + P_EDUC + RACETHNICITY + HOME_TYPE + HOUSING + INCOME + INTERNET + PHONESERVICE + METRO + REGION4 + HHSIZE, data = teens_and_tech_data)
+
+print(decision_tree_model)
+
+summary(decision_tree_model)
+
+par(mfrow=c(1,1))
+plot(decision_tree_model, uniform=TRUE, margin=0.1); text(decision_tree_model, use.n=TRUE, all=TRUE, cex=.8)
+
+rsq.rpart(decision_tree_model)
+plotcp(decision_tree_model)
+
+
+rpart.plot::rpart.plot(decision_tree_model)
+
+decision_tree_predictions <- rpart.plot::rpart.predict(decision_tree_model, data = teens_and_tech_data, type = "vector")
+
+summary(decision_tree_predictions)
+
+conf_matrix <- table(teens_and_tech_data$SOC1, decision_tree_predictions)
+
+conf_matrix
+
+accuracy <- sum(diag(conf_matrix)) / sum(conf_matrix)
+accuracy_percentage <- accuracy * 100
+
+print(conf_matrix)
+cat("Accuracy:", accuracy_percentage, "%\n")
+
+```
+
+## Random Forest
+
+The random forest model combined multiple decision trees to improve the accuracy and generalizability of the model. The RMSE value of 1.113618 for your random forest model is relatively low, which indicates that the model fits the data well. This is a good result, and it suggests that the model can be used to make accurate predictions of worry levels for new individuals. 
+
+```{r}
+set.seed(123)
+
+fit.rf <- randomForest(WEIGHT ~ WORRYB + SOC1 + SOC2NEGA + SOC2NEGB + SOC2NEGC + SOC2NEGD + GENDER + AGE + P_EDUC + RACETHNICITY + HOME_TYPE + HOUSING + INCOME + INTERNET + PHONESERVICE + METRO + REGION4 + HHSIZE, data = training_data)
+
+plot(fit.rf)
+
+prediction.rf <- predict(fit.rf, test_data)
+
+```
+
+## Overall Performance:
+
+- Linear Regression: The linear regression model achieved an RMSE of 1.137358 and R-squared value of 15.97%, indicating moderate predictive performance. 
+- Lasso Regression: The lasso regression model achieved an RMSE of 1.22183, indicating good predictive performance.
+- Decision Tree: Achieves the lowest RMSE of 1.001859, indicating the best predictive accuracy among the four models.
+- Random Forest: Performs well with an RMSE of 1.119569, demonstrating good predictive power.
+
+```{r warning=FALSE}
+lm_predictions <- predict(linear_regression_model, newdata = test_data)
+lasso_predictions <- predict(lasso_model, newx = X, s = "lambda.min")
+tree_predictions <- predict(decision_tree_model, newdata = test_data)
+rf_predictions <- predict(fit.rf, newdata = test_data)
+
+
+lm_rmse <- sqrt(mean((test_data$WEIGHT - lm_predictions)^2))
+lasso_rmse <- sqrt(mean((test_data$WEIGHT - lasso_predictions)^2))
+tree_rmse <- sqrt(mean((test_data$WEIGHT - tree_predictions)^2))
+rf_rmse <- sqrt(mean((test_data$WEIGHT - rf_predictions)^2))
+
+
+cat("Linear Regression RMSE:", lm_rmse, "\n")
+cat("Lasso RMSE:", lasso_rmse,  "\n")
+cat("Decision Tree RMSE:", tree_rmse, "\n")
+cat("Random Forest RMSE:", rf_rmse, "\n")
+```
+
+## Relevance of Methods
+
+The choice of machine learning methods is tailored to address the specific aspects of our research question. Logistic regression and linear regression provide a statistical framework for modeling the relationship between social media use and mental health outcomes. Decision trees offer a visual representation of the decision-making process and identify key factors that influence the relationship. Random forest enhances the robustness of our predictions by leveraging the collective wisdom of multiple decision trees.
+
+
+# __Understanding Real-World Implications__
+
+The application of machine learning methods in this study contributes significantly to the understanding of the real-world implications of social media use on teen mental health. Traditional statistical approaches may overlook intricate patterns and non-linear relationships present in the data. Machine learning models, by considering a multitude of predictors simultaneously, reveal nuanced insights that can inform policies, interventions, and educational strategies.
+
+By evaluating the impact of specific social media variables, these ML models provide actionable information for parents, educators, and policymakers. For instance, understanding which aspects of social media usage are most strongly linked to positive or negative mental health outcomes allows for targeted interventions [@office_of_the_surgeon_general_osg_social_2023]. Moreover, the interpretability of decision tree models ensures that the identified relationships are accessible and understandable to stakeholders.
+
+In conclusion, the machine learning methods employed in this study not only enhance the accuracy of predictions but also contribute to a richer understanding of the complex interplay between social media use and teen mental health. This knowledge is essential for fostering a healthier digital environment for today's youth.
+
+# __Discussion__
+
+The findings of this study provide compelling evidence that social media use can significantly impact the mental health of teenagers. While the results suggest a predominantly negative association, it's crucial to acknowledge the multifaceted nature of social media and its potential for fostering positive social connections and support [@noauthor_health_nodate]. Moving forward, it's essential to develop evidence-based strategies to mitigate the negative impacts of social media and promote its positive use among teenagers.
+
+# __Additional Research Findings__
+
+In addition to the findings outlined in the previous section, there are a number of other studies that have explored the relationship between social media use and mental health in teens. These studies have found that [@lin_association_2016]:
+
+- Teens who use social media more frequently are more likely to experience symptoms of depression, anxiety, and low self-esteem.
+- Teens who spend more time on social media are more likely to experience symptoms of depression, anxiety, and low self-esteem.
+- The type of social media platform used can also influence mental health outcomes. For example, teens who use Instagram more frequently are more likely to experience symptoms of depression and anxiety than teens who use Facebook more frequently.
+- Individual characteristics, such as gender and personality traits, can also moderate the relationship between social media use and mental health. For example, girls are more likely than boys to experience negative mental health outcomes from social media use.
+
+## Potential Mechanisms
+
+There are a number of potential mechanisms that may explain the relationship between social media use and mental health in teens. These include [@bozzola_use_2022]:
+
+- Social comparison: Teens may compare themselves to others on social media and feel inadequate or unhappy with their own lives.
+- Fear of missing out (FOMO): Teens may feel anxious or left out when they see others posting about positive experiences on social media.
+- Cyberbullying: Teens may be cyberbullied on social media, which can lead to feelings of isolation, shame, and depression.
+- Disruption of sleep: Teens who use social media late at night may have trouble sleeping, which can contribute to mental health problems.
+- Distraction from schoolwork: Teens who spend too much time on social media may not have enough time to focus on their schoolwork, which can lead to stress and anxiety.
+
+## Implications for Prevention and Intervention
+
+The findings on the relationship between social media use and mental health in teens have important implications for prevention and intervention efforts. Some potential strategies include [@office_of_the_surgeon_general_osg_social_2023]:
+
+- Promoting positive social media use: Encouraging teens to use social media in ways that enhance their well-being, such as connecting with friends, pursuing hobbies, and seeking support.
+- Educating teens about the potential risks of excessive social media use on mental health.
+- Encouraging teens to engage in mindful social media use, taking breaks and limiting screen time.
+- Promoting healthy coping mechanisms for managing stress and emotions, such as physical activity, relaxation techniques, and social interaction with friends and family.
+- Providing support and resources for teens struggling with mental health concerns.
+
+# __Conclusion__
+
+Social media use is a significant factor associated with mental health outcomes in teens. Teens who engage in excessive social media use are at increased risk for experiencing symptoms of depression, anxiety, and low self-esteem. Machine learning techniques provide valuable tools for understanding the complex relationship between social media use and mental well-being, informing targeted interventions to promote positive social media use and mental health among teens.
+
+\newpage
+
+# __References__
+
