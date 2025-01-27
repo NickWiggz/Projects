@@ -1,0 +1,514 @@
+---
+title: "Data Visualization Portfolio"
+author: "Nicholas Wiggins"
+date: "2023-12-03"
+output: html_document
+runtime: shiny
+resource_files:
+- "2023-12-03-washington-post-police-shootings-export.csv"
+- arrests_national.csv
+- ICJTR+Basic+Training+Data+Set.xlsx
+- "Real (inflation-adjusted) state and local government expenditures on police protection
+  in the U.S., 2000-2017.csv"
+- world_country_and_usa_states_latitude_and_longitude_values.csv
+---
+
+```{r setup, include=FALSE, echo=FALSE, warning=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+library(tidyverse)
+library(knitr)
+library(dplyr)
+library(readr)
+library(readxl)
+library(ggplot2)
+library(anytime)
+library(ggrepel)
+library(gridExtra)
+library(viridis)
+library(ggalluvial)
+library(packcircles)
+library(hrbrthemes)
+library(cowplot)
+library(maps)
+library(lubridate)
+library(treemap)
+library(treemapify)
+library(shiny)
+library(shinydashboard)
+library(plotly)
+```
+
+```{r echo=FALSE, warning=FALSE}
+US_Police_Shootings_2015_2023 <- drop_na(read.csv("2023-12-03-washington-post-police-shootings-export.csv"))
+
+Police_Spending_2000_2017 <- read_csv("Real (inflation-adjusted) state and local government expenditures on police protection in the U.S., 2000-2017.csv")
+
+arrests_national_1995_2016 <- drop_na(read_csv("arrests_national.csv"))
+
+US_Lat_Long <-read_csv("world_country_and_usa_states_latitude_and_longitude_values.csv")
+
+Police_Training <- read_excel("ICJTR+Basic+Training+Data+Set.xlsx")
+
+```
+
+
+```{r Kiilings by Cop by Race, echo=FALSE, message=FALSE, warning=FALSE}
+US_Police_Shootings_2015_2023$date <- anydate(US_Police_Shootings_2015_2023$date)
+US_Police_Shootings_2015_2023$year <- year(US_Police_Shootings_2015_2023$date)
+
+shooting_counts <- US_Police_Shootings_2015_2023 %>%
+  group_by(year, race) %>%
+  summarise(n = n()) %>% 
+  ungroup()
+
+shooting_counts2 <- US_Police_Shootings_2015_2023 %>%
+  group_by(race) %>%
+  summarise(n = n()) %>% 
+  ungroup()
+
+shooting_counts3 <- US_Police_Shootings_2015_2023 %>%
+  group_by(year) %>%
+  summarise(n = n()) %>% 
+  ungroup()
+
+ggplot(shooting_counts2, aes(x = race, y = n, fill = race)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = n), vjust = -0.5) +
+  labs(y = "Number Killed") +
+  xlab("Race") +
+  ggtitle("Number of People Killed by Cops by Race, 2015-2023") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+shooting_counts1 <- US_Police_Shootings_2015_2023 %>%
+  group_by(year) %>%
+  summarise(n = n())
+
+shooting_counts1 <- shooting_counts1 %>%
+  mutate(yoy_diff = n - lag(n, default = 0))
+
+ggplot(shooting_counts1, aes(x = year, y = n, fill = year)) +
+  geom_bar(stat = "identity") +
+  geom_line(color = "red") +
+  geom_text_repel(data = shooting_counts1, aes(label = yoy_diff, x = year, y = n), vjust = -0.5, color = "white") +
+  labs(x = "Year", y = "Year-over-Year Difference in Shootings", title = "Year-over-Year Comparison of Police Shootings") +
+  theme_bw()
+
+
+ui3 <- fluidPage(
+  titlePanel("U.S. Police Involved Shootings YoY"),
+  h4("2015-2023"),
+  sidebarLayout(
+    sidebarPanel(
+      checkboxGroupInput("race_filter",
+                        "Race:",
+                        choices = unique(shooting_counts$race),
+                        selected = unique(shooting_counts$race),
+                        inline = TRUE
+                      ),
+      actionButton("clear_race_filter", "Clear", icon = icon("eraser")),
+      actionButton("select_all_races", "Select All", icon = icon("check-circle")),
+      ),
+    mainPanel(
+      plotOutput("plot_Race_Year")
+    )
+  )
+)
+
+server3 <- function(input, output, session) {
+  
+  output$plot_Race_Year <- renderPlot({
+    shooting_countsRY <- shooting_counts %>%
+    filter(race %in% input$race_filter)
+      
+
+ggplot(shooting_countsRY, aes(x = year, y = n, color = race)) +
+  geom_point(size = 2.5) +  # Adjust the size as needed
+  geom_line() +  # Add a line connecting the points
+  scale_x_continuous(breaks = seq(2015, 2023, by = 1)) +
+  scale_y_continuous() +
+  labs(title = "Number of People Killed by Police by Race and Year", x = "Year", y = "Number Killed") +
+  theme_minimal()
+  })
+  observeEvent(input$clear_race_filter, {
+    updateSelectInput(inputId = "race_filter", selected = character(0))
+  })
+  observeEvent(input$select_all_races, {
+    updateSelectInput(inputId = "race_filter", selected = unique(shooting_counts$race))
+  })
+}
+  #Run the Application
+shinyApp(ui3, server3)
+```
+
+```{r Killings by Cops by Race and Age, echo=FALSE, message=FALSE, warning=FALSE}
+shootings_race_age <- US_Police_Shootings_2015_2023 %>%
+  group_by(race, age) %>%
+  summarize(n = n()) %>%
+  mutate(percentage = n / sum(n)) %>% 
+  ungroup()
+
+ggplot(shootings_race_age, aes(x = age, y = percentage, fill = race)) +
+  geom_area() +
+  labs(x = "Age", y = "% of killings", title = "Killings by Race by Age") +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +
+  theme_minimal()
+
+ggplot(shootings_race_age, aes(x = age, y = percentage, fill = race)) +
+  geom_area() +
+  labs(x = "Age", y = "% of killings", title = "Killings by Race by Age") +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +
+  facet_wrap(~race) +
+  theme_minimal()
+```
+
+```{r Funding vs. Total Arrests, echo=FALSE, warning=FALSE}
+
+arrests_national_2000_2016 <- 
+  arrests_national_1995_2016 %>% filter(year >= 2000)
+Police_Spending_2000_2016 <- filter(Police_Spending_2000_2017, Year != 2017)
+
+```
+
+```{r Funding vs. Violent Crimes, echo=FALSE, warning=FALSE}
+violent_crimes <- ggplot(arrests_national_2000_2016, aes(x = year, y = violent_crime)) +
+  geom_bar(stat = "identity", fill = "red") +
+  labs(x = "Year", y = "# of Violent Crimes", title = "Violent Crimes in the U.S.", subtitle = "2000 - 2016") +
+ scale_y_continuous(labels = scales::label_number(accuracy = 1))
+
+police_spending <- ggplot(Police_Spending_2000_2016, aes(x = Year, y = Real_police_protection_expenditures)) +
+  geom_bar(stat = "identity", fill = "dark green") +
+  labs(x = "Year", y = "Police-Protection Expenditures", title = "Police-Protection Expenditures in the U.S.", subtitle =  "2000 - 2016") + 
+  scale_y_continuous(labels = scales::label_number(scale = 1e-6, suffix = "B"))
+
+grid.arrange(police_spending,violent_crimes, nrow = 1)
+
+```
+
+```{r Shootings by State, echo=FALSE, message=FALSE, warning=FALSE}
+shootings_race_state <- US_Police_Shootings_2015_2023 %>%
+  group_by(race, gender, state) %>%
+  count
+
+shootings_state <- US_Police_Shootings_2015_2023 %>%
+  group_by(state) %>%
+  summarise(state_count=n())
+
+ggplot(shootings_race_state, aes(x = state, y = n, fill = race)) +
+  geom_bar(stat = "identity") +
+  scale_fill_viridis_d() +
+  labs(title = "Police Shootings by State and Race (2015-2023)",
+       x = "State",
+       y = "Number of Shootings",
+       fill = "Race") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+packing<-circleProgressiveLayout(shootings_state$state_count, sizetype = "area")
+shootings_state<-add_column(shootings_state, packing)
+dat.gg<-circleLayoutVertices(packing,npoints = 50)
+ggplot() +
+  geom_polygon(data = dat.gg,
+               aes(x=x,
+                   y=y,
+                   group=id,
+                   fill=as.factor(id),
+                   alpha=0.6)) + 
+  geom_text(data = shootings_state,
+            aes(x=x,
+                y=y,
+                size=state_count,
+                label=paste(state, "(", state_count, ")", sep=" "))) +
+  theme(legend.position = "none") +
+  labs(title = "Killings by State") +
+  coord_equal()
+
+us_states <- map_data("state")
+
+US_Police_Shootings_2015_2023 <- left_join(US_Police_Shootings_2015_2023, US_Lat_Long, by = "state")
+US_Police_Shootings_2015_2023.dat2 <- US_Police_Shootings_2015_2023 %>%
+  group_by(state, usa_state) %>%
+  summarise(state_count1=n())
+colnames(US_Police_Shootings_2015_2023.dat2)[2] = "region"
+us_police_killings <- left_join(us_states, US_Police_Shootings_2015_2023.dat2, by = "region")
+
+ui1 <- fluidPage(
+  titlePanel("U.S. Police Involved Shootings"),
+  h4("2015-2023"),
+  sidebarLayout(
+    sidebarPanel(
+      checkboxGroupInput("map_filter",
+                  "State:",
+                  choices = unique(us_police_killings$region),
+                  selected = unique(us_police_killings$region),
+                  inline = TRUE,
+      ),
+      actionButton("clear_map_filter", "Clear", icon = icon("eraser")),
+      actionButton("select_all_states", "Select All", icon = icon("check-circle"))
+    ),
+    mainPanel(
+      plotOutput("map")
+    )
+    )
+  )
+
+#Define Server Logic
+server1 <- function(input, output, session) {
+
+ output$map <- renderPlot({
+    plot_dat2 <-  us_police_killings %>% 
+      filter(region %in% input$map_filter)
+    
+    ggplot(data = plot_dat2,
+           mapping = aes(x = long, y = lat,
+                         group = group, fill = state_count1)) +
+      geom_polygon(color = "gray90", size = 0.1) +
+      coord_map(projection = "albers", lat0 = 39, lat1 = 45) +
+      labs(title = "US Police Killings by State, 2015-2023") +
+      scale_fill_continuous(name = "Number of killings") +
+      xlab(NULL) + ylab(NULL) +
+      geom_text(aes(label = paste("Total Killed:", sum(US_Police_Shootings_2015_2023.dat2$state_count1), sep = " "), x = -100, y = 23), color = "black", size = 5)
+  })
+  observeEvent(input$clear_map_filter, {
+    updateSelectInput(inputId = "map_filter", selected = character(0))
+  })
+  observeEvent(input$select_all_states, {
+    updateSelectInput(inputId = "map_filter", selected = unique(us_police_killings$region))
+  })
+  
+}
+
+#Run the Application
+shinyApp(ui1, server1)
+```
+
+```{r Body Camera Use, echo=FALSE, message=FALSE, warning=FALSE}
+US_Police_Shootings_2015_2023$date <- anydate(US_Police_Shootings_2015_2023$date)
+US_Police_Shootings_2015_2023$year <- year(US_Police_Shootings_2015_2023$date)
+
+body_camera <- US_Police_Shootings_2015_2023 %>%
+  group_by(race, body_camera, year) %>%
+  summarize(n = n()) %>%
+  ungroup()
+
+body_camera_true <- body_camera %>%
+      filter(body_camera == "true")
+
+body_camera_false <- body_camera %>%
+      filter(body_camera == "false")
+
+
+ui2 <- fluidPage(
+  titlePanel("U.S. Police Involved Shootings"),
+  h4("2015-2023"),
+  sidebarLayout(
+    sidebarPanel(
+      checkboxGroupInput("race_filter",
+                        "Race:",
+                        choices = unique(body_camera$race),
+                        selected = unique(body_camera$race),
+                        inline = TRUE
+                      ),
+      actionButton("clear_race_filter", "Clear", icon = icon("eraser")),
+      actionButton("select_all_races", "Select All", icon = icon("check-circle")),
+      sliderInput("year_filter",
+                  "Year:",
+                  min = min(body_camera$year),
+                  max = max(body_camera$year),
+                  value = range(body_camera$year),
+                  sep = ""
+      )
+    ),
+    mainPanel(
+      tabsetPanel(type = "tabs",
+                  tabPanel("Body Camera Worn True", plotOutput("plot_true")),
+                  tabPanel("Body Camera Worn False", plotOutput("plot_false"))
+      )
+    )
+  )
+)
+    
+
+server2 <- function(input, output, session) {
+  
+  output$plot_true <- renderPlot({
+    body_camera_true <- body_camera %>%
+      filter(body_camera == "true") %>% 
+      filter(race %in% input$race_filter, year %in% input$year_filter)
+    
+    body_camera_totals_true <- body_camera_true %>%
+      group_by(race, year) %>%
+      summarise(n = n()) %>%
+      ungroup()
+    
+    ggplot(body_camera_true, aes(race, n, fill = race)) +
+      geom_boxplot(alpha=FALSE) +
+      geom_label(aes(label = paste0(year, ", ", "(", round(n / sum(n) * 100, 2), "%", ")", sep=" "))) +
+      scale_fill_discrete(name = "Race") +
+      labs(x = "Race", y = "# Killed Wearing Body Camera", title = "Boxplot of Police Involved Shootings with Body Camera by Race") +
+      theme_bw() +
+      theme(
+        legend.text = element_text(size = 12),
+        axis.text = element_text(size = 12),
+        plot.title = element_text(size = 16)
+      )
+    })
+
+output$plot_false <- renderPlot({
+  body_camera_false <- body_camera %>%
+      filter(body_camera == "false") %>% 
+      filter(race %in% input$race_filter, year %in% input$year_filter)
+  
+  body_camera_totals_false <- body_camera_false %>%
+  group_by(race, year) %>%
+  summarise(n = n()) %>%
+  ungroup()
+
+  ggplot(body_camera_false, aes(race, n, fill = race)) +
+      geom_boxplot(alpha=FALSE) +
+      geom_label(aes(label = paste0(year, ", ", "(", round(n / sum(n) * 100, 2), "%", ")", sep=" "))) +
+      scale_fill_discrete(name = "Race") +
+      labs(x = "Race", y = "# Killed not Wearing Body Camera", title = "Boxplot of Police Involved Shootings without Body Camera by Race") +
+      theme_bw() +
+      theme(
+        legend.text = element_text(size = 12),
+        axis.text = element_text(size = 12),
+        plot.title = element_text(size = 16)
+      )
+  })
+observeEvent(input$clear_race_filter, {
+    updateSelectInput(inputId = "race_filter", selected = character(0))
+  })
+  observeEvent(input$select_all_races, {
+    updateSelectInput(inputId = "race_filter", selected = unique(body_camera$race))
+  })
+}
+
+#Run the Application
+shinyApp(ui2, server2)
+
+body_camera_totals <- body_camera %>%
+  group_by(race, year) %>%
+  summarise(n = n()) %>%
+  ungroup()
+
+body_camera_totals <- body_camera %>%
+  group_by(race) %>%
+  summarise(total_killed = sum(n)) %>%
+  ungroup() %>%
+  mutate(percentage = total_killed / sum(total_killed) * 100)
+
+body_camera_totals_false <- body_camera_false %>%
+  group_by(race) %>%
+  summarise(total_killed = sum(n)) %>%
+  ungroup() %>%
+  mutate(percentage = total_killed / sum(total_killed) * 100)
+
+body_camera_totals_true <- body_camera_true %>%
+  group_by(race) %>%
+  summarise(total_killed = sum(n)) %>%
+  ungroup() %>%
+  mutate(percentage = total_killed / sum(total_killed) * 100)
+
+
+ggplot(body_camera, aes(x = "", y = n, fill = race)) +
+  geom_bar(stat = "identity", position = "fill", width = 1) +
+  coord_polar(theta = "y") +
+  geom_label_repel(data = body_camera_totals,
+            aes(x = 1, y = total_killed, label = paste0(round(percentage, 1), "%, \n", total_killed, " killed")),
+            position = position_fill(vjust = 0.5), color = "white") +
+  labs(x = NULL, y = NULL, fill = "Race") +
+  ggtitle("Police Shootings with/without Body Camera by Race") +
+  theme_void()
+
+bct <- ggplot(body_camera_true, aes(x = "", y = n, fill = race)) +
+  geom_bar(stat = "identity", position = "fill", width = 1) +
+  coord_polar(theta = "y") +
+  geom_label_repel(data = body_camera_totals_true,
+                   aes(x = 1, y = total_killed, label = paste0(round(percentage, 1), "%, \n", total_killed, " killed")),
+                   position = position_fill(vjust = 0.5), color = "white") +
+  labs(x = NULL, y = NULL, fill = "Race") +
+  ggtitle(str_wrap("Police Shootings with Body Camera by Race", width = 30)) +
+  theme_void() +
+  guides(fill = FALSE) 
+    
+bcf <- ggplot(body_camera_false, aes(x = "", y = n, fill = race)) +
+  geom_bar(stat = "identity", position = "fill", width = 1) +
+  coord_polar(theta = "y") +
+  geom_label_repel(data = body_camera_totals_false,
+                   aes(x = 1, y = total_killed, label = paste0(round(percentage, 1), "%, \n", total_killed, " killed")),
+                   position = position_fill(vjust = 0.5), color = "white") +
+  labs(x = NULL, y = NULL, fill = "Race") +
+  ggtitle(str_wrap("Police Shootings without Body Camera by Race", width = 30)) +
+  theme_void() +
+  guides(fill = FALSE) 
+
+grid.arrange(bct,bcf, nrow = 1)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+Police_Training$STATE <- tolower(Police_Training$STATE)
+
+US_Police_Shootings_2015_2023.dat2 <- US_Police_Shootings_2015_2023.dat2 %>%
+  rename(STATE = region)
+
+Training_Shootings <- US_Police_Shootings_2015_2023.dat2 %>%
+  left_join(Police_Training %>%
+              select(STATE, "POLICE BASIC TRAINING HRS 2020", "POLICE FIELD TRAINING"))
+
+Training_Shootings <- Training_Shootings %>%
+  rename(
+    state_name = "STATE",
+    state_count = "state_count1",
+    basic_training_hours = "POLICE BASIC TRAINING HRS 2020",
+    field_training_hours = "POLICE FIELD TRAINING"
+  )
+
+Training_Shootings <- Training_Shootings %>%
+  mutate(total_training_hours = basic_training_hours + field_training_hours)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(Training_Shootings, aes(x = state, y = total_training_hours, size = state_count, color = state_count)) +
+  geom_point() +
+  scale_size_continuous(range = c(2, 8)) +
+  scale_fill_viridis(discrete = FALSE) +
+  labs(x = "State", y = "Total Training Hours", size = "# of Police Killings") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Police Shootings by State and Training Hours")
+```
+```{r Armed Status Killing, echo=FALSE, warning=FALSE}
+US_Police_Shootings_2015_2023$armed <- ifelse(
+  US_Police_Shootings_2015_2023$armed == "unarmed", "Unarmed",
+  ifelse(US_Police_Shootings_2015_2023$armed == "", "Unknown", "Armed")
+)
+
+ggplot(US_Police_Shootings_2015_2023, aes(x = year, fill = armed)) +
+  geom_bar(position = "dodge") +
+  labs(x = "Year", y = "Number of Shootings", fill = "armed", title = "Number of Shootings by Armed Status") +
+  scale_fill_manual(values = c("Armed" = "red", "Unarmed" = "blue", "Unknown" = "grey")) +
+  theme_minimal()
+```
+
+
+```{r echo=FALSE, warning=FALSE}
+US_Police_Shootings_2015_2023$month <- month(ymd(US_Police_Shootings_2015_2023$date))
+
+monthly_killings <- US_Police_Shootings_2015_2023 %>%
+  group_by(month) %>%
+  summarise(total_killings = n())
+
+
+ggplot(monthly_killings, aes(area = month, fill = total_killings, label = month.abb)) +
+  geom_treemap() +
+  geom_treemap_text(color = "white",
+                    place = "center",
+                    size = 15) +
+  labs(title = "Total Killings by Month") +
+  scale_x_continuous(breaks = 1:12, labels = month.abb) +
+  theme_minimal()
+```
+
