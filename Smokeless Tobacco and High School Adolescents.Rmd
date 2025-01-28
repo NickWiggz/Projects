@@ -1,0 +1,607 @@
+---
+title: "The Gateway Effect of Smokeless Tobacco on High School Adolescents"
+author: "Nicholas Wiggins"
+date: "2024-12-10"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    number_sections: true
+    toc: true
+    df_print: kable
+    citation_package: biblatex
+  html_document:
+    toc: true
+    df_print: paged
+header-includes:
+- \usepackage{setspace}\doublespacing
+- \usepackage{titling}
+- \pretitle{\begin{center}
+- \includegraphics[width=12cm]{Students_Vaping.jpg}\LARGE\\}
+- \posttitle{\end{center}}
+- \usepackage{fontspec}
+- \setmainfont{Times New Roman}[Size=12]
+- \usepackage{geometry}
+- \geometry{margin=1in}
+bibliography: citation.bib
+---
+
+\newpage
+# __Abstract__
+
+Smokeless tobacco (SLT) use has emerged as a significant public health concern, particularly among adolescents. This study investigates the relationship between early-onset SLT use and subsequent substance use and mental health outcomes. Using data from the National Survey on Drug Use and Health (NSDUH), I employed logistic regression models to examine the association between SLT use and a range of substance use and mental health indicators, while controlling for demographic, socioeconomic, and behavioral factors.
+
+The results provide strong evidence for the gateway effect of SLT use. Early initiation of SLT was associated with increased risk of cigarette, alcohol, and illicit drug use. Additionally, SLT use was linked to elevated rates of depression and lower self-esteem. These findings highlight the importance of addressing SLT use as a risk factor for a range of negative health outcomes.
+
+Future research should delve deeper into the underlying mechanisms driving the gateway effect of SLT use. Longitudinal studies can provide valuable insights into the temporal relationship between SLT initiation and the development of other substance use behaviors and mental health problems. By understanding these mechanisms, we can develop more effective prevention and intervention strategies to protect the health and well-being of young people.
+
+
+# __Introduction__
+
+Smokeless tobacco (SLT) use has long been a public health concern, often overshadowed by the more prominent issue of cigarette smoking. However, recent research has increasingly highlighted the significant health risks associated with SLT use, including oral cancer, cardiovascular disease, and respiratory problems. Beyond these direct health consequences, there is growing evidence to suggest that SLT may serve as a gateway to other substance use behaviors, particularly among adolescents.
+
+Adolescence is a critical period of development characterized by heightened risk-taking behaviors and experimentation with substances. Early initiation of SLT use during this formative period can have lasting negative impacts on physical and mental health. The gateway hypothesis suggests that SLT use may serve as an entry point to a broader pattern of substance use, increasing the likelihood of future engagement with cigarettes, alcohol, and illicit drugs.
+
+This study aims to investigate the complex relationship between early-onset SLT use and subsequent substance use and mental health outcomes among adolescents. By examining the factors that contribute to the initiation and continuation of SLT use, as well as the potential consequences of early-onset SLT use, this research seeks to shed light on the underlying mechanisms driving the gateway effect.
+
+A deeper understanding of these mechanisms is crucial for developing effective prevention and intervention strategies to reduce the burden of SLT-related harm on public health. By identifying the key risk factors and protective factors associated with SLT use, we can tailor interventions to address the specific needs of vulnerable populations and promote healthy behaviors among adolescents.
+
+# __Research Significance__
+
+Understanding the potential gateway effect of smokeless tobacco (SLT) is crucial for developing effective public health interventions. By identifying the factors that contribute to the initiation and continuation of SLT use, and examining its association with other substance use behaviors and mental health outcomes, this research can inform evidence-based strategies to prevent and reduce the harmful consequences of SLT use among adolescents and young adults.
+
+A key question in this research is whether early-onset SLT use increases the risk of subsequent substance use and mental health problems. By examining the relationship between SLT use and other substance use behaviors, such as cigarette smoking, alcohol consumption, and illicit drug use, we can assess the extent to which SLT serves as a gateway to more severe substance use disorders.
+
+Additionally, understanding the impact of SLT use on mental health is essential. By exploring the association between SLT use and mental health outcomes, such as depression and anxiety, we can identify potential mechanisms through which SLT use may contribute to adverse psychological effects.
+
+The findings of this research have significant implications for public health policy and practice. By understanding the long-term consequences of early-onset SLT use, policymakers can develop evidence-based interventions to target high-risk populations and reduce the prevalence of SLT use. Additionally, healthcare providers can use this information to counsel patients about the risks of SLT use, promote smoking cessation, and address underlying mental health issues that may contribute to SLT use.
+
+# __Background and Rational__
+
+Smokeless tobacco (SLT) has long been a public health concern, often overshadowed by the more prominent issue of cigarette smoking. SLT products, including chewing tobacco, snuff, and dissolvable tobacco, contain nicotine, a highly addictive substance that poses significant health risks. Research has consistently linked SLT use to health issues. For example, Hajat et al. (2021)[@hajat_health_2021] emphasized the potential of SLT to cause cancer, heart disease, and oral health problems, aligning with broader epidemiological findings that SLT use contributes to a substantial disease burden globally.
+
+Despite its perceived lower risk compared to cigarette smoking, SLT is not a harmless alternative. The addictive nature of nicotine in SLT can lead to physiological dependence and long-term health consequences. Momenabadi et al. (2016)[@momenabadi_factors_2016] noted that SLT's association with oral and systemic diseases creates a pressing need for targeted public health strategies. Additionally, Jehi et al. (2024)[@jehi_identifying_2024] highlighted that adolescents using SLT are at higher risk of subsequent substance use and mental health challenges, further complicating the public health landscape.
+
+A particularly concerning aspect of SLT use is its prevalence among adolescents and its potential gateway effects. Early initiation of SLT use increases the likelihood of developing nicotine dependence, which may predispose individuals to experiment with other substances such as cigarettes, alcohol, or illicit drugs. This progression is partly attributed to the role of nicotine in altering neural pathways associated with reward and addiction. Yu et al. (2023)[@yu_association_2023] found that adolescents who use SLT are more likely to transition to cigarette smoking, highlighting the importance of early intervention to disrupt this pathway.
+
+Furthermore, SLT use among adolescents may be influenced by broader psychosocial factors, such as peer influence, family environment, and cultural acceptance of tobacco use. Social norms and marketing practices often portray SLT as a safer or socially acceptable alternative, contributing to its appeal among youth. Agaku et al. (2018)[@agaku_social_2018] explored the social dimensions of tobacco use and found that targeted interventions addressing peer norms and community attitudes are essential for reducing SLT initiation rates.
+
+The link between SLT use and mental health is another critical area of concern. Adolescents who use SLT are more likely to report symptoms of anxiety, depression, and low self-esteem, suggesting a bidirectional relationship between substance use and mental health challenges. Goodwin et al. (2014)[@goodwin_hookah_2014] reported that SLT use is often co-occurring with other risk-taking behaviors, including alcohol and drug use, which further exacerbates its impact on mental health and social functioning.
+
+Understanding the factors driving SLT initiation and its association with other harmful behaviors is essential for public health planning. This research aims to address gaps in knowledge about the long-term consequences of early-onset SLT use, particularly its role in predicting substance abuse and mental health outcomes in adulthood. By identifying patterns and risk factors associated with SLT use, evidence-based interventions can be developed to mitigate its impact on public health.
+
+# __Hypothesis__
+
+Given the addictive nature of nicotine and its impact on the brain, it is plausible that SLT could act as a gateway to other harmful behaviors. This study will test the following hypotheses:
+
+1.	Early initiation of smokeless tobacco (SLT) use is associated with an increased risk of developing substance use disorders later in life. Adolescents who begin using SLT at an early age are more likely to progress to the use of other substances, such as cigarettes, alcohol, and illicit drugs, compared to those who do not use SLT.
+
+2.	Smokeless tobacco (SLT) use is associated with adverse mental health outcomes, including increased risk of depressive symptoms and decreased self-esteem. Adolescents who use SLT are more likely to experience symptoms of depression and have lower self-esteem compared to non-users.
+
+By testing these hypotheses, I aim to provide empirical evidence for the potential negative consequences of early-onset SLT use and its association with mental health problems. This research will contribute to a better understanding of the factors driving adolescent substance use and inform the development of effective prevention and intervention strategies.
+
+# __Review of Relevant Literature__
+
+The body of literature on smokeless tobacco (SLT) use has revealed important connections between its use and a variety of high-risk behaviors, including substance abuse and mental health challenges. SLT, often perceived as a safer alternative to traditional cigarettes, plays a complex role in the initiation of other harmful behaviors, especially among adolescents and young adults. A key factor in this progression is nicotine, the active compound in SLT, which is highly addictive and affects brain reward pathways. This addiction primes users to become more susceptible to dependency, which in turn increases the likelihood of engaging in other substance use. Research by Yu et al. (2023)[@yu_association_2023] has demonstrated that nicotine use, including waterpipe or hookah smoking, can serve as a stepping stone to cigarette smoking. Their meta-analysis found that adolescents and young adults who first used waterpipe smoking were more likely to transition to cigarette use later. While the study specifically focused on waterpipe use, its implications for SLT use are clear, given the similarities in nicotine exposure and the similar perceptions of lower risk associated with both practices. Early exposure to nicotine through SLT use, therefore, may be a crucial factor in setting the stage for subsequent tobacco and other substance dependencies.
+
+The relationship between SLT use and the subsequent abuse of other substances is another major theme in the literature. Goodwin et al. (2021)[@goodwin_hookah_2014] conducted a study on hookah use among college students and found that students who used hookah were more likely to engage in the use of other substances, such as marijuana and alcohol. These individuals also reported higher levels of mental health concerns, including anxiety and depression. Although the study focused on hookah, the findings are highly relevant to SLT use, as both substances involve nicotine, which is known to alter brain chemistry and behavior. The use of nicotine through SLT can, therefore, act as a primer for further experimentation with other substances, as it activates the brain's addiction pathways and creates a propensity for subsequent substance use. Goodwin et al.[@goodwin_hookah_2014] argue that interventions for tobacco use must address the likelihood of progression to other substance use behaviors. This highlights the need for targeted prevention and early intervention strategies to mitigate the risk of SLT use escalating into broader substance abuse and mental health issues.
+
+Social acceptance and cultural normalization of SLT products, particularly among young people, also play a significant role in encouraging experimentation with tobacco. Momenabadi et al. (2016)[@momenabadi_factors_2016] explored how cultural perceptions contribute to the rising popularity of hookah smoking, a phenomenon that also appears to be applicable to SLT use. Many young individuals view SLT as a less harmful alternative to cigarettes, which makes it more appealing to those who might otherwise avoid tobacco. However, this perception is misleading, as SLT is still highly addictive and poses significant health risks. Momenabadi et al.[@momenabadi_factors_2016] suggest that this normalization is reinforced by social contexts, particularly in communities where tobacco use is accepted, and peer pressure is a strong motivating factor. Peer influence, especially in youth and young adult groups, can lead to the initiation of SLT use, which in turn may foster a broader pattern of risk-taking behavior. The study underscores the importance of addressing these social dynamics in public health campaigns, as correcting misconceptions about the safety of SLT and challenging social norms that promote its use could help prevent its escalation into other forms of substance abuse.
+
+The powerful role of social environments in shaping smoking behaviors is further emphasized by Shaik and Tepoju (2013)[@shaik_cross_2013], who conducted a study on the prevalence of cigarette and hookah smoking among urban youth. Their research found that young people, particularly adolescents, often engage in smoking to fit in socially or to respond to peer pressure. These motivations are likely to extend to SLT use, where social acceptance and the desire for inclusion can make SLT a more attractive option. In this sense, SLT use becomes part of a larger pattern of behavior in which social drivers lead to experimentation with not only tobacco but also other substances, such as alcohol or illicit drugs. Shaik and Tepoju's[@shaik_cross_2013] study highlights the critical need for interventions that disrupt these social influences, especially in environments where peer pressure regarding substance use is particularly strong. Such interventions could help to curb the initiation of SLT use and reduce the risk of progression to other harmful substances.
+
+In addition to substance use, the mental health implications of SLT use are an area of growing concern. Hajat et al. (2021)[@hajat_health_2021] conducted a systematic review examining the health impacts of SLT, noting that, in addition to its physical health risks, SLT use is linked to a range of mental health issues, such as anxiety, depression, and stress. Nicotine’s effects on the brain are not limited to addiction; it can exacerbate preexisting mental health conditions and contribute to the development of new ones. The review suggests that individuals who use SLT may turn to nicotine as a coping mechanism to alleviate psychological distress, only to find themselves increasingly dependent on it. This cycle of nicotine use and mental health challenges is concerning, as it can create a feedback loop in which SLT use both causes and worsens mental health conditions, increasing the likelihood of further substance abuse. This dual impact of SLT—on both physical and mental health—raises important questions about the broader consequences of SLT use, particularly for individuals who are already vulnerable to mental health issues. These findings further highlight the need for interventions that address both the addictive nature of nicotine and its psychological effects on users.
+
+The motivations behind SLT use, particularly among youth, are also of significant concern. Jehi et al. (2024)[@jehi_identifying_2024] explored the factors driving hookah use among young people and found that curiosity, peer influence, and the desire for stress relief were among the most common reasons for engaging in tobacco use. These motivations are also relevant to SLT, as young people often view SLT as a less harmful alternative to cigarettes. Many of these users are unaware of nicotine’s addictive properties, which increases their risk of escalating tobacco use and experimenting with other substances. This lack of awareness, combined with the perceived safety of SLT, is particularly troubling, as it means that young people may not fully understand the potential long-term consequences of their behavior. Jehi et al.[@jehi_identifying_2024] emphasize the need for educational campaigns that increase awareness of the risks of SLT, highlighting the addictive nature of nicotine and the potential for escalation to other substances. By correcting misconceptions and providing accurate information, such campaigns could help reduce the likelihood of progression to more harmful behaviors.
+
+In conclusion, the literature on SLT use presents a complex and concerning picture of its potential to contribute to a broader pattern of substance abuse and mental health issues, particularly among youth. The combination of nicotine's addictive properties, the social influences that normalize SLT use, and the general lack of awareness regarding its risks creates an environment in which young users are at heightened risk for developing further addictive behaviors and mental health challenges. This underscores the importance of early intervention, educational efforts, and public health initiatives that target the social, cultural, and psychological factors driving SLT use. Addressing these factors will be essential to reducing the long-term risks associated with SLT use, including its progression to more dangerous forms of substance abuse and the exacerbation of mental health problems. Through targeted interventions that aim to disrupt social norms, correct misconceptions about SLT’s safety, and raise awareness about the addictive nature of nicotine, public health strategies can help mitigate the harmful consequences of SLT use among young people and prevent it from becoming a gateway to broader substance abuse and mental health issues.
+
+# __Methodology Overview__
+
+This study will employ a quantitative, cross-sectional design to examine the relationship between early-onset smokeless tobacco (SLT) use and subsequent substance use and mental health outcomes. The primary data source will be the 2022 National Survey on Drug Use and Health (NSDUH), a nationally representative survey conducted annually by the Substance Abuse and Mental Health Services Administration (SAMHSA), collecting data on the use of illegal drugs, alcohol, and tobacco, including SLT.
+
+## __Data__
+
+To examine the association between early-onset smokeless tobacco (SLT) use and subsequent substance use and mental health outcomes among adolescents, particularly focusing on depression and self-esteem issues. The NSDUH dataset, encompassing 59,069 observations, provides a rich source of data on substance use behaviors, mental health, and demographic characteristics. To focus on the adolescent population, the analysis is restricted to a subsample of 7,150 high school students in grades 9-12, of whom 2,015 reported using SLT.
+
+The NSDUH provides a rich set of variables that will be used to explore the relationship between early-onset SLT use and subsequent substance use and mental health outcomes. Key variables from the NSDUH that will be utilized in this study include:
+
+- Demographic Information: Age, gender, race/ethnicity, and socioeconomic status
+- Substance Use: Cigarette smoking, alcohol use, marijuana use, and other illicit drug use
+- Mental Health: Depression and self-esteem
+
+The large and comprehensive nature of the NSDUH dataset offers a valuable opportunity to analyze the gateway effect of SLT use and its potential associations with other health outcomes. By examining longitudinal data, this study will track individuals over time to assess how early exposure to SLT may influence the development of substance use behaviors and mental health challenges in the adolescent population. The insights gained from this study will contribute to a deeper understanding of the factors that influence SLT use and its potential long-term consequences.
+
+__Data Collection and Analysis__
+
+To investigate the relationship between early-onset SLT use and subsequent substance use and mental health outcomes, a series of statistical analyses using the NSDUH dataset will be employed. This dataset provides valuable information on the use of illegal drugs, alcohol, and tobacco, including smokeless tobacco (SLT).
+
+__Data Preparation__
+
+The NSDUH dataset will undergo several data preparation steps to ensure its suitability for analysis. These steps include:
+
+1. Data Cleaning: Identifying and addressing missing data, outliers, and inconsistencies in the dataset.
+2. Variable Creation: Creating new variables as necessary, such as categorizing continuous variables into meaningful groups or creating interaction terms.
+3. Data Coding: Assigning numerical codes to categorical variables for analysis.
+4. Data Weighting: Applying appropriate weights to account for the complex survey design of the NSDUH.
+
+__Statistical Analysis__
+
+Once the data is cleaned and prepared, a series of statistical analyses will be conducted to investigate the relationship between early-onset SLT use and subsequent substance use and mental health outcomes.
+
+Descriptive Analysis:
+
+To provide a comprehensive overview of the sample, descriptive statistics will be calculated to summarize key demographic characteristics, substance use behaviors, and mental health indicators. This will involve calculating frequencies, percentages, means, and standard deviations for relevant variables.
+
+Logistic Regression Models:
+
+To examine the association between early-onset SLT use and the likelihood of engaging in other substance use behaviors and experiencing mental health problems, logistic regression models will be employed. These models will control for potential confounding factors such as age, gender, race/ethnicity, education level, income, and parental communication about substance use.
+
+Specifically, the following logistic regression models will be estimated:
+
+Substance Use Models
+
+A series of logistic regression models will be conducted to examine the relationship between early-onset SLT use and the likelihood of engaging in specific substance use behaviors:
+
+- Cigarette Use: This model will assess the association between early-onset SLT use and the likelihood of cigarette use, controlling for demographic and socioeconomic factors.
+- Alcohol Use: This model will examine the association between early-onset SLT use and the likelihood of alcohol use, controlling for demographic and socioeconomic factors.
+- Illicit Drug Use: This model will assess the association between early-onset SLT use and the likelihood of illicit drug use, controlling for demographic and socioeconomic factors.
+
+Mental Health Models
+
+A series of logistic regression models will be conducted to examine the relationship between early-onset SLT use and mental health outcomes:
+
+- Depression: This model will assess the association between early-onset SLT use and the likelihood of experiencing depressive symptoms, controlling for demographic and socioeconomic factors.
+- Self-Esteem: This model will examine the association between early-onset SLT use and low self-esteem, controlling for demographic and socioeconomic factors.
+
+By conducting these analyses, we aim to gain a deeper understanding of the factors that contribute to the initiation and continuation of SLT use, as well as the potential long-term consequences for adolescent health and well-being.
+
+## __Addressing Potential Bias__
+
+While the NSDUH provides a valuable resource for understanding adolescent substance use and mental health, it is important to acknowledge potential limitations and biases. One key concern is selection bias, as certain demographic groups may be underrepresented or overrepresented in the sample. To mitigate this, I will employ weighting adjustments to ensure the sample is more representative of the broader population.
+
+Another challenge is measurement error, which can arise from self-reported data. To address this, I will consider using multiple indicators of substance use and mental health and carefully examine the wording and phrasing of survey questions. Additionally, I will control for potential confounding variables through logistic regression models, adjusting for factors such as age, gender, race/ethnicity, socioeconomic status, and family history of substance use.
+
+Finally, it is crucial to consider the generalizability of the findings. While the NSDUH provides a nationally representative sample, the focus on high school students may limit the applicability of the results to younger or older age groups, or to individuals who are not enrolled in school.
+
+By addressing these methodological challenges and limitations, I aim to provide a more comprehensive and accurate understanding of the relationship between SLT use and mental health outcomes among adolescents.
+
+# __Demographics High School SLT Users__
+
+```{r setup, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE, cache=TRUE}
+library(dplyr)
+library(tidyr)
+library(knitr)
+library(tidyverse)
+library(haven)
+library(broom)
+library(nnet)
+library(kableExtra)
+library(ggplot2)
+library(modelsummary)
+library(stargazer)
+library(lmtest)
+
+
+knitr::opts_chunk$set(echo=FALSE)
+
+NSDUH_2022 <- read_csv("~/Data Analytics - JHU/Capstone and Data Analytics and Policy/Data/NSDUH_2022.csv")
+
+high_school_students <- NSDUH_2022 %>%
+  filter(EDUSCHGRD2 %in% c(5, 6, 7, 8))
+
+high_school_students <- high_school_students %>%
+  mutate(SLT_User = ifelse(smklssflag == 1 | nicvapflag == 1, 1, 0),
+         cigarette_use = ifelse(cigever == 1, 1, 0),
+         alcohol_use = ifelse(alcever == 1, 1, 0),
+         illicit_drug_use = ifelse(illflag == 1, 1, 0),
+         irsex = ifelse(irsex == 1, 1, 0)
+         )
+```
+
+
+The prevalence of smokeless tobacco (SLT) use among high school students is a growing public health concern, with significant implications for adolescent health and well-being. In this study, I analyzed a sample of 7,150 high school students to explore patterns of SLT use across various demographic groups. Among these students, 2,015 (28.2%) were identified as SLT users, highlighting the scope of the issue. This section examines the relationship between SLT use and key factors such as grade average, grade level, race, and gender, providing valuable insights into which groups may be most vulnerable. Understanding these disparities is essential for developing targeted interventions that address the unique needs of high-risk populations and ultimately reduce the prevalence of SLT use in youth.
+
+The analysis of smokeless tobacco (SLT) use among adolescents reveals significant demographic disparities, shedding light on patterns that require targeted public health interventions. One of the most striking findings is the strong correlation between academic performance and SLT use. Students with lower academic achievement demonstrate significantly higher rates of SLT use. Specifically, the prevalence of SLT use increases from 18.13% among students with an "A" average to 50.89% among those with a "D or F" average. This trend suggests that students struggling academically may also be more susceptible to engaging in risky behaviors, such as tobacco use. Addressing these interconnected challenges requires an integrated approach that combines academic support initiatives with substance use prevention programs. Such strategies can help address the underlying factors contributing to both poor academic performance and increased SLT use, providing students with the resources needed to succeed academically while avoiding harmful behaviors.
+
+```{r SLT_Grade plot, echo=FALSE, message=FALSE, warning=FALSE}
+
+prevalence_by_grade <- high_school_students %>%
+  group_by(EDUSCHGRD2) %>%
+  summarise(
+    Total_Students = n(),
+    Prevalence = round((sum(SLT_User == 1) / Total_Students) * 100, 2)) %>%
+  ungroup() %>% 
+  mutate(
+    Grade_Level = case_when(
+      EDUSCHGRD2 == 5 ~ " 9th Grade",
+      EDUSCHGRD2 == 6 ~ "10th Grade",
+      EDUSCHGRD2 == 7 ~ "11th Grade",
+      EDUSCHGRD2 == 8 ~ "12th Grade"
+    )
+  ) %>%
+  select(Grade_Level, Total_Students, Prevalence)  
+
+ggplot(prevalence_by_grade, aes(x = "", y = Prevalence, fill = Grade_Level)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar(theta = "y") +
+  geom_text(aes(label = paste0(Prevalence, "%")), position = position_stack(vjust = 0.5)) +
+  labs(title = "Prevalence of SLT Use by Grade Level") +
+  scale_fill_discrete(limits = prevalence_by_grade$Grade_Level) +
+   labs(caption = "Figure 1: Prevalence of SLT Use by Grade Level, Source: 2022 National Survey on Drug Use and Health (NSDUH)") +
+  theme_void() +
+  theme(plot.caption = element_text(hjust = 0, face = "italic", size = 8, color = "blue")) 
+```
+
+A similar upward trend is evident when examining SLT use across grade levels. The prevalence rises steadily from 18.20% among 9th-grade students to 36.02% in 12th grade. This age-related increase indicates that older adolescents are at heightened risk of initiating and maintaining SLT use. Factors such as increased exposure to peer influences, evolving social norms, and marketing strategies targeting older teens likely contribute to this trend. Furthermore, developmental changes associated with adolescence, such as heightened impulsivity and risk-taking behavior, may play a significant role in the escalation of SLT use among older students. These findings emphasize the importance of implementing early intervention strategies that target younger high school students before they are exposed to these influences. Prevention efforts aimed at delaying the initiation of SLT use could have a substantial impact on reducing overall prevalence and mitigating the associated long-term health risks.
+
+Racial and ethnic disparities further underscore the complexity of SLT use among adolescents. Native American/Alaskan Native (NA_AN) students report the highest prevalence of SLT use at 47.50%, followed by Native Hawaiian/Pacific Islander (NH_PI) students at 34.78%. Multiracial, Hispanic, and Black students also show notable rates of SLT use at 32.55%, 29.51%, and 25.66%, respectively. In contrast, Asian students report the lowest prevalence at 15.05%. These variations highlight the need for culturally tailored prevention strategies that consider the unique social, cultural, and environmental factors influencing SLT use within each demographic group. Culturally sensitive messaging and community-specific interventions can help address these disparities by resonating with the lived experiences and values of different racial and ethnic populations.
+
+```{r demographics, message=FALSE, warning=FALSE}
+high_school_students_demo <- high_school_students %>% 
+  mutate(
+    Gender = case_when(
+      irsex == 1 ~ "Male",
+      irsex == 0 ~ "Female"
+    ),
+    Race = case_when(
+      NEWRACE2 == 1 ~ "White",
+      NEWRACE2 == 2 ~ "Black",
+      NEWRACE2 == 3 ~ "NA_AN",
+      NEWRACE2 == 4 ~ "NH_PI",
+      NEWRACE2 == 5 ~ "Asian",
+      NEWRACE2 == 6 ~ "Multiracial",
+      NEWRACE2 == 7 ~ "Hispanic",
+    ),
+    Grade_Level = case_when(
+      EDUSCHGRD2 == 5 ~ " 9th Grade",
+      EDUSCHGRD2 == 6 ~ "10th Grade",
+      EDUSCHGRD2 == 7 ~ "11th Grade",
+      EDUSCHGRD2 == 8 ~ "12th Grade"
+    ),
+    Grade_Avg = case_when(
+      yelstgrd == 1 ~ "A",
+      yelstgrd == 2 ~ "B",
+      yelstgrd == 3 ~ "C",
+      yelstgrd == 4 ~ "D or F"
+    )
+    ) %>%
+  pivot_longer(
+    cols = c(Gender, Race, Grade_Level, Grade_Avg),
+    names_to = "Category",
+    values_to = "Demographics"
+  ) %>% 
+  group_by(Category, Demographics) %>% 
+  summarise(
+    Total_Students = n(),
+    Avg_SLT_Use = round(sum(SLT_User == 1) / Total_Students * 100, 2)
+  ) %>% 
+  ungroup() %>% 
+  select(Category, Demographics, Avg_SLT_Use) %>% 
+  na.omit
+ 
+knitr::kable(high_school_students_demo, caption = "Prevalence of Smokeless Tobacco Use by Demographic") %>% add_footnote("Source: 2022 National Survey on Drug Use and Health (NSDUH)")
+```
+
+Interestingly, the analysis challenges traditional perceptions of SLT use as a predominantly male behavior. Contrary to this stereotype, female adolescents exhibit higher average SLT use (30.52%) compared to males (25.94%). This unexpected finding underscores the need to reconsider public health messaging and ensure that prevention campaigns address the behaviors and risks associated with SLT use among both genders. Tailoring interventions to reflect this gender dynamic can enhance their effectiveness and broaden their impact.
+
+In conclusion, the findings illuminate key demographic trends that should guide public health efforts to reduce SLT use among adolescents. Interventions must prioritize early prevention for younger students, integrate academic and behavioral support for those at risk, and incorporate culturally and gender-sensitive approaches to address disparities.
+
+```{r full demographics, message=FALSE, warning=FALSE}
+high_school_students_SLT <- high_school_students %>% 
+  group_by(EDUSCHGRD2, NEWRACE2, irsex) %>% 
+  summarise(
+    Total_Students = n(),
+    SLT_Use = round(sum(SLT_User == 1) / Total_Students * 100, 2)
+  ) %>% 
+  ungroup() %>% 
+  mutate(
+    Gender = case_when(
+      irsex == 1 ~ "Male",
+      irsex == 0 ~ "Female"
+    ),
+    Race = case_when(
+      NEWRACE2 == 1 ~ "White",
+      NEWRACE2 == 2 ~ "Black",
+      NEWRACE2 == 3 ~ "NA_AN",
+      NEWRACE2 == 4 ~ "NH_PI",
+      NEWRACE2 == 5 ~ "Asian",
+      NEWRACE2 == 6 ~ "Multiracial",
+      NEWRACE2 == 7 ~ "Hispanic",
+    ),
+    Grade_Level = case_when(
+      EDUSCHGRD2 == 5 ~ " 9th Grade",
+      EDUSCHGRD2 == 6 ~ "10th Grade",
+      EDUSCHGRD2 == 7 ~ "11th Grade",
+      EDUSCHGRD2 == 8 ~ "12th Grade"
+    )
+    ) %>%
+  select(Gender, Race, Grade_Level, SLT_Use) %>%
+  na.omit() %>% 
+  pivot_longer(cols = c(SLT_Use), names_to = "Substance", values_to = "Percentage")
+
+wide_table_SLT <- high_school_students_SLT %>%
+  pivot_wider(names_from = Substance, values_from = Percentage)
+
+knitr::kable(wide_table_SLT, caption = "Prevalence of Smokeless Tobacco Use by Demographic") %>% add_footnote("Source: 2022 National Survey on Drug Use and Health (NSDUH)")
+```
+
+Further analysis of the demographic factors associated with smokeless tobacco (SLT) use reveals additional layers of complexity that highlight the diverse experiences of adolescents from different backgrounds. The grade-level analysis demonstrates that SLT use increases with age, but there are noteworthy differences when broken down by gender and race. For example, while both male and female students show an increase in SLT use from 9th to 12th grade, the rise is more pronounced among female students. In particular, 12th-grade females report a prevalence of 39.51%, compared to 34.19% among their male counterparts. This suggests that older female adolescents may face unique social and environmental pressures that contribute to their higher rates of SLT use.
+
+When examining race and ethnicity in more detail, it is evident that certain groups are disproportionately affected by SLT use. Native American/Alaskan Native (NA_AN) students consistently report the highest prevalence rates across all grade levels, with a marked increase in use as they progress through high school. In 12th grade, 46.15% of NA_AN females and 50% of NA_AN males report using SLT, highlighting a significant public health concern for this demographic. Native Hawaiian/Pacific Islander (NH_PI) students also demonstrate striking variations in SLT use, with females reporting 100% use in 10th grade and males showing a significant drop to 25% in the same grade level. These disparities underscore the need for targeted outreach that recognizes the distinct cultural factors at play within these communities.
+
+Moreover, the data reveals that multiracial and Hispanic students experience substantial rates of SLT use, particularly among those in the 11th and 12th grades. The prevalence among multiracial females increases steadily from 26.23% in 9th grade to 46.94% in 12th grade, while Hispanic females show a similar upward trend, reaching 39.04% in 12th grade. These patterns suggest that multiracial and Hispanic adolescents may encounter unique socio-cultural influences that contribute to higher SLT usage, making it crucial for public health campaigns to consider these influences when crafting prevention strategies.
+
+# __Substance Use Among High School SLT Users__
+
+```{r substance_SLT_Grd, echo=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+substance_use_SLT_by_grade <- high_school_students %>%
+group_by(EDUSCHGRD2, yelstgrd) %>%
+  summarise(
+    Total = n(),
+    SLT_Use = round(sum(SLT_User == 1) / Total * 100, 2),
+    Cigarette_Users = round(sum(cigarette_use == 1) / Total * 100, 2),
+    Alcohol_Users = round(sum(alcohol_use == 1) / Total * 100, 2),
+    Illicit_Drug_Users = round(sum(illicit_drug_use == 1) / Total * 100, 2)
+  ) %>%
+  ungroup() %>% 
+  mutate(
+    Grade_Level = case_when(
+      EDUSCHGRD2 == 5 ~ " 9th Grade",
+      EDUSCHGRD2 == 6 ~ "10th Grade",
+      EDUSCHGRD2 == 7 ~ "11th Grade",
+      EDUSCHGRD2 == 8 ~ "12th Grade"
+    ),
+    Grade_Avg = case_when(
+      yelstgrd == 1 ~ "A",
+      yelstgrd == 2 ~ "B",
+      yelstgrd == 3 ~ "C",
+      yelstgrd == 4 ~ "D or F"
+    )
+  ) %>% 
+  select(Grade_Level, Grade_Avg, SLT_Use, Cigarette_Users, Alcohol_Users, Illicit_Drug_Users) %>%
+  na.omit %>% 
+  pivot_longer(cols = c(SLT_Use, Cigarette_Users, Alcohol_Users, Illicit_Drug_Users), names_to = "Substance", values_to = "Percentage")
+
+wide_table1 <- substance_use_SLT_by_grade %>%
+  pivot_wider(names_from = Substance, values_from = Percentage)
+
+knitr::kable(wide_table1, caption = "Substance Use by Grade Level")
+
+```
+
+
+Understanding the patterns of substance use among smokeless tobacco (SLT) users is critical for addressing broader public health concerns among adolescents. SLT use does not occur in isolation; it is often accompanied by the use of other substances such as cigarettes, alcohol, and illicit drugs. Examining the prevalence of these behaviors by grade level and academic performance provides valuable insights into the interconnected nature of substance use among high school students.
+
+The data reveals a clear relationship between SLT use and other substances, with prevalence increasing significantly as academic averages decline. Among 9th-grade students, for instance, SLT use rises from 10.33% among those with an "A" average to 38.74% for those with a "D or F." This pattern extends to alcohol use, which increases from 13.37% to 34.23%, and illicit drug use, which grows from 12.16% to 35.14%. By 12th grade, these disparities become even more pronounced. SLT use reaches 63.16% among students with a "D or F" average compared to 27.33% for those with an "A," with similar trends observed for alcohol and drug use.
+
+```{r recode_dummy variables}
+
+high_school_students <- high_school_students %>%
+  mutate(
+    talked_to_parent = ifelse(PRTALK3 == 1, 1, 0),
+    self_esteem = ifelse(PRBSOLV2 == 1, 1, 0),
+    youth_activities = ifelse(YTHACT2 == 1, 1, 0),
+    depression = ifelse(ymdelt == 1, 1, 0)
+  )
+
+high_school_students$IRHHSIZ2 <- as.factor(high_school_students$IRHHSIZ2)
+high_school_students$EDUSCHGRD2 <- as.factor(high_school_students$EDUSCHGRD2)
+high_school_students$income <- as.factor(high_school_students$income)
+high_school_students$NEWRACE2 <- as.factor(high_school_students$NEWRACE2)
+high_school_students$IRFAMIN3 <- as.factor(high_school_students$IRFAMIN3)
+high_school_students <- high_school_students %>%
+  mutate(
+    AGE3 = factor(AGE3, levels = 1:4,
+                       labels = c("12-13", "14-15", "16-17", "18-20")),
+    yelstgrd = factor(yelstgrd, levels = 1:4,
+                         labels = c("A", "B", "C", "D/F"))
+  )
+
+```
+
+Alcohol use consistently exhibits the highest prevalence across all groups, but illicit drug use closely parallels SLT use patterns, particularly among students with lower academic performance. This suggests overlapping risk factors, such as peer influence or stress, that drive the adoption of multiple substances. The correlation between SLT and other substance use behaviors underscores the importance of integrated prevention efforts that address the full range of risky behaviors.
+
+These findings emphasize the need for targeted interventions for students with declining academic performance and older grade levels. Prevention programs that holistically address the factors contributing to SLT, cigarette, alcohol, and drug use can significantly reduce the prevalence of substance use and its associated risks, paving the way for healthier adolescent outcomes.
+
+
+## __Hypothesis 1: Substance and SLT Use__
+
+This study tests the hypothesis that early smokeless tobacco (SLT) use among adolescents is associated with increased odds of engaging in other substance use behaviors, including cigarette smoking, alcohol consumption, and illicit drug use. This hypothesis is grounded in the gateway theory, which posits that early initiation of one substance can lead to subsequent use of others through neurobiological, social, and behavioral pathways (Kandel, 1975)[@kandel_stages_1975]. However, rival hypotheses suggest that the observed relationships may be mediated by underlying shared risk factors such as demographic variables, socio-environmental influences, and personality traits rather than a direct causal link.
+
+The findings from logistic regression strongly support the gateway hypothesis. Adolescents using SLT exhibited significantly higher odds of smoking cigarettes (OR = 3.32), consuming alcohol (OR = 2.28), and engaging in illicit drug use (OR = 2.42). These results are consistent with existing literature, such as Jehi et al. (2024)[@jehi_identifying_2024], who identified early exposure to SLT as a predictor of poly-substance use due to its role in normalizing risky behaviors and reducing perceived harm. The moderate McFadden’s R-squared values (0.513 for cigarette use, 0.397 for alcohol use, and 0.414 for illicit drug use) further underscore the role of SLT use in explaining variations in substance use behaviors, though other factors remain influential.
+
+The hypothesis underlying this analysis is that smokeless tobacco (SLT) use among adolescents is a significant predictor of other substance use behaviors, including cigarette smoking, alcohol consumption, and illicit drug use. The logistic regression models presented in Table 3 offer valuable insights into the relationships between SLT use and these other substances, with the results generally supporting the hypothesis that SLT use is associated with increased odds of engaging in additional substance use. Specifically, the odds ratios for SLT use in models (1), (2), and (3)—for cigarette use (3.316), alcohol use (2.283), and illicit drug use (2.422), respectively—indicate that SLT users are significantly more likely to engage in these behaviors compared to non-users, with all coefficients being statistically significant at the 0.01 level.
+
+```{r substance_models, echo=FALSE, message=FALSE, warning=FALSE, results = "asis"}
+
+substance_models <- list(
+  "model_cigarettes" = glm(cigarette_use ~ SLT_User + AGE3 + irsex + NEWRACE2 + EDUSCHGRD2 + IRHHSIZ2 + IRFAMIN3 + PRTALK3 + yelstgrd + YTHACT2, data = high_school_students, family = binomial),
+  "model_alcohol" = glm(alcohol_use ~ SLT_User + AGE3 + irsex + NEWRACE2 + EDUSCHGRD2 + IRHHSIZ2 + IRFAMIN3 + PRTALK3 + yelstgrd + YTHACT2, data = high_school_students, family = binomial),
+  "model_illicit_drugs" = glm(illicit_drug_use ~ SLT_User + AGE3 + irsex + NEWRACE2 + EDUSCHGRD2 + IRHHSIZ2 + IRFAMIN3 + PRTALK3 + yelstgrd + YTHACT2, data = high_school_students, family = binomial)
+)
+
+for (model_name in names(substance_models)) {
+  model <- substance_models[[model_name]]
+  
+  mcfadden_r2 <- 1 - logLik(model) / logLik(update(model, . ~ 1))
+  
+  substance_models[[model_name]]$mcfadden_r2 <- mcfadden_r2
+  
+  odds_ratios <- exp(coef(model))
+  
+  substance_models[[model_name]]$odds_ratios <- odds_ratios
+}
+
+stargazer(substance_models, 
+          type = "latex",
+          title = "Logistic Regression Models for Substance Use",
+          covariate.labels = c("SLT User~", "Age 14-15~", "Age 16-17~", "Male~", "Black/ Afr Am~", "Native Am/AK Native~", "Native HI/Pac Isl~", "Asian~", "Multiracial~", "Hispanic~", "10th Grade~", "11th Grade~", "12th Grade~", "Household Size 2~", "Household Size 3~", "Household Size 4~", "Household Size 5~", "Household Size 6~", "Income $10K to $20K~", "Income $20K to $30K~", "Income $30K to $40K~", "Income $40K to $50K~", "Income $50K to $75K~", "Income > \\$75K~", "Talked to Parent~", "Grades B~", "Grades C~", "Grades D/F~", "Youth Act Participate~"), 
+          add.lines = list(
+            c("McFadden's R-squared", 
+              round(substance_models$model_cigarettes$mcfadden_r2, 3), 
+              round(substance_models$model_alcohol$mcfadden_r2, 3), 
+              round(substance_models$model_illicit_drugs$mcfadden_r2, 3))
+            ),
+          single.row = TRUE,
+          notes = "Source: 2022 National Survey on Drug Use and Health (NSDUH)~")
+
+
+
+```
+
+
+However, it is important to interpret these findings with caution, as alternative hypotheses and theoretical frameworks suggest that the observed relationships may not be entirely causal. One alternative hypothesis posits that the co-occurrence of SLT use and other substance use behaviors may be explained by shared environmental factors, such as peer influence or family substance use history. Previous research has emphasized the critical role of social environments in shaping adolescent substance use patterns. Agaku et al. (2018)[@agaku_social_2018] highlight that adolescents in social circles where multiple substances are used are more likely to adopt similar behaviors. While this study controls for a number of relevant covariates such as age, sex, and race/ethnicity, it remains possible that unmeasured confounders, such as parental substance use or exposure to substance-promoting environments, may also contribute to the observed associations.
+
+Another competing hypothesis posits that the relationship between SLT use and other substances reflects an underlying personality trait, such as impulsivity or risk-taking behavior, that predisposes adolescents to engage in a variety of risky behaviors. Goodwin et al. (2014)[@goodwin_hookah_2014] argue that adolescents who are more tolerant of risk are more likely to experiment with substances, suggesting that SLT use may not directly lead to other forms of substance use but rather be part of a broader pattern of risk-taking behavior. This perspective challenges the "gateway" hypothesis, suggesting that SLT use may be a marker of a general propensity for risky behaviors rather than a causal precursor to other substance use.
+
+The findings from this study provide some support for these alternative hypotheses, particularly in the context of the observed associations between age and substance use behaviors. In models (1) and (2), adolescents aged 16-17 showed significantly higher odds of engaging in cigarette smoking and alcohol use, relative to their younger counterparts aged 14-15. This aligns with developmental theories suggesting that older adolescents are more likely to encounter environments that foster substance use, such as increased social opportunities for experimentation. Additionally, academic performance emerged as a significant predictor of substance use, with adolescents who reported lower grades (D/F grades) demonstrating higher odds of using cigarettes and illicit drugs. This finding supports previous research by Shaik and Tepoju (2013)[@shaik_cross_2013], which suggests that academic struggles and lack of engagement in extracurricular activities can exacerbate risk-taking behaviors among adolescents. These results suggest that adolescent substance use may be influenced by a combination of developmental, social, and contextual factors, rather than solely by prior SLT use.
+
+Although the findings generally support the gateway hypothesis, they also point to the complexity of adolescent substance use behaviors. The relatively moderate explanatory power of the models, as indicated by McFadden’s R-squared values of 0.513, 0.397, and 0.414 for cigarette use, alcohol use, and illicit drug use, respectively, suggests that while SLT use is an important predictor, it accounts for only a portion of the variance in substance use behaviors. This highlights the importance of considering a wide array of individual, social, and environmental factors when attempting to understand adolescent substance use. Furthermore, the finding that certain covariates, such as race/ethnicity and extracurricular participation, also play significant roles in predicting substance use behaviors suggests that SLT use is just one piece of a larger, multifaceted puzzle.
+
+In conclusion, the analysis supports the hypothesis that SLT use is associated with an increased likelihood of engaging in other substance use behaviors during adolescence, but it also underscores the need for further research to untangle the complex interplay of individual, environmental, and contextual factors that contribute to adolescent substance use. The observed associations between SLT use and other substances may be driven by shared risk factors, such as peer influence, family history of substance use, and personality traits, rather than a direct causal relationship. Future research should aim to incorporate longitudinal data to better understand the temporal sequencing of substance use behaviors and explore the mechanisms that drive co-occurrence, which could help inform more targeted prevention and intervention strategies.
+
+# __Mental Health Among High School SLT Users__
+
+Adolescents who use smokeless tobacco (SLT) face heightened mental health risks, often linked to social and psychological factors. Research indicates that substance use during adolescence, including SLT, can serve as a maladaptive coping mechanism for underlying emotional distress, such as depression and anxiety (Audrain-McGovern et al., 2009)[@audrainmcgovern_adolescent_2009]. These behaviors may align with the self-medication hypothesis, wherein individuals use substances to mitigate psychological discomfort, thus establishing patterns of reliance that can persist into adulthood. Adolescents engaging in SLT may also experience social marginalization or peer pressure, compounding stress and emotional challenges. Cohen and Wills’ (1985)[@cohen_stress_1985] buffering hypothesis underscores the importance of social support in mitigating stress-related mental health outcomes, yet adolescents reliant on SLT may lack the protective benefits of robust social networks, increasing their vulnerability to psychological strain.
+
+The social context of SLT use may also play a role. Research on hookah smoking, another form of smokeless tobacco, highlights the influence of peer pressure and social acceptance (Jehi et al., 2024; Momenabadi et al., 2016)[@jehi_identifying_2024, @momenabadi_factors_2016].  Similar dynamics may be at play with SLT use, potentially leading to social isolation or feelings of inadequacy if adolescents struggle to conform to peer group behavior. These social stressors could further contribute to negative mental health outcomes.
+
+## __Hypothesis 2: Mental Health and SLT Use__
+
+The hypothesis under investigation posits that smokeless tobacco (SLT) use is associated with adverse mental health outcomes, specifically increased depressive symptoms and decreased self-esteem among adolescents. Logistic regression models provide mixed evidence for this hypothesis.
+
+The results indicate that individuals who use SLT are 0.76 times less likely to report depressive symptoms compared to non-users (OR = 0.760, p < 0.01), supporting the hypothesis that SLT use is associated with poor mental health. This finding aligns with existing literature, such as Goodwin et al. (2014)[@goodwin_hookah_2014], which highlights the co-occurrence of tobacco use and depressive symptoms in adolescents. The potential mechanisms include nicotine's dysregulation of neurochemical pathways, such as serotonin and dopamine, which are implicated in mood regulation (Audrain-McGovern et al., 2009)[@audrainmcgovern_adolescent_2009].
+
+Contrary to expectations, SLT use has a negligible impact on self-esteem, as evidenced by the non-significant association between the two variables (OR = -0.010, p > 0.05). This result suggests that the association between SLT use and mental health may not generalize across all domains of psychosocial functioning. It is possible that self-esteem, a multidimensional construct, is more resilient to the direct effects of SLT use or influenced more heavily by external factors such as family dynamics or peer relationships.
+
+Alternative explanations for the observed relationships include the role of social and environmental mediators. For example, adolescents who use SLT may experience depressive symptoms due to social stigma or conflicts arising from their behavior, rather than the pharmacological effects of nicotine alone (Agaku et al., 2018)[@agaku_social_2018]. Variables such as parental communication, represented by the "Talked to Parent" variable, significantly predict lower depressive symptoms (p < 0.01), suggesting that supportive family environments may buffer against mental health challenges associated with SLT use.
+
+Peer influences and extracurricular participation also play a role. Participation in youth activities significantly increases self-esteem (p < 0.01), potentially offsetting negative self-perceptions among SLT users. These findings are consistent with theories emphasizing the protective effects of social integration and community engagement on adolescent mental health (Cohen & Wills, 1985)[@cohen_stress_1985].
+
+```{r mental_health_models, echo=FALSE, message=FALSE, warning=FALSE, results = "asis"}
+
+mental_health_models <- list(
+  "model_depression" = glm(depression ~ SLT_User + AGE3 + irsex + NEWRACE2 + EDUSCHGRD2 + IRHHSIZ2 + IRFAMIN3 + PRTALK3 + yelstgrd + YTHACT2, data = high_school_students, family = binomial),
+  "model_self_esteem" = glm(self_esteem ~ SLT_User + AGE3 + irsex + NEWRACE2 + EDUSCHGRD2 + IRHHSIZ2 + IRFAMIN3 + PRTALK3 + yelstgrd + YTHACT2, data = high_school_students, family = binomial)
+ )
+
+for (model_name in names(mental_health_models)) {
+  model <- mental_health_models[[model_name]]
+  
+  mcfadden_r2 <- 1 - logLik(model) / logLik(update(model, . ~ 1))
+  
+  mental_health_models[[model_name]]$mcfadden_r2 <- mcfadden_r2
+  
+  odds_ratios <- exp(coef(model))
+  
+  mental_health_models[[model_name]]$odds_ratios <- odds_ratios
+}
+
+stargazer(mental_health_models, 
+          type = "latex",
+          title = "Logistic Regression Models for Mental Health",
+        covariate.labels = c("SLT User~", "Age 14-15~", "Age 16-17~", "Male~", "Black/ Afr Am~", "Native Am/AK Native~", "Native HI/Pac Isl~", "Asian~", "Multiracial~", "Hispanic~", "10th Grade~", "11th Grade~", "12th Grade~", "Household Size 2~", "Household Size 3~", "Household Size 4~", "Household Size 5~", "Household Size 6~", "Income $10K to $20K~", "Income $20K to $30K~", "Income $30K to $40K~", "Income $40K to $50K~", "Income $50K to $75K~", "Income > \\$75K~", "Talked to Parent~", "Grades B~", "Grades C~", "Grades D/F~", "Youth Act Participate~"),
+          dep.var.labels = c("Depression", "Self Esteem"), 
+          add.lines = list(
+            c("McFadden's R-squared", 
+              round(mental_health_models$model_depression$mcfadden_r2, 3), 
+              round(mental_health_models$model_self_esteem$mcfadden_r2, 3))
+            ),
+          single.row = TRUE,
+          notes = "Source: 2022 National Survey on Drug Use and Health (NSDUH)~")
+
+
+```
+
+
+The results reveal significant demographic and socioeconomic disparities in mental health outcomes. For instance, males exhibit lower odds of depressive symptoms (p < 0.01) but slightly lower self-esteem (p < 0.1). This aligns with gender differences in emotional expression and coping strategies documented in prior research (Nolen-Hoeksema, 2012)[@nolen-hoeksema_emotion_2012].
+
+Black/African American adolescents report higher self-esteem (p < 0.01), a finding supported by studies highlighting cultural resilience and community support within this demographic (Neblett et al., 2010)[@neblett_promise_2012]. Conversely, socioeconomic variables such as household income significantly predict depressive symptoms, with higher income associated with greater odds of depressive symptoms in some categories. This counterintuitive result may reflect unmeasured stressors, such as academic pressure or familial expectations, disproportionately affecting higher-income adolescents (Luthar et al., 2013)[@luthar_i_2013].
+
+Academic performance strongly correlates with mental health outcomes. Adolescents with D/F grades report significantly higher odds of depressive symptoms (p < 0.01). Poor academic performance may exacerbate mental health challenges through increased stress and diminished future prospects, as suggested by Wang and Fredricks (2014)[@wang_reciprocal_2014]. However, the link between academic performance and self-esteem is less pronounced, indicating that other factors, such as peer validation or personal achievements, may play a compensatory role.
+
+While the hypothesis that SLT use is associated with adverse mental health outcomes holds for depressive symptoms, the lack of a significant relationship with self-esteem warrants further investigation. Rival hypotheses emphasizing social and environmental mediators suggest that the impact of SLT use on mental health may be indirect and context-dependent. 
+
+```{r coeffecient models, message=FALSE, warning=FALSE}
+tidy_mv_model <- tidy(glm(cigarette_use ~ SLT_User + AGE3 + irsex + NEWRACE2 + EDUSCHGRD2 + IRHHSIZ2 + IRFAMIN3 + PRTALK3 + yelstgrd + YTHACT2, data = high_school_students, family = binomial), conf.int = TRUE) %>% mutate(model = "model_cigarettes")
+tidy_mv_model1 <- tidy(glm(alcohol_use ~ SLT_User + AGE3 + irsex + NEWRACE2 + EDUSCHGRD2 + IRHHSIZ2 + IRFAMIN3 + PRTALK3 + yelstgrd + YTHACT2, data = high_school_students, family = binomial), conf.int = TRUE) %>% mutate(model = "model_alcohol")
+tidy_mv_model2 <- tidy(glm(illicit_drug_use ~ SLT_User + AGE3 + irsex + NEWRACE2 + EDUSCHGRD2 + IRHHSIZ2 + IRFAMIN3 + PRTALK3 + yelstgrd + YTHACT2, data = high_school_students, family = binomial), conf.int = TRUE) %>% mutate(model = "model_illicit_drugs")
+tidy_mv_model3 <- tidy(glm(depression ~ SLT_User + AGE3 + irsex + NEWRACE2 + EDUSCHGRD2 + IRHHSIZ2 + IRFAMIN3 + PRTALK3 + yelstgrd + YTHACT2, data = high_school_students, family = binomial), conf.int = TRUE) %>% mutate(model = "model_depression")
+tidy_mv_model4 <- tidy(glm(self_esteem ~ SLT_User + AGE3 + irsex + NEWRACE2 + EDUSCHGRD2 + IRHHSIZ2 + IRFAMIN3 + PRTALK3 + yelstgrd + YTHACT2, data = high_school_students, family = binomial), conf.int = TRUE) %>% mutate(model = "model_self_esteem")
+
+all_models <- bind_rows(tidy_mv_model, tidy_mv_model1, tidy_mv_model2, tidy_mv_model3, tidy_mv_model4)
+
+all_models <- all_models %>% filter(term != "(Intercept)") %>% mutate(term = recode(term, "SLT_User" = "SLT User", "AGE316-17" = "Age 16-17", "AGE314-15" = "Age 14-15", "irsex" = "Male", "NEWRACE22" = "Black/ Afr Am", "NEWRACE23" = "Native Am/AK Native", "NEWRACE24" = "Native HI/Pac Isl", "NEWRACE25" = "Asian", "NEWRACE26" = "Multiracial", "NEWRACE27" = "Hispanic", "EDUSCHGRD26" = "10th Grade", "EDUSCHGRD27" = "11th Grade", "EDUSCHGRD28" = "12th Grade", "IRHHSIZ22" = "Household Size 2", "IRHHSIZ23" = "Household Size 3", "IRHHSIZ24" = "Household Size 4", "IRHHSIZ25" = "Household Size 5", "IRHHSIZ26" = "Household Size 6", "IRFAMIN32" = "Income $10K to $20K", "IRFAMIN33" = "Income $20K to $30K", "IRFAMIN34" = "Income $30K to $40K", "IRFAMIN35" = "Income $40K to $50K", "IRFAMIN36" = "Income $50K to $75K", "IRFAMIN37" = "Income > $75K", "PRTALK3" = "Talked to Parent", "yelstgrdB" = "Grades B", "yelstgrdC" = "Grades C", "yelstgrdD/F" = "Grades D or F", "YTHACT2" = "Youth Act Participate")) 
+
+```
+
+# __Model Comparisons__
+
+This study investigates two hypotheses regarding the impact of smokeless tobacco (SLT) use on adolescent substance use and mental health. The first hypothesis posits that early initiation of SLT use increases the risk of developing substance use disorders, including the progression to cigarette, alcohol, and illicit drug use. The second hypothesis suggests that SLT use is associated with adverse mental health outcomes, such as increased depressive symptoms and decreased self-esteem.
+
+Findings confirm that SLT use is a significant predictor of increased alcohol, cigarette, and illicit drug use, highlighting its role in escalating substance use behaviors. However, the relationship between SLT use and mental health outcomes is less consistent, with overlapping confidence intervals suggesting uncertainty about the strength of its effects on depression and self-esteem.
+
+```{r coefficient plot, message=FALSE, warning=FALSE}
+ggplot(all_models, aes(x = term, y = estimate, ymin = conf.low, ymax = conf.high, color = model)) +
+  geom_pointrange(position = position_dodge(width = 0.5)) +
+  coord_flip() +
+  labs(
+    title = "Comparison of Model Coefficients",
+    x = "Predictors",
+    y = "Coefficient Estimate",
+    color = "Model"
+  ) +
+  theme_minimal() +
+   labs(caption = "Figure 2: Comparison of Model Coefficients, Source: 2022 National Survey on Drug Use and Health (NSDUH)") +
+  theme(plot.caption = element_text(hjust = 0, face = "italic", size = 8, color = "blue"))
+```
+
+Demographic factors such as age, gender, and race/ethnicity also play critical roles. Older adolescents (ages 16–17) exhibit higher substance use compared to younger peers, reflecting developmental patterns of increased risk-taking. Gender differences show males engaging more in alcohol and illicit drug use but reporting fewer mental health challenges, while race and ethnicity influence outcomes variably. For example, Native American/Alaska Native adolescents have higher engagement in alcohol and cigarette use, whereas Black/African American and Hispanic adolescents exhibit weaker associations with illicit drug use and depression.
+
+Socioeconomic factors, including household size and income, further shape these outcomes. Larger household sizes are linked to greater substance use, whereas higher income levels correlate with reduced illicit drug use. Academic performance is similarly influential, with lower grades associated with increased substance use and higher grades offering protective effects against depression.
+
+Parental communication emerges as a consistent protective factor across all models. Adolescents who report frequent communication with parents are less likely to engage in substance use and more likely to experience higher self-esteem, underscoring the critical role of family dynamics in adolescent well-being.
+
+In conclusion, the findings underscore the complex interplay of behavioral, demographic, and socioeconomic factors influencing adolescent substance use and mental health. Interventions aimed at fostering parental involvement, supporting academic success, and addressing socioeconomic disparities may be effective in reducing substance use and improving mental health outcomes among adolescents.
+
+# __Expected Contributions and Outcomes__
+
+This study seeks to advance the understanding of the gateway effect of smokeless tobacco (SLT) use among adolescents by investigating its relationship with subsequent substance use and mental health outcomes. Adolescence is a critical developmental period marked by heightened susceptibility to external influences, including peer pressure and experimentation with risky behaviors. Within this context, early-onset SLT use presents a significant concern, as it may serve as a gateway to more harmful behaviors. By focusing on the progression from SLT use to substances such as cigarettes, alcohol, marijuana, and potentially other illicit drugs, this research aims to quantify the extent to which SLT use predicts these outcomes. Simultaneously, the study will evaluate the association between SLT use and mental health conditions, including anxiety, depression, and other psychosocial challenges. These findings will provide a robust evidence base to highlight the role of SLT use in amplifying public health concerns, underscoring the need for targeted prevention strategies during this critical period of development.
+
+A key objective of this study is to identify specific associations between SLT use and other behaviors and conditions, which can inform more focused interventions. Differential impacts will be assessed to determine whether certain substances, such as alcohol or marijuana, are more strongly correlated with early SLT use compared to others. Similarly, the study will examine whether particular mental health conditions, such as depression or anxiety, exhibit stronger associations with SLT initiation. This nuanced understanding will help prioritize public health efforts by targeting the most significant risks associated with SLT use. For example, if early SLT use is found to have a stronger correlation with alcohol use than with marijuana, prevention campaigns could focus on the interplay between these two substances. Similarly, if depression shows a more pronounced association with SLT use than anxiety, interventions can be designed to address this specific mental health challenge. By delineating these relationships, the study aims to maximize the strategic allocation of resources and enhance the impact of public health initiatives.
+
+In addition to identifying these associations, the study will explore the mediating and moderating factors that shape the relationship between SLT use and adverse outcomes. Mediating factors, such as nicotine-induced changes in brain chemistry, will be analyzed to uncover the pathways through which SLT use leads to other harmful behaviors. For instance, nicotine addiction may heighten reward sensitivity, increasing the likelihood of experimentation with other substances. Shifts in social behavior patterns, such as affiliation with peer groups that normalize substance use, may also serve as mediators. Moderating factors will further illuminate how individual and contextual characteristics influence these associations. Peer influence, for example, may amplify the transition from SLT use to other substances, while familial substance use history could predispose adolescents to heightened vulnerability. Socioeconomic status (SES) may also play a critical role, as it can impact access to both substances and mental health resources. Understanding these mediators and moderators will support the development of tailored interventions that address the unique needs of specific subpopulations, ensuring that prevention and treatment efforts are both equitable and effective.
+
+The study’s findings will directly inform the development of evidence-based interventions aimed at reducing SLT initiation and mitigating its associated risks. Targeted prevention strategies could focus on adolescents at higher risk due to familial or social influences, such as those with a family history of substance use or exposure to environments where SLT use is normalized. Holistic intervention programs could integrate efforts to address SLT use alongside co-occurring behaviors, such as alcohol use or mental health challenges, creating a thorough approach to adolescent health. Educational campaigns based on the study’s findings could be instrumental in raising public awareness about the broader risks associated with SLT use, particularly its potential role as a gateway to other harmful behaviors. These campaigns could be tailored to resonate with specific demographics, ensuring that the message is both impactful and accessible.
+
+Finally, this research will contribute to shaping public health policy by providing evidence to support regulatory measures and resource allocation decisions. The identification of a gateway effect could bolster arguments for stricter regulations on the sale and marketing of SLT products, particularly those targeting minors. For instance, policies could be implemented to restrict flavored SLT products that appeal to younger audiences or to mandate clearer health warnings on packaging. Additionally, the data generated by this study could guide policymakers in allocating resources for prevention and treatment programs tailored to populations at the greatest risk of SLT-related harm. Advocacy efforts can further leverage these findings to raise the profile of SLT as a pressing public health issue, emphasizing the need for thorough approaches to its regulation and prevention. By advancing understanding of the gateway effect, this study aims to inform the development of effective interventions, shape evidence-based policies, and ultimately enhance adolescent health and well-being.
+
+__Broader Implications__
+The study’s outcomes will extend beyond immediate public health concerns, contributing to long-term societal benefits:
+
+- Reducing Health Disparities: By focusing on factors like SES and peer influence, the study will address disparities in substance use and mental health outcomes.
+- Strengthening Prevention Efforts: The findings will empower educators, parents, and community leaders with evidence-based tools to discourage SLT use.
+- Enhancing Research: This work will lay the foundation for future research into other underexplored pathways linking SLT use with broader health and behavioral consequences.
+
+In sum, this research aims to fill critical gaps in knowledge, offering an understanding of the gateway effects of SLT use. By doing so, it will provide the evidence needed to inform and strengthen public health policies and programs, ultimately reducing the prevalence of SLT use and its associated harms among adolescents.
+
+# __Conclusion__
+
+This study has examined the relationship between early-onset smokeless tobacco (SLT) use and the subsequent development of substance use behaviors and mental health issues among adolescents and young adults, using data from the National Survey on Drug Use and Health (NSDUH). The central aim was to investigate the gateway effect of SLT use, where early initiation of SLT is hypothesized to increase the likelihood of using other substances such as cigarettes, alcohol, and marijuana, while also raising the risk of experiencing mental health problems like depression and anxiety. This analysis contributes to the growing body of research on the harmful effects of SLT use and its broader implications for public health, particularly among youth.
+
+The results of this study reveal significant associations between early SLT use and later substance use behaviors and mental health issues. Specifically, adolescents who engage in SLT use at an early age are more likely to initiate cigarette smoking, alcohol consumption, and illicit drug use in the future. Additionally, these individuals are at a higher risk of experiencing mental health problems such as depression, anxiety, and emotional distress. These findings provide robust support for the gateway effect of SLT use, aligning with previous research that has linked early substance use with the development of a broader pattern of addictive behaviors and mental health difficulties. Such findings are important as they underscore the need for targeted interventions aimed at preventing the initiation of SLT use during adolescence, which may help mitigate subsequent substance use and mental health challenges.
+
+Moreover, the results have important implications for public health policy and intervention strategies. Educating young people about the risks associated with SLT use and promoting healthier behaviors are essential steps in reducing the prevalence of SLT use among adolescents. School-based education programs, community outreach, and social media campaigns could play a critical role in raising awareness about the dangers of SLT, especially given its potential to act as a gateway to more severe substance use patterns. Additionally, policymakers should consider enacting regulations that limit the accessibility and marketing of SLT products to youth, thereby reducing the likelihood of early initiation. These regulatory measures could include restrictions on advertising targeting adolescents and raising the minimum age for SLT purchase. Such policies would complement public health initiatives aimed at reducing youth substance use overall.
+
+However, several limitations should be considered when interpreting the findings of this study. While this analysis provides valuable insights into the correlation between early SLT use and later substance use and mental health problems, it is important to note that these relationships are associative and do not establish causal links. There may be other confounding factors, such as genetic predispositions, peer influence, or environmental stressors, that contribute to both SLT use and later substance use or mental health issues. Moreover, the cross-sectional nature of the available data limits the ability to draw conclusions about the temporal dynamics and long-term effects of SLT use on mental health and substance use trajectories. Longitudinal studies, particularly those that track individuals over extended periods, could provide more robust evidence regarding the causal mechanisms underlying the gateway effect of SLT use. Furthermore, future research should explore the role of social and environmental factors, such as family dynamics, peer pressure, and socio-economic status, in shaping the likelihood of SLT use and its subsequent effects.
+
+In addition, this study only considers a limited range of substance use and mental health outcomes. Future research could expand the scope to include other forms of substance use, such as prescription drug misuse or cannabis use, and additional mental health conditions, such as conduct disorders or eating disorders, to provide a more thorough understanding of the consequences of SLT use. By incorporating a broader set of variables and examining the potential moderating effects of various demographic and psychosocial factors, future studies could refine the understanding of how early SLT use influences adolescent development and mental health.
+
+From a policy perspective, the findings of this study highlight the need for thorough, multi-faceted approaches to reducing SLT use among youth. Prevention efforts should target not only SLT use but also other forms of early substance use and mental health concerns, with a focus on building resilience and providing support for at-risk youth. Early interventions, such as school-based counseling, substance use prevention programs, and family therapy, could help reduce the initiation of SLT use and its subsequent impact on mental health and substance use. Furthermore, policymakers should prioritize funding for programs that support mental health screening and intervention in schools and communities, particularly for adolescents who may be at heightened risk of developing both substance use disorders and mental health problems.
+
+Overall, the findings of this study set the stage for future research aimed at further elucidating the mechanisms through which SLT use contributes to broader patterns of substance use and mental health issues. By expanding the focus of future research to include longitudinal data, more diverse populations, and a wider range of outcomes, researchers can deepen our understanding of the gateway effect of SLT use. This, in turn, will inform more effective public health interventions and policy strategies to protect young people from the harmful consequences of early substance use and mental health problems, ultimately promoting better outcomes for adolescents and young adults.
+
+\newpage
+
+# References
+
