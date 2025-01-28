@@ -1,0 +1,180 @@
+---
+title: "Text as Data Course Project"
+author: "Nicholas Wiggins"
+format: html
+editor: visual
+---
+
+## Course Project
+
+#### Research Question
+
+How do media narratives about veteran homelessness shape public perceptions and policy agendas?
+
+```{r}
+library(tidyverse)
+library(quanteda)
+library(readtext)
+library(stopwords)
+library(dplyr)
+library(cluster)
+library(factoextra)
+library(stats)
+library(e1071)
+library(tm)
+library(caret)
+
+set.seed(123)
+
+Homeless_Vets <- readtext("~/Data Analytics - JHU/Text as Data/Final Project/Veterans/*pdf")
+
+Homeless_Vets$label <- c("Health", "General", "Health", "Health", "Opinion", "Opinion", "Policy", "Policy", "Health", "General", "Health", "Policy", "General", "Policy", "Opinion", "Policy", "Opinion", "Policy")
+
+Homeless_Vets$label <- as.factor(Homeless_Vets$label)
+
+
+Homeless_Vets_corpus <- corpus(Homeless_Vets, text_field = "text")
+
+Homeless_Vets_dfm <- tokens(Homeless_Vets_corpus, remove_punct = TRUE, remove_symbols = TRUE, remove_numbers = TRUE, remove_url = TRUE) %>% 
+  tokens_wordstem(language = "en") %>%  
+  tokens_tolower() %>% 
+  dfm() %>% 
+  dfm_remove(stopwords("en")) %>% 
+  dfm_trim(min_termfreq = 10)
+
+Homeless_Vets_matrix <- as.matrix(Homeless_Vets_dfm)
+
+Homeless_Vets_matrix[is.nan(Homeless_Vets_matrix)] = 0
+
+elbow  <- fviz_nbclust(Homeless_Vets_matrix,
+                      kmeans,
+                      method = "gap_stat",
+                      k.max = 17,
+                      verbose = TRUE)
+elbow 
+
+Homeless_Vets_elbow <- kmeans(
+  x = Homeless_Vets_matrix,
+  centers = 11,
+  iter.max = 100
+)
+
+```
+
+You can add options to executable code like this
+
+```{r}
+## 
+folds_2 <- createFolds(Homeless_Vets$label, k = 2)
+folds_2
+
+nb_k_fold = function(folds, data, labels){
+    
+    results = lapply(folds, function(x){ # Run lapply on the folds list using a function
+      test_subset = as.vector(x)  # Convert to vector. Not required but sometimes leads to errors if not done
+      print(test_subset)
+      # Unique error that happens sometimes
+      # First get a vector of all labels
+      dependent_labels = as.factor(labels)
+      train_matrix = data[-test_subset,] # Select everything within our somewhat random sample
+      train_labels = dependent_labels[-test_subset]
+      test_matrix = data[test_subset,] # Select everything not within the sample
+      test_labels = dependent_labels[test_subset]
+
+        # Create a model
+      nb_model = naivebayes::naive_bayes( # Name things clearly
+        x=train_matrix,
+        y=train_labels,
+      )
+      # Run predictions
+      pred <- predict(nb_model, test_matrix)
+      
+      # Look at how well out classifier is doing using the Caret package
+      confusion_matrix = confusionMatrix(data=pred, #Enter your predictions
+                                         reference = test_labels, # The true labels
+                                         mode = 'prec_recall') # Mode has to be precision and recall
+      
+      # Return results where we can compare Accuracy from each k-fold
+      return(confusion_matrix)  
+    })
+    
+    return(results)
+}
+
+Homeless_Vets_results_nb = nb_k_fold(folds = folds_5,
+                                data = Homeless_Vets_matrix,
+                                labels = Homeless_Vets$label)
+
+svm_k_fold = function(folds, data, labels, model_kernel = 'linear'){
+    
+    results = lapply(folds, function(x){ # Run lapply on the folds list using a function
+      test_subset = as.vector(x)  # Convert to vector. Not required but sometimes leads to errors if not done
+      print(test_subset)
+      # Unique error that happens sometimes
+      # First get a vector of all labels
+      dependent_labels = as.factor(labels)
+      train_matrix = data[-test_subset,] # Select everything within our somewhat random sample
+      train_labels = dependent_labels[-test_subset]
+      test_matrix = data[test_subset,] # Select everything not within the sample
+      test_labels = dependent_labels[test_subset]
+
+        # Create a model
+      svm_mod = e1071::svm(
+        x=train_matrix,
+        y=train_labels,
+        type = 'C',
+        kernel = model_kernel
+      )
+      # Run predictions
+      pred <- predict(svm_mod, test_matrix)
+      
+
+      # Look at how well out classifier is doing using the Caret package
+      confusion_matrix = confusionMatrix(data=pred, #Enter your predictions
+                                         reference = test_labels, # The true labels
+                                         mode = 'prec_recall') # Mode has to be precision and recall
+      
+      # Return results where we can compare Accuracy from each k-fold
+      return(confusion_matrix)  
+    })
+    
+    return(results)
+}
+
+Homeless_Vets_results_svm = svm_k_fold(folds = folds_5,
+                                data = Homeless_Vets_matrix,
+                                labels = Homeless_Vets$label,
+                                model_kernel = 'linear')
+
+)
+
+```
+
+```{r}
+## APR METRICS
+set.seed(123)
+APR_Metrics <- function(confusion_matrix) {
+  data.frame(
+    accuracy = confusion_matrix$overall['Accuracy'],
+    precision = mean(confusion_matrix$byClass[, 'Precision']),
+    recall = mean(confusion_matrix$byClass[, 'Recall'])
+  )
+}
+
+APR_nb <- do.call(rbind, lapply(Homeless_Vets_results_nb, APR_Metrics))
+
+metrics_nb <- colMeans(APR_nb)
+
+APR_svm <- do.call(rbind, lapply(Homeless_Vets_results_svm, APR_Metrics))
+
+metrics_svm <- colMeans(APR_svm)
+
+mean_results_HV <- data.frame(
+  Method = c("Naive Bayes", "Support Vector Machine"),
+  Accuracy = c(metrics_nb['accuracy'], metrics_svm['accuracy']),
+  Precision = c(metrics_nb['precision'], metrics_svm['precision']),
+  Recall = c(metrics_nb['recall'], metrics_svm['recall'])
+)
+
+print(mean_results_HV
+```
