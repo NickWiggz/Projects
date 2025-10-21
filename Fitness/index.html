@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gym Dashboard: Lean Muscle & Toning</title>
+    <title>Gym Dashboard: Lean Mass & Toning</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
@@ -20,14 +20,14 @@
             border-radius: 0.5rem;
             transition: all 0.2s;
             cursor: pointer;
-            color: #4B5563; /* Gray text for inactive */
-            background-color: #E5E7EB; /* Light gray background */
-            font-size: 0.8rem; /* Smaller font for more buttons */
+            color: #4B5563;
+            background-color: #E5E7EB;
+            font-size: 0.8rem;
         }
         .nav-button.active {
             color: #FFFFFF;
-            background-color: #00A6FB; /* Vibrant blue accent */
-            box-shadow: 0 4px 6px -1px rgba(0, 166, 251, 0.3), 0 2px 4px -2px rgba(0, 166, 251, 0.1);
+            background-color: #00A6FB;
+            box-shadow: 0 4px 6px -1px rgba(0, 166, 251, 0.3), 0 2px 4px -2px rgba(0, 2px, 251, 0.1);
         }
         .workout-card {
             background-color: white;
@@ -46,14 +46,14 @@
             border-bottom: none;
         }
         .stat-box {
-            background-color: #03254E; /* Navy blue */
+            background-color: #03254E;
             color: white;
             border-radius: 0.5rem;
             padding: 1rem;
             text-align: center;
         }
         .note-text {
-            color: #F15946; /* Orange accent for notes */
+            color: #F15946;
             font-weight: 600;
             font-size: 0.875rem;
         }
@@ -71,29 +71,50 @@
             -webkit-appearance: none;
             margin: 0;
         }
+        .history-item {
+            cursor: pointer;
+            transition: background-color 0.1s;
+        }
+        .history-item:hover {
+            background-color: #f3f4f6;
+        }
+        /* Custom styling for the dropdown selector to look clean */
+        #workout-day-selector {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2303254E'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z' clip-rule='evenodd' /%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.7rem center;
+            background-size: 1.5em;
+        }
     </style>
 </head>
 <body class="min-h-screen">
 
     <div class="container mx-auto max-w-lg p-3">
 
-        <h1 class="text-3xl font-black text-center text-[#03254E] mt-4 mb-4">LEAN MUSCLE FOCUS</h1>
+        <h1 class="text-3xl font-black text-center text-[#03254E] mt-4 mb-4">LEAN MUSCLE FITNESS TRACKER</h1>
         <p id="auth-status" class="text-xs text-center text-gray-500 mb-2"></p>
 
-        <!-- Navigation Tabs (Two Rows for Mobile Usability) -->
+        <!-- Navigation Tabs (Dropdown + Tabs) -->
         <div class="flex flex-col gap-2 mb-6">
+            <!-- Row 1: Workout Day Dropdown -->
+            <select id="workout-day-selector" class="w-full p-3 bg-white border border-gray-300 rounded-lg shadow-sm text-lg font-bold text-[#03254E] focus:ring-[#00A6FB] focus:border-[#00A6FB]">
+                <option value="day1">🏋️ Day 1: Push (Chest, Shoulders, Triceps)</option>
+                <option value="day2">💪 Day 2: Pull (Back, Biceps)</option>
+                <option value="day3">🦵 Day 3: Legs (Quads, Hams, Calves)</option>
+                <option value="day4">🏃 Day 4: Active Recovery</option>
+                <option value="day5">🛠️ Day 5: Volume & Arms</option>
+                <option value="day6">🧘 Day 6: Lower Body & Abs</option>
+                <option value="day7">😴 Day 7: Full Rest & Recovery</option>
+            </select>
+            
+            <!-- Row 2: Tabs -->
             <div class="flex justify-between gap-1 p-1 bg-white rounded-lg shadow-inner">
-                <button class="nav-button active" data-day="day1">Day 1: Push</button>
-                <button class="nav-button" data-day="day2">Day 2: Pull</button>
-                <button class="nav-button" data-day="day3">Day 3: Legs</button>
-                <button class="nav-button" data-day="day4">Day 4: Rest</button> <!-- NEW -->
-                <button class="nav-button" data-day="day5">Day 5: Volume</button>
-            </div>
-            <div class="flex justify-between gap-1 p-1 bg-white rounded-lg shadow-inner">
-                <button class="nav-button" data-day="day6">Day 6: Core</button>
-                <button class="nav-button" data-day="day7">Day 7: Rest</button> <!-- NEW -->
                 <button class="nav-button" data-day="goals">Goals & Track</button>
                 <button class="nav-button" data-day="nutrition">Nutrition Guide</button>
+                <button class="nav-button" data-day="lift-history">Lift History</button>
             </div>
         </div>
 
@@ -176,6 +197,7 @@
                         </div>
                     </div>
                 </div>
+                <button onclick="saveSessionLifts('Day 1: Push')" class="w-full mt-4 py-3 bg-[#F15946] text-white font-bold rounded-lg shadow-md hover:bg-[#E04834] transition duration-150">Log Day 1 Session</button>
             </div>
 
             <!-- DAY 2: PULL -->
@@ -245,6 +267,7 @@
                         </div>
                     </div>
                 </div>
+                <button onclick="saveSessionLifts('Day 2: Pull')" class="w-full mt-4 py-3 bg-[#F15946] text-white font-bold rounded-lg shadow-md hover:bg-[#E04834] transition duration-150">Log Day 2 Session</button>
             </div>
 
             <!-- DAY 3: LEGS -->
@@ -303,6 +326,7 @@
                         </div>
                     </div>
                 </div>
+                <button onclick="saveSessionLifts('Day 3: Legs')" class="w-full mt-4 py-3 bg-[#F15946] text-white font-bold rounded-lg shadow-md hover:bg-[#E04834] transition duration-150">Log Day 3 Session</button>
             </div>
             
             <!-- DAY 4: REST / ACTIVE RECOVERY (NEW) -->
@@ -399,6 +423,7 @@
                         </div>
                     </div>
                 </div>
+                <button onclick="saveSessionLifts('Day 5: Volume & Arms')" class="w-full mt-4 py-3 bg-[#F15946] text-white font-bold rounded-lg shadow-md hover:bg-[#E04834] transition duration-150">Log Day 5 Session</button>
             </div>
 
             <!-- DAY 6: LOWER BODY, ABS & FAT BURN FOCUS -->
@@ -465,6 +490,7 @@
                         <div></div>
                     </div>
                 </div>
+                <button onclick="saveSessionLifts('Day 6: Lower Body & Abs')" class="w-full mt-4 py-3 bg-[#F15946] text-white font-bold rounded-lg shadow-md hover:bg-[#E04834] transition duration-150">Log Day 6 Session</button>
             </div>
 
             <!-- DAY 7: FULL REST (NEW) -->
@@ -480,7 +506,7 @@
                             <li>**Nutrition:** Continue hitting your **150-177g protein goal**. Fueling recovery prevents muscle loss.</li>
                         </ul>
                     </div>
-                    <p class="note-text pt-2">**Tip:** Prepare your meals or protein shakes for Day 1 today!</p>
+                    <p class="note-text pt-2">**Crucial:** Do NOT lift heavy or perform intense HIIT. This day is non-negotiable for progress.</p>
                 </div>
             </div>
 
@@ -518,13 +544,13 @@
 
                 <!-- WEEKLY TRACKING INPUTS -->
                 <div class="workout-card mb-6">
-                    <h3 class="text-xl font-bold mb-3 text-[#03254E]">Log Weekly Progress</h3>
+                    <h3 class="text-xl font-bold mb-3 text-[#03254E]">Weekly Check-In (Archived)</h3>
 
                     <!-- Weight Tracking -->
                     <div class="flex justify-between items-center space-x-2 p-3 border-2 border-gray-200 rounded-lg mb-3">
                         <label for="weight-input" class="font-bold text-lg text-gray-700">Measured Weight:</label>
                         <div class="flex items-center space-x-2">
-                            <input type="number" id="weight-input" min="100" max="300" step="0.5" placeholder="Latest lbs" class="weight-input text-base w-24" onchange="saveBodyWeight(this)">
+                            <input type="number" id="weight-input" min="100" max="300" step="0.5" placeholder="Latest lbs" class="weight-input text-base w-24">
                             <span class="text-gray-500">lbs</span>
                         </div>
                     </div>
@@ -534,15 +560,43 @@
                     <div class="flex justify-between items-center space-x-2 p-3 border-2 border-gray-200 rounded-lg">
                         <label for="bf-input" class="font-bold text-lg text-gray-700">Measured BF%:</label>
                         <div class="flex items-center space-x-2">
-                            <input type="number" id="bf-input" min="5" max="50" step="0.1" placeholder="Latest %" class="weight-input text-base w-24" onchange="saveBodyFat(this)">
+                            <input type="number" id="bf-input" min="5" max="50" step="0.1" placeholder="Latest %" class="weight-input text-base w-24">
                             <span class="text-gray-500">%</span>
                         </div>
                     </div>
-                    <p id="last-bf-date" class="text-xs text-gray-500 mt-2 text-right">Last Logged: N/A</p>
+                    <p id="last-bf-date" class="text-xs text-gray-500 mt-2 text-right"></p>
+
+                    <button id="weekly-log-button" class="w-full mt-4 py-3 bg-[#00A6FB] text-white font-bold rounded-lg shadow-md hover:bg-[#0095E0] transition duration-150">Log This Week's Data</button>
+                </div>
+
+                <!-- HISTORY DISPLAY SECTION -->
+                <div class="workout-card">
+                    <h3 class="text-xl font-bold mb-3 text-[#03254E]">History Log</h3>
+                    
+                    <!-- Comparison Results -->
+                    <div id="comparison-display" class="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-3 mb-4 hidden">
+                        <h4 class="font-bold text-lg text-yellow-700 mb-2" id="comparison-title">Comparison Against Last Logged:</h4>
+                        <p class="text-sm text-gray-700 mb-1" id="comparison-weight"></p>
+                        <p class="text-sm text-gray-700" id="comparison-bf"></p>
+                    </div>
+
+                    <div class="mb-6 border-b pb-4">
+                        <h4 class="font-bold text-gray-700 mb-2 text-[#03254E]">Weight History (Click to Compare)</h4>
+                        <ul id="weight-history-list" class="space-y-1 text-sm text-gray-600">
+                            <li class="text-center text-gray-400">Loading weight history...</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-gray-700 mb-2 text-[#03254E]">Body Fat History (Click to Compare)</h4>
+                        <ul id="bf-history-list" class="space-y-1 text-sm text-gray-600">
+                            <li class="text-center text-gray-400">Loading BF history...</li>
+                        </ul>
+                    </div>
                 </div>
                 
                 <!-- PROGRESSIVE OVERLOAD -->
-                <div class="workout-card mb-6">
+                <div class="workout-card my-6">
                     <h3 class="text-xl font-bold mb-3 text-[#03254E]">Training Principle: Overload</h3>
                     <p class="text-gray-700 text-sm mb-4">You MUST challenge yourself every week to build mass. Focus on one of these:</p>
                     <ul class="list-disc list-inside space-y-2 text-gray-700 ml-2 text-sm">
@@ -613,6 +667,27 @@
                     </ul>
                 </div>
             </div>
+            
+            <!-- LIFT HISTORY TAB (NEW) -->
+            <div id="lift-history" class="day-content hidden">
+                <h2 class="text-2xl font-extrabold mb-4 text-[#F15946]">Lift Session History</h2>
+                
+                <!-- Comparison Display Area -->
+                <div id="lift-comparison-display" class="workout-card mb-6 hidden">
+                    <h3 class="text-xl font-bold mb-3 text-[#00A6FB]" id="lift-comparison-title">Comparison Against Latest Session</h3>
+                    <ul id="lift-comparison-list" class="space-y-1 text-sm text-gray-700">
+                        <li class="text-center text-gray-400">Select a past session below to compare.</li>
+                    </ul>
+                </div>
+                
+                <div class="workout-card mb-6">
+                    <h3 class="text-xl font-bold mb-3 text-[#03254E]">Past Sessions (Tap to Compare)</h3>
+                    <p class="text-sm text-gray-700 mb-4">Tap a past session to see how your weights have changed since then compared to your latest workout.</p>
+                    <ul id="session-history-list" class="space-y-2">
+                        <li class="text-center text-gray-400">Loading history...</li>
+                    </ul>
+                </div>
+            </div>
 
         </div>
 
@@ -621,7 +696,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection, addDoc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Global Firebase Configuration
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
@@ -632,6 +707,33 @@
         let auth;
         let userId = null;
         let isAuthReady = false;
+        
+        // Storage for history data
+        let bodyWeightHistory = [];
+        let bodyFatHistory = [];
+        let liftSessionsHistory = []; // Stores all archived lift sessions
+
+        // Helper functions
+        const formatDate = (isoString) => new Date(isoString).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+        const getColorClass = (value) => {
+            if (value > 0) return 'text-green-600'; // Green for positive change (weight lifted, muscle growth)
+            if (value < 0) return 'text-red-600';   // Red for negative change
+            return 'text-gray-600';
+        };
+
+        const getMetricColorClass = (value, isWeight) => {
+            // Weight and BF% should be RED for a decrease, GREEN for an increase.
+            // Since we WANT weight/BF to decrease, we flip the colors.
+            if (isWeight) {
+                if (value < 0) return 'text-green-600'; // Weight decreased (good)
+                if (value > 0) return 'text-red-600';   // Weight increased (bad for cut)
+            } else { // BF%
+                if (value < 0) return 'text-green-600'; // BF% decreased (good)
+                if (value > 0) return 'text-red-600';   // BF% increased (bad)
+            }
+            return 'text-gray-600';
+        };
 
         // 1. Firebase Initialization and Authentication
         async function initializeFirebase() {
@@ -646,8 +748,8 @@
                         document.getElementById('auth-status').textContent = `User ID: ${userId.substring(0, 8)}... (Data Saved)`;
                         isAuthReady = true;
                         loadWeights(); 
-                        loadBodyFat();
-                        loadBodyWeight();
+                        loadBodyFatHistory();
+                        loadBodyWeightHistory();
                     } else {
                         try {
                             if (initialAuthToken) {
@@ -670,7 +772,7 @@
 
         initializeFirebase();
 
-        // 2. Data Persistence Logic (Saving Weight)
+        // 2. Data Persistence Logic (Saving Lifts - Updates Max Weight for PO)
         window.saveWeight = async function(inputElement) {
             if (!isAuthReady) {
                 console.warn("Authentication not ready. Cannot save data.");
@@ -687,7 +789,7 @@
             }
 
             try {
-                // Path: /artifacts/{appId}/users/{userId}/max_lifts/{exerciseId}
+                // This stores the single highest/most recent weight as the target for the next session
                 const docRef = doc(db, `artifacts/${appId}/users/${userId}/max_lifts`, exerciseId);
                 
                 await setDoc(docRef, {
@@ -695,14 +797,14 @@
                     date: new Date().toISOString()
                 }, { merge: true });
 
-                console.log(`Weight saved for ${exerciseId}: ${weightValue} lbs.`);
+                console.log(`PO Target saved for ${exerciseId}: ${weightValue} lbs.`);
                 inputElement.placeholder = `${weightValue} lbs`; 
             } catch (error) {
                 console.error("Error saving weight:", error);
             }
         };
 
-        // 3. Data Retrieval Logic (Loading Weights)
+        // 3. Data Retrieval Logic (Loading Lifts - gets PO Target)
         function loadWeights() {
             if (!isAuthReady || !db || !userId) {
                 return;
@@ -710,7 +812,6 @@
             
             const maxLiftsRef = collection(db, `artifacts/${appId}/users/${userId}/max_lifts`);
             
-            // Listen for real-time updates for the current user's max lifts
             onSnapshot(maxLiftsRef, (snapshot) => {
                 const weightInputs = document.querySelectorAll('.weight-input');
                 const maxLifts = {};
@@ -720,16 +821,12 @@
                     maxLifts[doc.id] = data.weight;
                 });
 
-                // Update input fields with the last recorded weight
                 weightInputs.forEach(input => {
                     const exerciseId = input.getAttribute('data-exercise-id');
                     if (maxLifts[exerciseId] !== undefined) {
-                        // Display the last logged weight as the current placeholder/value
-                        // We use placeholder if the current input value is empty
                         if (input.value === "") {
                             input.placeholder = `${maxLifts[exerciseId]} lbs`;
                         } else {
-                            // If user has already entered a value for the current session, don't overwrite it
                             input.placeholder = `${maxLifts[exerciseId]} lbs`;
                         }
                     }
@@ -739,127 +836,347 @@
             });
         }
 
-        // 4. Data Persistence Logic (Saving Body Fat)
-        window.saveBodyFat = async function(inputElement) {
+        // 4. ARCHIVING LOGIC: Save Lift Session (NEW)
+        window.saveSessionLifts = async function(dayName) {
             if (!isAuthReady) {
-                console.warn("Authentication not ready. Cannot save BF data.");
+                alert("Authentication not ready. Cannot save session.");
                 return;
             }
+            
+            const activeDayContent = document.querySelector('.day-content:not(.hidden)');
+            if (!activeDayContent) return;
 
-            const bfValue = parseFloat(inputElement.value);
+            const liftInputs = activeDayContent.querySelectorAll('.weight-input');
+            const sessionData = {};
+            let count = 0;
 
-            if (isNaN(bfValue) || bfValue <= 0) {
-                inputElement.value = '';
-                inputElement.placeholder = 'Latest %';
-                return;
-            }
-
-            try {
-                const timestamp = new Date().toISOString();
-                // Path: /artifacts/{appId}/users/{userId}/body_fat_log/latest
-                const docRef = doc(db, `artifacts/${appId}/users/${userId}/body_fat_log`, 'latest');
+            liftInputs.forEach(input => {
+                const weightValue = parseFloat(input.value);
+                const nameElement = input.closest('.exercise-item').querySelector('.font-bold');
                 
-                await setDoc(docRef, {
-                    percentage: bfValue,
-                    date: timestamp
-                }, { merge: true });
+                // Only archive non-empty, valid entries
+                if (!isNaN(weightValue) && weightValue > 0) {
+                    sessionData[input.getAttribute('data-exercise-id')] = {
+                        name: nameElement ? nameElement.textContent.trim() : input.getAttribute('data-exercise-id'),
+                        weight: weightValue
+                    };
+                    count++;
+                }
+            });
 
-                console.log(`Body Fat saved: ${bfValue}%.`);
-                inputElement.placeholder = `${bfValue}%`;
-                document.getElementById('last-bf-date').textContent = `Last Logged: ${new Date(timestamp).toLocaleDateString()}`;
+            if (count === 0) {
+                alert("Please enter weights for at least one exercise before logging the session.");
+                return;
+            }
+
+            const timestamp = new Date().toISOString();
+            
+            try {
+                await addDoc(collection(db, `artifacts/${appId}/users/${userId}/lift_sessions`), {
+                    dayName: dayName,
+                    date: timestamp,
+                    lifts: JSON.stringify(sessionData)
+                });
+
+                alert(`${dayName} session logged successfully! (${count} lifts recorded)`);
+                
+                // Clear inputs after archiving
+                liftInputs.forEach(input => input.value = '');
+
             } catch (error) {
-                console.error("Error saving body fat:", error);
+                console.error("Error saving lift session:", error);
+                alert("Failed to save lift session. Check console for details.");
             }
         };
-
-        // 5. Data Retrieval Logic (Loading Body Fat)
-        function loadBodyFat() {
+        
+        // 5. LIFT HISTORY RETRIEVAL & RENDERING
+        function loadLiftHistory() {
             if (!isAuthReady || !db || !userId) {
+                document.getElementById('session-history-list').innerHTML = '<li class="text-center text-gray-500">Authentication needed to view history.</li>';
                 return;
             }
 
-            // Path: /artifacts/{appId}/users/{userId}/body_fat_log/latest
-            const docRef = doc(db, `artifacts/${appId}/users/${userId}/body_fat_log`, 'latest');
-            const bfInput = document.getElementById('bf-input');
-            const dateElement = document.getElementById('last-bf-date');
+            const historyRef = collection(db, `artifacts/${appId}/users/${userId}/lift_sessions`);
+            const historyQuery = query(historyRef, orderBy("date", "desc"));
+            const historyList = document.getElementById('session-history-list');
 
-            onSnapshot(docRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    const bf = data.percentage;
-                    const date = new Date(data.date).toLocaleDateString();
-                    
-                    bfInput.placeholder = `${bf}%`;
-                    dateElement.textContent = `Last Logged: ${date}`;
+            onSnapshot(historyQuery, (snapshot) => {
+                historyList.innerHTML = '';
+                liftSessionsHistory = [];
+                document.getElementById('lift-comparison-display').classList.add('hidden');
+
+                if (snapshot.empty) {
+                    historyList.innerHTML = '<li class="text-center text-gray-400">No lift sessions logged yet.</li>';
+                    return;
                 }
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    // Deserialize the lifts array for easy comparison later
+                    data.lifts = JSON.parse(data.lifts);
+                    liftSessionsHistory.push(data);
+                    
+                    const date = formatDate(data.date);
+                    const listItem = document.createElement('li');
+                    listItem.className = 'flex justify-between p-2 border-b border-dashed border-gray-200 history-item font-bold text-[#03254E]';
+                    listItem.textContent = `${data.dayName} - ${date}`;
+                    
+                    // Set up click handler to display comparison
+                    listItem.onclick = () => displayLiftComparison(data);
+                    historyList.appendChild(listItem);
+                });
             }, (error) => {
-                console.error("Error loading body fat:", error);
+                console.error("Error loading lift history:", error);
             });
         }
+
+        // 6. DISPLAY LIFT COMPARISON
+        function displayLiftComparison(pastSession) {
+            const comparisonDiv = document.getElementById('lift-comparison-display');
+            const comparisonList = document.getElementById('lift-comparison-list');
+            const comparisonTitle = document.getElementById('lift-comparison-title');
+            
+            // The most recent session is always at index 0 of the stored array
+            const latestSession = liftSessionsHistory[0];
+
+            if (!latestSession || latestSession.date === pastSession.date) {
+                comparisonDiv.classList.add('hidden');
+                return;
+            }
+
+            comparisonDiv.classList.remove('hidden');
+            comparisonList.innerHTML = '';
+
+            comparisonTitle.textContent = `Comparison: Latest (${formatDate(latestSession.date)}) vs. ${formatDate(pastSession.date)}`;
+            
+            const latestLifts = latestSession.lifts;
+            const pastLifts = pastSession.lifts;
+            let comparedCount = 0;
+
+            for (const id in latestLifts) {
+                const latestLift = latestLifts[id];
+                const pastLift = pastLifts[id];
+
+                if (pastLift) {
+                    const diff = (latestLift.weight - pastLift.weight).toFixed(1);
+                    const colorClass = getColorClass(diff);
+                    const direction = diff > 0 ? '⬆️' : (diff < 0 ? '⬇️' : '➖');
+                    const listItem = document.createElement('li');
+                    
+                    listItem.className = 'flex justify-between py-1 border-b border-gray-100';
+                    listItem.innerHTML = `
+                        <span>${latestLift.name}: ${latestLift.weight} lbs</span> 
+                        <span class="${colorClass} font-bold">${direction} ${Math.abs(diff)} lbs</span>
+                    `;
+                    comparisonList.appendChild(listItem);
+                    comparedCount++;
+                }
+            }
+            
+            if (comparedCount === 0) {
+                comparisonList.innerHTML = '<li class="text-center text-gray-400">No matching exercises found between these two sessions.</li>';
+            }
+        }
+
         
-        // 6. Data Persistence Logic (Saving Body Weight)
-        window.saveBodyWeight = async function(inputElement) {
+        // 7. ARCHIVING LOGIC: Save Weekly Log (Body Weight & Body Fat)
+        document.getElementById('weekly-log-button').addEventListener('click', async () => {
             if (!isAuthReady) {
-                console.warn("Authentication not ready. Cannot save BW data.");
+                alert("Please wait for authentication to load before logging.");
                 return;
             }
 
-            const bwValue = parseFloat(inputElement.value);
+            const bwInput = document.getElementById('weight-input');
+            const bfInput = document.getElementById('bf-input');
+            const bwValue = parseFloat(bwInput.value);
+            const bfValue = parseFloat(bfInput.value);
 
-            if (isNaN(bwValue) || bwValue <= 0) {
-                inputElement.value = '';
-                inputElement.placeholder = 'Latest lbs';
+            if (isNaN(bwValue) || bwValue <= 0 || isNaN(bfValue) || bfValue <= 0) {
+                alert("Please enter valid weight (lbs) and body fat (%) before logging.");
                 return;
             }
 
+            const timestamp = new Date().toISOString();
+            
             try {
-                const timestamp = new Date().toISOString();
-                // Path: /artifacts/{appId}/users/{userId}/body_weight_log/latest
-                const docRef = doc(db, `artifacts/${appId}/users/${userId}/body_weight_log`, 'latest');
-                
-                await setDoc(docRef, {
+                // Save Body Weight Log
+                await addDoc(collection(db, `artifacts/${appId}/users/${userId}/body_weight_log`), {
                     weight: bwValue,
                     date: timestamp
-                }, { merge: true });
+                });
 
-                console.log(`Body Weight saved: ${bwValue} lbs.`);
-                inputElement.placeholder = `${bwValue} lbs`;
-                document.getElementById('last-weight-date').textContent = `Last Logged: ${new Date(timestamp).toLocaleDateString()}`;
+                // Save Body Fat Log
+                await addDoc(collection(db, `artifacts/${appId}/users/${userId}/body_fat_log`), {
+                    percentage: bfValue,
+                    date: timestamp
+                });
+
+                // Clear inputs and give feedback
+                bwInput.value = '';
+                bfInput.value = '';
+                alert(`Weekly log saved successfully for ${formatDate(timestamp)}!`);
+
             } catch (error) {
-                console.error("Error saving body weight:", error);
+                console.error("Error saving weekly log:", error);
+                alert("Failed to save data. Check console for details.");
             }
-        };
+        });
 
-        // 7. Data Retrieval Logic (Loading Body Weight)
-        function loadBodyWeight() {
-            if (!isAuthReady || !db || !userId) {
+        // 8. Comparison Logic (Weight and BF%)
+        function updateComparisonDisplay(pastWeightData, pastBFData) {
+            const comparisonDiv = document.getElementById('comparison-display');
+            const weightP = document.getElementById('comparison-weight');
+            const bfP = document.getElementById('comparison-bf');
+            const title = document.getElementById('comparison-title');
+
+            // Find the most recent entry (index 0)
+            const latestWeight = bodyWeightHistory[0] ? bodyWeightHistory[0].weight : null;
+            const latestBF = bodyFatHistory[0] ? bodyFatHistory[0].percentage : null;
+
+            if (!latestWeight || !latestBF) {
+                comparisonDiv.classList.add('hidden');
                 return;
             }
 
-            // Path: /artifacts/{appId}/users/{userId}/body_weight_log/latest
-            const docRef = doc(db, `artifacts/${appId}/users/${userId}/body_weight_log`, 'latest');
-            const bwInput = document.getElementById('weight-input');
-            const dateElement = document.getElementById('last-weight-date');
+            const pastWeight = pastWeightData ? pastWeightData.weight : null;
+            const pastBF = pastBFData ? pastBFData.percentage : null;
 
-            onSnapshot(docRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    const bw = data.weight;
-                    const date = new Date(data.date).toLocaleDateString();
-                    
-                    bwInput.placeholder = `${bw} lbs`;
-                    dateElement.textContent = `Last Logged: ${date}`;
+            if (pastWeight === null && pastBF === null) {
+                comparisonDiv.classList.add('hidden');
+                return;
+            }
+
+            comparisonDiv.classList.remove('hidden');
+            
+            let weightHtml = `Weight: ${latestWeight} lbs`;
+            let bfHtml = `BF%: ${latestBF}%`;
+
+            title.textContent = `Change Since ${formatDate(pastWeightData ? pastWeightData.date : pastBFData.date)}:`;
+
+            // Calculate Weight Change (Lower is good)
+            if (pastWeight !== null) {
+                const diff = (latestWeight - pastWeight).toFixed(1);
+                const colorClass = getMetricColorClass(diff, true); 
+                const direction = diff > 0 ? '🔺' : (diff < 0 ? '⬇️' : '➖');
+                weightHtml += ` (Net Change: <span class="${colorClass} font-bold">${direction} ${Math.abs(diff)} lbs</span>)`;
+            }
+
+            // Calculate BF Change (Lower is good)
+            if (pastBF !== null) {
+                const diff = (latestBF - pastBF).toFixed(1);
+                const colorClass = getMetricColorClass(diff, false);
+                const direction = diff > 0 ? '🔺' : (diff < 0 ? '⬇️' : '➖');
+                bfHtml += ` (Net Change: <span class="${colorClass} font-bold">${direction} ${Math.abs(diff)} %pts</span>)`;
+            }
+
+            weightP.innerHTML = weightHtml;
+            bfP.innerHTML = bfHtml;
+        }
+
+        // 9. HISTORY RETRIEVAL & RENDERING: Body Weight
+        function loadBodyWeightHistory() {
+            if (!isAuthReady || !db || !userId) {
+                return;
+            }
+            
+            const historyRef = collection(db, `artifacts/${appId}/users/${userId}/body_weight_log`);
+            const historyQuery = query(historyRef, orderBy("date", "desc"));
+
+            onSnapshot(historyQuery, (snapshot) => {
+                bodyWeightHistory = [];
+                const bwInput = document.getElementById('weight-input');
+                const dateElement = document.getElementById('last-weight-date');
+                const historyList = document.getElementById('weight-history-list');
+                
+                historyList.innerHTML = '';
+
+                if (snapshot.empty) {
+                    historyList.innerHTML = '<li class="text-center text-gray-400">No weight history logged yet.</li>';
+                    dateElement.textContent = 'Last Logged: N/A';
+                    bwInput.placeholder = 'Latest lbs';
+                    return;
                 }
+
+                snapshot.forEach((doc, index) => {
+                    const data = doc.data();
+                    bodyWeightHistory.push(data);
+                    
+                    const date = formatDate(data.date);
+                    const listItem = document.createElement('li');
+                    listItem.className = 'flex justify-between p-1 border-b border-dashed border-gray-200 history-item';
+                    listItem.setAttribute('data-index', index);
+                    listItem.setAttribute('data-type', 'weight');
+                    listItem.onclick = () => updateComparisonDisplay(data, bodyFatHistory.find(bf => bf.date === data.date));
+
+                    listItem.innerHTML = `<span>${date}:</span> <span class="font-bold text-[#03254E]">${data.weight} lbs</span>`;
+                    historyList.appendChild(listItem);
+
+                    if (index === 0) {
+                        bwInput.placeholder = `${data.weight} lbs`;
+                        dateElement.textContent = `Last Logged: ${date}`;
+                    }
+                });
+
             }, (error) => {
-                console.error("Error loading body weight:", error);
+                console.error("Error loading body weight history:", error);
+            });
+        }
+
+        // 10. HISTORY RETRIEVAL & RENDERING: Body Fat
+        function loadBodyFatHistory() {
+            if (!isAuthReady || !db || !userId) {
+                return;
+            }
+            
+            const historyRef = collection(db, `artifacts/${appId}/users/${userId}/body_fat_log`);
+            const historyQuery = query(historyRef, orderBy("date", "desc"));
+
+            onSnapshot(historyQuery, (snapshot) => {
+                bodyFatHistory = [];
+                const bfInput = document.getElementById('bf-input');
+                const dateElement = document.getElementById('last-bf-date');
+                const historyList = document.getElementById('bf-history-list');
+                
+                historyList.innerHTML = '';
+
+                if (snapshot.empty) {
+                    historyList.innerHTML = '<li class="text-center text-gray-400">No body fat history logged yet.</li>';
+                    dateElement.textContent = 'Last Logged: N/A';
+                    bfInput.placeholder = 'Latest %';
+                    return;
+                }
+
+                snapshot.forEach((doc, index) => {
+                    const data = doc.data();
+                    bodyFatHistory.push(data);
+                    
+                    const date = formatDate(data.date);
+                    const listItem = document.createElement('li');
+                    listItem.className = 'flex justify-between p-1 border-b border-dashed border-gray-200 history-item';
+                    listItem.setAttribute('data-index', index);
+                    listItem.setAttribute('data-type', 'bf');
+                    listItem.onclick = () => updateComparisonDisplay(bodyWeightHistory.find(bw => bw.date === data.date), data);
+
+                    listItem.innerHTML = `<span>${date}:</span> <span class="font-bold text-[#00A6FB]">${data.percentage}%</span>`;
+                    historyList.appendChild(listItem);
+
+                    if (index === 0) {
+                        bfInput.placeholder = `${data.percentage}%`;
+                        dateElement.textContent = `Last Logged: ${date}`;
+                    }
+                });
+
+            }, (error) => {
+                console.error("Error loading body fat history:", error);
             });
         }
 
 
-        // 8. Tab Navigation Logic
+        // 11. Tab Navigation Logic (Updated for Dropdown)
         const navButtons = document.querySelectorAll('.nav-button');
         const dayContents = document.querySelectorAll('.day-content');
         const warmupSection = document.getElementById('warmup-section');
+        const daySelector = document.getElementById('workout-day-selector');
 
         function showDay(dayId) {
             dayContents.forEach(content => {
@@ -869,33 +1186,52 @@
             navButtons.forEach(btn => {
                 btn.classList.remove('active');
             });
+            
+            daySelector.classList.remove('active');
+            daySelector.value = '';
 
             const targetDay = document.getElementById(dayId);
             if (targetDay) {
                 targetDay.classList.remove('hidden');
             }
 
-            // Handle the navigation button activation, checking both navigation rows
             const navButtonSelector = document.querySelector(`.nav-button[data-day="${dayId}"]`);
             if (navButtonSelector) {
                 navButtonSelector.classList.add('active');
             }
+            
+            if (daySelector.querySelector(`option[value="${dayId}"]`)) {
+                 daySelector.value = dayId;
+                 // Mark the dropdown as conceptually "active" for styling consistency if needed
+            }
 
-            // Hide warm-up on rest/info days
-            if (dayId === 'goals' || dayId === 'nutrition' || dayId === 'day4' || dayId === 'day7') {
+            if (dayId === 'goals' || dayId === 'nutrition' || dayId === 'day4' || dayId === 'day7' || dayId === 'lift-history') {
                 warmupSection.classList.add('hidden');
             } else {
                 warmupSection.classList.remove('hidden');
             }
+            
+            if (dayId === 'lift-history') {
+                loadLiftHistory();
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+             // Handle Tab button clicks
              navButtons.forEach(button => {
                 button.addEventListener('click', (e) => {
                     const dayId = e.target.getAttribute('data-day');
                     showDay(dayId);
                 });
             });
+
+            // Handle Dropdown changes
+            daySelector.addEventListener('change', (e) => {
+                const dayId = e.target.value;
+                showDay(dayId);
+            });
+            
+            // Set initial view
             showDay('day1');
         });
     </script>
