@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym Dashboard: Lean Muscle & Toning</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            background-color: #F0F2F5;
+        }
+        .nav-button {
+            padding: 0.75rem 0.5rem;
+            flex-grow: 1;
+            text-align: center;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+            cursor: pointer;
+            color: #4B5563; /* Gray text for inactive */
+            background-color: #E5E7EB; /* Light gray background */
+            font-size: 0.8rem; /* Smaller font for more buttons */
+        }
+        .nav-button.active {
+            color: #FFFFFF;
+            background-color: #00A6FB; /* Vibrant blue accent */
+            box-shadow: 0 4px 6px -1px rgba(0, 166, 251, 0.3), 0 2px 4px -2px rgba(0, 166, 251, 0.1);
+        }
+        .workout-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .exercise-item {
+            border-bottom: 1px solid #E5E7EB;
+            padding: 1rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .exercise-item:last-child {
+            border-bottom: none;
+        }
+        .stat-box {
+            background-color: #03254E; /* Navy blue */
+            color: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+        }
+        .note-text {
+            color: #F15946; /* Orange accent for notes */
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        .weight-input {
+            text-align: right;
+            border: 2px solid #E5E7EB;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            width: 70px;
+            -moz-appearance: textfield;
+        }
+        .weight-input::-webkit-outer-spin-button,
+        .weight-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <div class="container mx-auto max-w-lg p-3">
+
+        <h1 class="text-3xl font-black text-center text-[#03254E] mt-4 mb-4">LEAN MUSCLE FOCUS</h1>
+        <p id="auth-status" class="text-xs text-center text-gray-500 mb-2"></p>
+
+        <!-- Navigation Tabs (Two Rows for Mobile Usability) -->
+        <div class="flex flex-col gap-2 mb-6">
+            <div class="flex justify-between gap-1 p-1 bg-white rounded-lg shadow-inner">
+                <button class="nav-button active" data-day="day1">Day 1: Push</button>
+                <button class="nav-button" data-day="day2">Day 2: Pull</button>
+                <button class="nav-button" data-day="day3">Day 3: Legs</button>
+                <button class="nav-button" data-day="day4">Day 4: Rest</button> <!-- NEW -->
+                <button class="nav-button" data-day="day5">Day 5: Volume</button>
+            </div>
+            <div class="flex justify-between gap-1 p-1 bg-white rounded-lg shadow-inner">
+                <button class="nav-button" data-day="day6">Day 6: Core</button>
+                <button class="nav-button" data-day="day7">Day 7: Rest</button> <!-- NEW -->
+                <button class="nav-button" data-day="goals">Goals & Track</button>
+                <button class="nav-button" data-day="nutrition">Nutrition Guide</button>
+            </div>
+        </div>
+
+        <!-- Workout Content -->
+        <div id="workout-content" class="min-h-[500px]">
+
+            <!-- WARM-UP SECTION (Visible on all workout days) -->
+            <div id="warmup-section" class="workout-card mb-6">
+                <h2 class="text-xl font-bold mb-3 text-[#00A6FB]">Warm-up Protocol</h2>
+                <div class="text-sm space-y-2 text-gray-700">
+                    <p>1. **Cardio:** 10 mins light jog/bike.</p>
+                    <p>2. **Stretching:** 5 mins dynamic (circles, swings).</p>
+                    <p>3. **Core Circuit (2-3 rounds):** Plank, Mountain Climbers, Russian Twists (30 seconds each, no rest).</p>
+                </div>
+            </div>
+            
+            <!-- DAY 1: PUSH -->
+            <div id="day1" class="day-content">
+                <h2 class="text-2xl font-extrabold mb-4 text-[#03254E]">Day 1: Push (Chest, Shoulders, Triceps)</h2>
+                <div class="workout-card space-y-2">
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Barbell Bench Press</p>
+                            <p class="text-gray-500">3 sets x 5-8 reps</p>
+                            <p class="note-text mt-1">*Notes: Use 145 lbs or slightly heavier for the lower rep range.*</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day1_barbellbenchpress" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Dumbbell Incline Press</p>
+                            <p class="text-gray-500">3 sets x 10-12 reps</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day1_dbinclinepress" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Dumbbell Overhead Press</p>
+                            <p class="text-gray-500">3 sets x 10-12 reps (Seated/Standing)</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day1_dboverheadpress" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Lateral Raise (DB or Cable)</p>
+                            <p class="text-gray-500">4 sets x 12-15 reps</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day1_lateralraise" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Triceps Pushdown (Rope)</p>
+                            <p class="text-gray-500">3 sets x 10-12 reps</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day1_tricepspushdown" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Overhead Triceps Extension (DB)</p>
+                            <p class="text-gray-500">3 sets x 12-15 reps</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day1_overheadextension" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DAY 2: PULL -->
+            <div id="day2" class="day-content hidden">
+                <h2 class="text-2xl font-extrabold mb-4 text-[#03254E]">Day 2: Pull (Back, Biceps)</h2>
+                <div class="workout-card space-y-2">
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Deadlifts (Conventional or Romanian)</p>
+                            <p class="text-gray-500">3 sets x 5-8 reps</p>
+                            <p class="note-text mt-1">*Notes: Focus on strict form for back development.*</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day2_deadlifts" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Lat Pulldown (Wide Grip)</p>
+                            <p class="text-gray-500">3 sets x 10-12 reps</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day2_latpulldown" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Bent-Over Barbell Row</p>
+                            <p class="text-gray-500">3 sets x 8-10 reps</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day2_bbrow" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Face Pulls (Cable)</p>
+                            <p class="text-gray-500">3 sets x 15-20 reps</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day2_facepulls" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Barbell Bicep Curl</p>
+                            <p class="text-gray-500">3 sets x 8-10 reps</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day2_bbcrawl" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Hammer Curls (DB)</p>
+                            <p class="text-gray-500">3 sets x 10-12 reps</p>
+                            <p class="note-text mt-1">Great for forearm and bicep thickness (mass).</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day2_dbhammercurls" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DAY 3: LEGS -->
+            <div id="day3" class="day-content hidden">
+                <h2 class="text-2xl font-extrabold mb-4 text-[#03254E]">Day 3: Legs (Quads, Hams, Calves)</h2>
+                <div class="workout-card space-y-2">
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Barbell Squats</p>
+                            <p class="text-gray-500">3 sets x 8-10 reps</p>
+                            <p class="note-text mt-1">Go deep, control the weight.</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day3_bbsquats" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Leg Press</p>
+                            <p class="text-gray-500">3 sets x 10-12 reps</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day3_legpress" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Lying Hamstring Curl</p>
+                            <p class="text-gray-500">3 sets x 12-15 reps</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day3_lyinghcurls" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Leg Extension</p>
+                            <p class="text-gray-500">3 sets x 12-15 reps</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day3_legextension" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Standing Calf Raise</p>
+                            <p class="text-gray-500">4 sets x 15-20 reps</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day3_calfraise" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- DAY 4: REST / ACTIVE RECOVERY (NEW) -->
+            <div id="day4" class="day-content hidden">
+                <h2 class="text-2xl font-extrabold mb-4 text-[#F5B700]">Day 4: Active Recovery</h2>
+                <div class="workout-card space-y-4 text-gray-700">
+                    <p class="text-lg font-semibold">Focus: Enhance recovery and circulation without intense stress.</p>
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-md">
+                        <p class="font-bold mb-2 text-[#03254E]">Recommendations</p>
+                        <ul class="list-disc list-inside space-y-1 ml-2 text-sm">
+                            <li>**Light Activity (30-45 min):** Walking, yoga, cycling at a very easy pace (keep heart rate low).</li>
+                            <li>**Stretching:** Focus on static stretching for tight areas (hips, shoulders, chest).</li>
+                            <li>**Nutrition:** Maintain high protein intake, as muscles are actively repairing today!</li>
+                        </ul>
+                    </div>
+                    <p class="note-text pt-2">**Crucial:** Do NOT lift heavy or perform intense HIIT. This day is non-negotiable for progress.</p>
+                </div>
+            </div>
+
+            <!-- DAY 5: UPPER BODY VOLUME & ARM HYPERTROPHY -->
+            <div id="day5" class="day-content hidden">
+                <h2 class="text-2xl font-extrabold mb-4 text-[#03254E]">Day 5: Volume & Arms</h2>
+                <div class="workout-card space-y-2">
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Dumbbell Bench Press</p>
+                            <p class="text-gray-500">3 sets x 10-12 reps</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day5_dbbenchpress" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Seated Cable Row</p>
+                            <p class="text-gray-500">3 sets x 10-12 reps</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day5_cablerow" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Dumbbell Military Press</p>
+                            <p class="text-gray-500">3 sets x 8-10 reps</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day5_dbmilitarypress" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Cable Triceps Pushdown (V-Bar)</p>
+                            <p class="text-gray-500">3 sets x 12-15 reps</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day5_tricepspushdown" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Spider Curls (On Incline Bench)</p>
+                            <p class="text-gray-500">3 sets x 12-15 reps</p>
+                            <p class="note-text mt-1">**Arm Mass Priority: Excellent isolation.**</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day5_spidercurls" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Dumbbell Skull Crushers</p>
+                            <p class="text-gray-500">3 sets x 10-12 reps</p>
+                            <p class="note-text mt-1">**Arm Mass Priority: Tricep stretch.**</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day5_dbskullcrushers" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Dumbbell Shrugs</p>
+                            <p class="text-gray-500">3 sets x 15 reps</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day5_dbshrugs" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DAY 6: LOWER BODY, ABS & FAT BURN FOCUS -->
+            <div id="day6" class="day-content hidden">
+                <h2 class="text-2xl font-extrabold mb-4 text-[#03254E]">Day 6: Lower Body & Abs</h2>
+                <div class="workout-card space-y-2">
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Walking Dumbbell Lunges</p>
+                            <p class="text-gray-500">3 sets x 10 per leg</p>
+                            <p class="note-text mt-1">Focus on glutes and thigh toning.</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day6_dblunges" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Goblet Squat</p>
+                            <p class="text-gray-500">3 sets x 12-15 reps</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day6_gobletsquat" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Reverse Hyper-Extensions</p>
+                            <p class="text-gray-500">3 sets x 15 reps</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day6_reversehyper" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Cable Crunch (Kneeling)</p>
+                            <p class="text-gray-500">3 sets x 15-20 reps</p>
+                        </div>
+                        <!-- Core is often bodyweight or small weight, but loggable -->
+                        <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day6_cablecrunch" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item">
+                        <div>
+                            <p class="font-bold text-lg">Hanging Leg/Knee Raises</p>
+                            <p class="text-gray-500">3 sets x 10-15 reps</p>
+                        </div>
+                         <div class="flex items-center space-x-2">
+                            <input type="number" data-exercise-id="day6_legraises" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <div class="exercise-item bg-[#F5B700] rounded-lg p-3 mt-4">
+                        <div>
+                            <p class="font-bold text-lg text-white">🔥 CARDIO FINISHER</p>
+                            <p class="text-sm text-gray-800">10 mins HIIT (e.g., 30s sprint / 60s rest)</p>
+                        </div>
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DAY 7: FULL REST (NEW) -->
+            <div id="day7" class="day-content hidden">
+                <h2 class="text-2xl font-extrabold mb-4 text-[#F15946]">Day 7: Full Rest & Recovery</h2>
+                <div class="workout-card space-y-4 text-gray-700">
+                    <p class="text-lg font-semibold">Focus: Zero activity. Prioritize sleep and high-quality food to prepare for the next week.</p>
+                    <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-md">
+                        <p class="font-bold mb-2 text-[#03254E]">Key Actions</p>
+                        <ul class="list-disc list-inside space-y-1 ml-2 text-sm">
+                            <li>**Sleep:** Aim for 7-9 hours of deep, uninterrupted sleep.</li>
+                            <li>**Hydration:** Drink plenty of water (50-70% of your body weight in ounces).</li>
+                            <li>**Nutrition:** Continue hitting your **150-177g protein goal**. Fueling recovery prevents muscle loss.</li>
+                        </ul>
+                    </div>
+                    <p class="note-text pt-2">**Tip:** Prepare your meals or protein shakes for Day 1 today!</p>
+                </div>
+            </div>
+
+            <!-- GOALS & TRACK (Focused on Numbers and Training Principles) -->
+            <div id="goals" class="day-content hidden">
+                <h2 class="text-2xl font-extrabold mb-4 text-[#01B492]">Goals & Weekly Tracking</h2>
+                
+                <!-- STAT BOXES FOR WEIGHT AND BODY FAT -->
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <!-- Row 1: Body Fat -->
+                    <div class="stat-box bg-[#F15946]">
+                        <p class="text-xs font-semibold uppercase">Current BF</p>
+                        <p class="text-3xl font-black">21%</p>
+                    </div>
+                    <div class="stat-box bg-[#00A6FB]">
+                        <p class="text-xs font-semibold uppercase">Target BF</p>
+                        <p class="text-3xl font-black">~13%</p>
+                    </div>
+                    <!-- Row 2: Body Weight -->
+                    <div class="stat-box bg-[#03254E]">
+                        <p class="text-xs font-semibold uppercase">Current Weight</p>
+                        <p class="text-3xl font-black">177 lbs</p>
+                    </div>
+                    <div class="stat-box bg-[#F5B700]">
+                        <p class="text-xs font-semibold uppercase">Target Weight</p>
+                        <p class="text-3xl font-black">165-170 lbs</p>
+                    </div>
+                    <!-- Row 3: Protein Goal (Spanning) -->
+                    <div class="stat-box bg-[#01B492] col-span-2">
+                        <p class="text-xs font-semibold uppercase">Daily Protein Goal</p>
+                        <p class="text-3xl font-black">150-177g</p>
+                        <p class="text-xs mt-1 text-gray-100">Crucial for Recomposition</p>
+                    </div>
+                </div>
+
+                <!-- WEEKLY TRACKING INPUTS -->
+                <div class="workout-card mb-6">
+                    <h3 class="text-xl font-bold mb-3 text-[#03254E]">Log Weekly Progress</h3>
+
+                    <!-- Weight Tracking -->
+                    <div class="flex justify-between items-center space-x-2 p-3 border-2 border-gray-200 rounded-lg mb-3">
+                        <label for="weight-input" class="font-bold text-lg text-gray-700">Measured Weight:</label>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" id="weight-input" min="100" max="300" step="0.5" placeholder="Latest lbs" class="weight-input text-base w-24" onchange="saveBodyWeight(this)">
+                            <span class="text-gray-500">lbs</span>
+                        </div>
+                    </div>
+                    <p id="last-weight-date" class="text-xs text-gray-500 mt-2 text-right mb-4">Last Logged: N/A</p>
+
+                    <!-- BF Tracking -->
+                    <div class="flex justify-between items-center space-x-2 p-3 border-2 border-gray-200 rounded-lg">
+                        <label for="bf-input" class="font-bold text-lg text-gray-700">Measured BF%:</label>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" id="bf-input" min="5" max="50" step="0.1" placeholder="Latest %" class="weight-input text-base w-24" onchange="saveBodyFat(this)">
+                            <span class="text-gray-500">%</span>
+                        </div>
+                    </div>
+                    <p id="last-bf-date" class="text-xs text-gray-500 mt-2 text-right">Last Logged: N/A</p>
+                </div>
+                
+                <!-- PROGRESSIVE OVERLOAD -->
+                <div class="workout-card mb-6">
+                    <h3 class="text-xl font-bold mb-3 text-[#03254E]">Training Principle: Overload</h3>
+                    <p class="text-gray-700 text-sm mb-4">You MUST challenge yourself every week to build mass. Focus on one of these:</p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 ml-2 text-sm">
+                        <li>**Increase Weight:** Use slightly heavier weight.</li>
+                        <li>**Increase Reps:** Do more reps within the 8-12 range.</li>
+                        <li>**Time Under Tension:** Slow down the lowering (negative) phase to 3-4 seconds.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- NUTRITION GUIDE -->
+            <div id="nutrition" class="day-content hidden">
+                <h2 class="text-2xl font-extrabold mb-4 text-[#01B492]">Nutrition & Supplementation</h2>
+
+                <!-- Strategy Card -->
+                <div class="workout-card mb-6 bg-[#E6F7F5]">
+                    <h3 class="text-xl font-bold mb-3 text-[#03254E]">Strategy: Calorie Deficit for Toning</h3>
+                    <p class="text-gray-700 text-sm mb-4">To achieve fat loss and "toning," maintain a **Slight Calorie Deficit** (300-500 kcal deficit). Crucially, keep protein intake high to spare muscle.</p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 ml-2 text-sm">
+                        <li>**Calorie Focus:** Reduce simple carbs (sugary drinks, white bread, processed snacks) and processed fats.</li>
+                        <li>**Carb Timing:** Consume complex carbs (rice, oats, sweet potatoes) mainly around your workouts for energy.</li>
+                    </ul>
+                </div>
+
+                <!-- Protein Sources Card -->
+                <div class="workout-card mb-6">
+                    <h3 class="text-xl font-bold mb-3 text-[#03254E]">Protein Sources (No Pork or Beef)</h3>
+                    <p class="text-gray-700 text-sm mb-3">Target: **150-177 grams** daily. This is achievable by prioritizing these sources:</p>
+                    
+                    <ul class="space-y-3 text-gray-700 ml-2 text-sm">
+                        <li>
+                            <p class="font-bold text-[#F15946]">1. Protein Powder (Whey/Casein)</p>
+                            <p>Delivers 20-30g protein for 120-150 calories. Use post-workout (Whey) and potentially before bed (Casein).</p>
+                        </li>
+                        <li>
+                            <p class="font-bold text-[#F15946]">2. Poultry & Fish</p>
+                            <p>Chicken breast, turkey, tuna, salmon (excellent for healthy fats), and cod. Aim for 4-6 oz per main meal.</p>
+                        </li>
+                        <li>
+                            <p class="font-bold text-[#F15946]">3. Dairy</p>
+                            <p>Greek yogurt (0% fat) and cottage cheese. A cup of cottage cheese provides 25-30g protein—perfect snack!</p>
+                        </li>
+                        <li>
+                            <p class="font-bold text-[#F15946]">4. Eggs</p>
+                            <p>Prioritize egg whites (pure protein), mixed with a whole egg for nutrients. A quick, easy protein hit.</p>
+                        </li>
+                        <li>
+                            <p class="font-bold text-[#F15946]">5. Plant-Based</p>
+                            <p>Tofu, edamame, beans, and lentils. Incorporate these into vegetarian meals.</p>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Supplement Card -->
+                <div class="workout-card mb-6">
+                    <h3 class="text-xl font-bold mb-3 text-[#03254E]">Recommended Supplements</h3>
+                    <p class="text-gray-700 text-sm mb-3">Your ideal stack: **Protein Powder + Creatine Monohydrate**.</p>
+
+                    <ul class="space-y-3 text-gray-700 ml-2 text-sm">
+                        <li>
+                            <p class="font-bold text-[#00A6FB]">Creatine (Highly Recommended)</p>
+                            <p>Increases muscle strength and power during lifts. **Dosage: 5 grams per day, consistently (timing doesn't matter).**</p>
+                        </li>
+                        <li>
+                            <p class="font-bold text-[#F15946]">Mass Gainers (AVOID)</p>
+                            <p>These are too high in calories and will work against your goal of reducing body fat to ~13%. Stick to normal protein powder.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Firebase Configuration
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let db;
+        let auth;
+        let userId = null;
+        let isAuthReady = false;
+
+        // 1. Firebase Initialization and Authentication
+        async function initializeFirebase() {
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        document.getElementById('auth-status').textContent = `User ID: ${userId.substring(0, 8)}... (Data Saved)`;
+                        isAuthReady = true;
+                        loadWeights(); 
+                        loadBodyFat();
+                        loadBodyWeight();
+                    } else {
+                        try {
+                            if (initialAuthToken) {
+                                await signInWithCustomToken(auth, initialAuthToken);
+                            } else {
+                                await signInAnonymously(auth);
+                            }
+                        } catch (error) {
+                            console.error("Firebase Auth Error:", error);
+                            document.getElementById('auth-status').textContent = `Authentication failed.`;
+                            userId = crypto.randomUUID(); 
+                            isAuthReady = true;
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error("Firebase Initialization Error:", error);
+            }
+        }
+
+        initializeFirebase();
+
+        // 2. Data Persistence Logic (Saving Weight)
+        window.saveWeight = async function(inputElement) {
+            if (!isAuthReady) {
+                console.warn("Authentication not ready. Cannot save data.");
+                return;
+            }
+
+            const exerciseId = inputElement.getAttribute('data-exercise-id');
+            const weightValue = parseFloat(inputElement.value);
+
+            if (!exerciseId || isNaN(weightValue) || weightValue <= 0) {
+                inputElement.value = '';
+                inputElement.placeholder = 'Max';
+                return;
+            }
+
+            try {
+                // Path: /artifacts/{appId}/users/{userId}/max_lifts/{exerciseId}
+                const docRef = doc(db, `artifacts/${appId}/users/${userId}/max_lifts`, exerciseId);
+                
+                await setDoc(docRef, {
+                    weight: weightValue,
+                    date: new Date().toISOString()
+                }, { merge: true });
+
+                console.log(`Weight saved for ${exerciseId}: ${weightValue} lbs.`);
+                inputElement.placeholder = `${weightValue} lbs`; 
+            } catch (error) {
+                console.error("Error saving weight:", error);
+            }
+        };
+
+        // 3. Data Retrieval Logic (Loading Weights)
+        function loadWeights() {
+            if (!isAuthReady || !db || !userId) {
+                return;
+            }
+            
+            const maxLiftsRef = collection(db, `artifacts/${appId}/users/${userId}/max_lifts`);
+            
+            // Listen for real-time updates for the current user's max lifts
+            onSnapshot(maxLiftsRef, (snapshot) => {
+                const weightInputs = document.querySelectorAll('.weight-input');
+                const maxLifts = {};
+
+                snapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    maxLifts[doc.id] = data.weight;
+                });
+
+                // Update input fields with the last recorded weight
+                weightInputs.forEach(input => {
+                    const exerciseId = input.getAttribute('data-exercise-id');
+                    if (maxLifts[exerciseId] !== undefined) {
+                        // Display the last logged weight as the current placeholder/value
+                        // We use placeholder if the current input value is empty
+                        if (input.value === "") {
+                            input.placeholder = `${maxLifts[exerciseId]} lbs`;
+                        } else {
+                            // If user has already entered a value for the current session, don't overwrite it
+                            input.placeholder = `${maxLifts[exerciseId]} lbs`;
+                        }
+                    }
+                });
+            }, (error) => {
+                console.error("Error loading weights:", error);
+            });
+        }
+
+        // 4. Data Persistence Logic (Saving Body Fat)
+        window.saveBodyFat = async function(inputElement) {
+            if (!isAuthReady) {
+                console.warn("Authentication not ready. Cannot save BF data.");
+                return;
+            }
+
+            const bfValue = parseFloat(inputElement.value);
+
+            if (isNaN(bfValue) || bfValue <= 0) {
+                inputElement.value = '';
+                inputElement.placeholder = 'Latest %';
+                return;
+            }
+
+            try {
+                const timestamp = new Date().toISOString();
+                // Path: /artifacts/{appId}/users/{userId}/body_fat_log/latest
+                const docRef = doc(db, `artifacts/${appId}/users/${userId}/body_fat_log`, 'latest');
+                
+                await setDoc(docRef, {
+                    percentage: bfValue,
+                    date: timestamp
+                }, { merge: true });
+
+                console.log(`Body Fat saved: ${bfValue}%.`);
+                inputElement.placeholder = `${bfValue}%`;
+                document.getElementById('last-bf-date').textContent = `Last Logged: ${new Date(timestamp).toLocaleDateString()}`;
+            } catch (error) {
+                console.error("Error saving body fat:", error);
+            }
+        };
+
+        // 5. Data Retrieval Logic (Loading Body Fat)
+        function loadBodyFat() {
+            if (!isAuthReady || !db || !userId) {
+                return;
+            }
+
+            // Path: /artifacts/{appId}/users/{userId}/body_fat_log/latest
+            const docRef = doc(db, `artifacts/${appId}/users/${userId}/body_fat_log`, 'latest');
+            const bfInput = document.getElementById('bf-input');
+            const dateElement = document.getElementById('last-bf-date');
+
+            onSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    const bf = data.percentage;
+                    const date = new Date(data.date).toLocaleDateString();
+                    
+                    bfInput.placeholder = `${bf}%`;
+                    dateElement.textContent = `Last Logged: ${date}`;
+                }
+            }, (error) => {
+                console.error("Error loading body fat:", error);
+            });
+        }
+        
+        // 6. Data Persistence Logic (Saving Body Weight)
+        window.saveBodyWeight = async function(inputElement) {
+            if (!isAuthReady) {
+                console.warn("Authentication not ready. Cannot save BW data.");
+                return;
+            }
+
+            const bwValue = parseFloat(inputElement.value);
+
+            if (isNaN(bwValue) || bwValue <= 0) {
+                inputElement.value = '';
+                inputElement.placeholder = 'Latest lbs';
+                return;
+            }
+
+            try {
+                const timestamp = new Date().toISOString();
+                // Path: /artifacts/{appId}/users/{userId}/body_weight_log/latest
+                const docRef = doc(db, `artifacts/${appId}/users/${userId}/body_weight_log`, 'latest');
+                
+                await setDoc(docRef, {
+                    weight: bwValue,
+                    date: timestamp
+                }, { merge: true });
+
+                console.log(`Body Weight saved: ${bwValue} lbs.`);
+                inputElement.placeholder = `${bwValue} lbs`;
+                document.getElementById('last-weight-date').textContent = `Last Logged: ${new Date(timestamp).toLocaleDateString()}`;
+            } catch (error) {
+                console.error("Error saving body weight:", error);
+            }
+        };
+
+        // 7. Data Retrieval Logic (Loading Body Weight)
+        function loadBodyWeight() {
+            if (!isAuthReady || !db || !userId) {
+                return;
+            }
+
+            // Path: /artifacts/{appId}/users/{userId}/body_weight_log/latest
+            const docRef = doc(db, `artifacts/${appId}/users/${userId}/body_weight_log`, 'latest');
+            const bwInput = document.getElementById('weight-input');
+            const dateElement = document.getElementById('last-weight-date');
+
+            onSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    const bw = data.weight;
+                    const date = new Date(data.date).toLocaleDateString();
+                    
+                    bwInput.placeholder = `${bw} lbs`;
+                    dateElement.textContent = `Last Logged: ${date}`;
+                }
+            }, (error) => {
+                console.error("Error loading body weight:", error);
+            });
+        }
+
+
+        // 8. Tab Navigation Logic
+        const navButtons = document.querySelectorAll('.nav-button');
+        const dayContents = document.querySelectorAll('.day-content');
+        const warmupSection = document.getElementById('warmup-section');
+
+        function showDay(dayId) {
+            dayContents.forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            navButtons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            const targetDay = document.getElementById(dayId);
+            if (targetDay) {
+                targetDay.classList.remove('hidden');
+            }
+
+            // Handle the navigation button activation, checking both navigation rows
+            const navButtonSelector = document.querySelector(`.nav-button[data-day="${dayId}"]`);
+            if (navButtonSelector) {
+                navButtonSelector.classList.add('active');
+            }
+
+            // Hide warm-up on rest/info days
+            if (dayId === 'goals' || dayId === 'nutrition' || dayId === 'day4' || dayId === 'day7') {
+                warmupSection.classList.add('hidden');
+            } else {
+                warmupSection.classList.remove('hidden');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+             navButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const dayId = e.target.getAttribute('data-day');
+                    showDay(dayId);
+                });
+            });
+            showDay('day1');
+        });
+    </script>
+</body>
+</html>
