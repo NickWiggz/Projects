@@ -1126,12 +1126,18 @@
             }
 
             // 2. Determine next page based on setup status
-            // After clicking 'Enter', we now bypass the landing page entirely.
+            let nextPageId;
             if (hasMinimumProfile) {
-                showDay('goals'); // Proceed to the default content tab
+                nextPageId = 'goals'; // Proceed to the default content tab
             } else {
-                showDay('settings'); // Force them to the Profile/Settings tab
+                nextPageId = 'settings'; // Force them to the Profile/Settings tab
             }
+            
+            // FIX: Explicitly hide the landing page container before showing the next page.
+            document.getElementById('landing-page').classList.add('hidden');
+
+            // 3. Show the determined page
+            showDay(nextPageId);
         }
 
         /**
@@ -1490,7 +1496,7 @@
                 // REDIRECTION LOGIC: If successfully saved minimal profile data AND current screen is settings (first run), take them to the main goals screen.
                 const activeId = document.querySelector('.day-content:not(.hidden)').id;
                 if (hasMinimumProfile && activeId === 'settings') {
-                    showDay('goals'); // Redirect to main app flow
+                    showDay('goals'); // Redirect to main app flow (Goals tab)
                 }
 
             } catch (error) {
@@ -2140,7 +2146,7 @@
             
             const userQuery = `Suggest one high-protein meal for dinner. The user is a ${currentSomatotype} and wants to incorporate the following protein sources: ${proteins}. ${exclusionText} Also include suggested macro percentages for their body type in the response.`;
             
-            const apiKey = "AIzaSyCJyCgsd9tqjHwVA7-OBa9M6v0_d1P1_NY"; 
+            const apiKey = ""; 
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
             const payload = {
@@ -2363,16 +2369,20 @@
             });
             workoutSelectorContainer.classList.add('hidden');
             warmupSection.classList.add('hidden');
-            landingPage.classList.add('hidden'); // Ensure landing page is hidden when navigating to a tab
 
             // 2. Handle Navigation Visibility
             if (dayId === 'landing-page' || (dayId === 'settings' && !hasMinimumProfile)) {
                 hideMainNavigation();
                 if(dayId === 'landing-page') {
                     landingPage.classList.remove('hidden'); 
+                } else {
+                    // When navigating to settings for mandatory setup, ensure landing page is explicitly hidden
+                    landingPage.classList.add('hidden');
                 }
             } else {
                 showMainNavigation();
+                // Ensure landing page is always hidden when main navigation is visible
+                landingPage.classList.add('hidden');
             }
 
             // 3. Update active tab/dropdown state
