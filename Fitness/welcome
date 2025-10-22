@@ -1,12 +1,198 @@
-<!-- LANDING PAGE - Shown first or if skipStartup is false and profile is complete -->
-<div id="landing-page" class="day-content hidden">
-    <h2 class="text-4xl font-black text-[#03254E] mb-6">Welcome!</h2>
-    <p class="text-lg text-gray-700 mb-10">Start your fitness journey or continue your progress.</p>
-    <button onclick="enterTracker()" class="w-2/3 py-4 bg-[#01B492] text-white text-xl font-bold rounded-lg shadow-lg hover:bg-[#009e7d] transition duration-150 transform hover:scale-105">
-        ENTER TRACKER
-    </button>
-    <div class="mt-8 pt-4 border-t w-2/3 flex justify-center items-center space-x-2">
-        <input type="checkbox" id="skip-landing-checkbox" class="text-[#00A6FB] focus:ring-[#00A6FB]">
-        <label for="skip-landing-checkbox" class="text-sm font-medium text-gray-600">Bypass this page next time</label>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to the Workout Tracker</title>
+    <!-- Load Tailwind CSS for utility classes -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* Shared Styles for consistency */
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            background-color: #F0F2F5;
+        }
+        /* New style for landing page container */
+        #landing-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh; 
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="container mx-auto max-w-lg p-3">
+
+        <h1 class="text-3xl font-black text-center text-[#03254E] mt-4 mb-4">DAILY WORKOUT TRACKER</h1>
+        <p id="auth-status" class="text-xs text-center text-gray-500 mb-6">Connecting to user data...</p>
+
+        <!-- LANDING PAGE CONTENT -->
+        <div id="landing-page">
+            <h2 class="text-4xl font-black text-[#03254E] mb-6">Welcome!</h2>
+            <p class="text-lg text-gray-700 mb-10">Start your fitness journey or continue your progress.</p>
+            <button onclick="enterTracker()" class="w-2/3 py-4 bg-[#01B492] text-white text-xl font-bold rounded-lg shadow-lg hover:bg-[#009e7d] transition duration-150 transform hover:scale-105">
+                ENTER TRACKER
+            </button>
+            <div class="mt-8 pt-4 border-t w-2/3 flex justify-center items-center space-x-2">
+                <input type="checkbox" id="skip-landing-checkbox" class="text-[#00A6FB] focus:ring-[#00A6FB]">
+                <label for="skip-landing-checkbox" class="text-sm font-medium text-gray-600">Bypass this page next time</label>
+            </div>
+        </div>
     </div>
-</div>
+
+    <!-- JAVASCRIPT LOGIC (Self-Contained) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- GLOBAL CONFIGURATION (MANDATORY) ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let db;
+        let auth;
+        let userId = null;
+        let isAuthReady = false;
+        let hasMinimumProfile = false;
+        let skipStartup = false;
+        
+        // --- FIREBASE UTILITIES ---
+        const getProfileDocRef = (db, appId, userId) => doc(db, `artifacts/${appId}/users/${userId}/user_profile/details`);
+        const getStartupDocRef = (db, appId, userId) => doc(db, `artifacts/${appId}/users/${userId}/app_settings/startup`);
+
+        /** Checks if required profile fields are present. */
+        function checkMinimalProfile(profile) {
+             return (
+                 profile && 
+                 profile.age && 
+                 profile.sex && 
+                 profile.initialWeight && 
+                 profile.initialBf
+             );
+        }
+
+        // --- AUTHENTICATION & INITIALIZATION ---
+        async function initializeFirebase() {
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+            
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        document.getElementById('auth-status').textContent = `User ID: ${userId.substring(0, 8)}... (Data Saved)`;
+                        isAuthReady = true;
+                        
+                        // Load critical profile data to check skip/setup status
+                        await loadProfileAndStartupSettings(); 
+
+                        // Handle initial routing immediately after loading settings
+                        if (skipStartup && hasMinimumProfile) {
+                            // If user chose to bypass AND profile is complete, go straight to index
+                            window.location.href = 'index.html?tab=goals';
+                        } else if (!hasMinimumProfile) {
+                            // If profile is incomplete, force redirect to setup page
+                            window.location.href = 'profile.html';
+                        } else {
+                            // Profile is complete but skipStartup is false, show the landing page content
+                            document.getElementById('landing-page').classList.remove('hidden');
+                        }
+                        
+                    } else {
+                        // Anonymous/Token Sign-in if necessary (handles initial load)
+                        try {
+                            if (initialAuthToken) {
+                                await signInWithCustomToken(auth, initialAuthToken);
+                            } else {
+                                await signInAnonymously(auth);
+                            }
+                        } catch (error) {
+                            console.error("Firebase Auth Error:", error);
+                            document.getElementById('auth-status').textContent = `Authentication failed.`;
+                            userId = crypto.randomUUID(); 
+                            isAuthReady = true;
+                            // Still attempt to load settings even if authentication failed (might rely on local fallbacks)
+                            await loadProfileAndStartupSettings();
+                            document.getElementById('landing-page').classList.remove('hidden'); // Show if auth fails
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error("Firebase Initialization Error:", error);
+            }
+        }
+
+        // Consolidated load function to pull data needed for initial routing decisions
+        async function loadProfileAndStartupSettings() {
+             if (!isAuthReady || !db || !userId) return;
+
+            // Load Profile Data
+            const profileSnap = await getDoc(getProfileDocRef(db, appId, userId));
+            const profile = profileSnap.exists() ? profileSnap.data() : {};
+            hasMinimumProfile = checkMinimalProfile(profile);
+
+            // Load Startup Setting
+            const startupSnap = await getDoc(getStartupDocRef(db, appId, userId));
+            if (startupSnap.exists()) {
+                skipStartup = startupSnap.data().skipLanding || false;
+            }
+
+            // Sync the checkbox state on the landing page
+            document.getElementById('skip-landing-checkbox').checked = skipStartup;
+        }
+
+
+        // --- USER ACTIONS ---
+
+        /** Handles the button click to enter the tracker. */
+        window.enterTracker = async function() {
+            // 1. Check & Save Bypass State from the checkbox on this page
+            const landingSkipCheckbox = document.getElementById('skip-landing-checkbox');
+            if (landingSkipCheckbox.checked !== skipStartup) {
+                 await saveStartupSetting(landingSkipCheckbox.checked); 
+                 skipStartup = landingSkipCheckbox.checked; // Update current state
+            }
+
+            // 2. Determine destination
+            if (hasMinimumProfile) {
+                // Profile is complete, go to main app
+                window.location.href = 'index.html?tab=goals';
+            } else {
+                // Profile is incomplete, force redirect to profile setup
+                window.location.href = 'profile.html';
+            }
+        }
+        
+        /** Saves the bypass setting. */
+        window.saveStartupSetting = async function(shouldSkip) {
+             if (!isAuthReady) return;
+             
+             try {
+                 await setDoc(getStartupDocRef(db, appId, userId), {
+                     skipLanding: shouldSkip,
+                     date: new Date().toISOString()
+                 }, { merge: true });
+
+                 console.log(`Startup skip setting saved: ${shouldSkip}`);
+
+             } catch (error) {
+                 console.error("Error saving startup setting:", error);
+             }
+        }
+
+
+        // Start the initialization process
+        initializeFirebase();
+
+    </script>
+</body>
+</html>
