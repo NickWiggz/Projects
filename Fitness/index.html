@@ -162,7 +162,7 @@
         <h1 class="text-3xl font-black text-center text-[#03254E] mt-4 mb-4">DAILY WORKOUT TRACKER</h1>
         <p id="auth-status" class="text-xs text-center text-gray-500 mb-2"></p>
         
-        <!-- LANDING PAGE - Shown first or if skipStartup is false -->
+        <!-- LANDING PAGE - Shown first or if skipStartup is false and profile is complete -->
         <div id="landing-page" class="day-content hidden">
             <h2 class="text-4xl font-black text-[#03254E] mb-6">Welcome!</h2>
             <p class="text-lg text-gray-700 mb-10">Start your fitness journey or continue your progress.</p>
@@ -178,7 +178,7 @@
         <!-- MAIN NAVIGATION CONTAINER - Hidden/Shown by JS -->
         <div id="main-navigation-container" class="hidden">
             
-            <!-- TOP: Workout Day Selector (Remains visible when any day or the 'workout' selector page is active) -->
+            <!-- TOP: Workout Day Selector (Only visible when a specific day or 'workout' selector page is active) -->
             <div id="workout-selector-container" class="flex flex-col gap-2 mb-4 hidden">
                 <select id="workout-day-selector" class="w-full p-3 bg-white border border-gray-300 rounded-lg shadow-sm font-bold text-[#03254E] focus:ring-[#00A6FB] focus:border-[#00A6FB]">
                     <option value="select" disabled selected>— Select Workout —</option>
@@ -196,11 +196,9 @@
             <div id="bottom-tabs" class="fixed bottom-0 left-0 right-0 p-3 bg-white shadow-2xl z-20">
                 <div class="flex justify-between gap-1 p-1 bg-gray-100 rounded-lg shadow-inner max-w-lg mx-auto">
                     <button class="nav-button" data-day="goals">Goals & Track</button>
-                    <!-- NEW WORKOUT TAB -->
                     <button class="nav-button" data-day="workout">Workout</button>
                     <button class="nav-button" data-day="nutrition">Nutrition</button>
                     <button class="nav-button" data-day="lift-history">Lift History</button>
-                    <!-- Renamed from Settings to Profile -->
                     <button class="nav-button" data-day="settings">Profile</button>
                 </div>
             </div>
@@ -219,7 +217,7 @@
                 </div>
             </div>
 
-            <!-- NEW WORKOUT SELECTOR PAGE -->
+            <!-- WORKOUT SELECTOR PAGE -->
             <div id="workout" class="day-content hidden">
                 <h2 class="text-2xl font-extrabold mb-4 text-[#03254E]">Select Your Session</h2>
                 <div class="workout-card space-y-4">
@@ -227,7 +225,6 @@
                         Select a workout to begin!
                     </p>
                     <div id="quick-links" class="grid grid-cols-2 gap-4">
-                        <!-- Quick links will be added via JS -->
                         <div class="text-center text-gray-500">Loading options...</div>
                     </div>
                 </div>
@@ -749,6 +746,7 @@
                             <input type="number" id="weight-input" min="100" max="300" step="0.5" placeholder="Latest lbs" class="weight-input text-base w-24">
                             <span class="text-gray-500">lbs</span>
                         </div>
+                        
                     </div>
 
                     <button id="weekly-log-button" class="w-full mt-4 py-3 bg-[#00A6FB] text-white font-bold rounded-lg shadow-md hover:bg-[#0095E0] transition duration-150">Log This Week's Data</button>
@@ -867,8 +865,8 @@
                     </div>
 
                     <div class="mt-4 border-t pt-4">
-                       <p class="font-bold text-[#F15946] text-sm mb-1">Mass Gainers (AVOID)</p>
-                       <p class="text-gray-700 text-sm">These are too high in calories and will work against your goal of reducing body fat to ~13%. Stick to normal protein powder.</p>
+                        <p class="font-bold text-[#F15946] text-sm mb-1">Mass Gainers (AVOID)</p>
+                        <p class="text-gray-700 text-sm">These are too high in calories and will work against your goal of reducing body fat to ~13%. Stick to normal protein powder.</p>
                     </div>
                 </div>
             </div>
@@ -1055,10 +1053,9 @@
                         document.getElementById('auth-status').textContent = `User ID: ${userId.substring(0, 8)}... (Data Saved)`;
                         isAuthReady = true;
                         
-                        // Wait for the minimal profile data to load before deciding where to navigate
-                        await loadStartupSettings(); // Load the 'skip' setting first
-                        await loadProfileSettings(); // Load profile details and checks for hasMinimumProfile
-
+                        // Load critical data first
+                        await loadStartupSettings(); 
+                        await loadProfileSettings(); 
                         loadWeights(); 
                         loadProteinSources();
                         loadExclusions(); 
@@ -1067,12 +1064,15 @@
                         loadLiftHistory(); 
 
                         // NAVIGATION LOGIC: Decide initial screen
-                        if (skipStartup || hasMinimumProfile) {
-                            showDay('landing-page'); // Show the landing page 
+                        if (skipStartup) {
+                            // Bypass is set, go straight into the main content
+                            showDay('goals'); 
+                        } else if (hasMinimumProfile) {
+                            // Bypass is not set, but profile is complete, show landing page
+                            showDay('landing-page');
                         } else {
                             // First run and no minimal data, force to Profile/Settings
-                            showDay('settings'); 
-                            // Add a visual cue to save settings
+                            showDay('settings');
                             document.getElementById('settings').querySelector('h2').textContent = '⚠️ First-Time Setup: Please Complete & Save Profile';
                         }
 
@@ -1126,6 +1126,7 @@
             }
 
             // 2. Determine next page based on setup status
+            // After clicking 'Enter', we now bypass the landing page entirely.
             if (hasMinimumProfile) {
                 showDay('goals'); // Proceed to the default content tab
             } else {
@@ -1778,7 +1779,6 @@
                     });
                     selector.hasListener = true;
                 }
-
                 // Render Chart on history load (reverse is necessary for chronological display on chart)
                 renderLiftChart(liftSessionsHistory.slice().reverse()); 
                 loadSkipLogs(); 
@@ -2140,7 +2140,7 @@
             
             const userQuery = `Suggest one high-protein meal for dinner. The user is a ${currentSomatotype} and wants to incorporate the following protein sources: ${proteins}. ${exclusionText} Also include suggested macro percentages for their body type in the response.`;
             
-            const apiKey = ""; 
+            const apiKey = "AIzaSyCJyCgsd9tqjHwVA7-OBa9M6v0_d1P1_NY"; 
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
             const payload = {
@@ -2160,7 +2160,7 @@
                     });
 
                     if (!response.ok) {
-                       throw new Error(`HTTP error! status: ${response.status}`);
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
 
                     const result = await response.json();
@@ -2168,9 +2168,11 @@
                     break; 
 
                 } catch (error) {
-                    console.error(`Attempt ${i + 1} failed:`, error);
+                    // Do not log retries as errors in the console
                     if (i < maxRetries - 1) {
                         await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000)); // Exponential backoff
+                    } else {
+                         console.error(`Gemini API call failed after ${maxRetries} attempts:`, error);
                     }
                 }
             }
@@ -2232,38 +2234,62 @@
                     }
                 }
             };
+            
+            const maxRetries = 3;
+            let generatedJsonText = null;
 
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    generatedJsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                    break;
+
+                } catch (error) {
+                    if (i < maxRetries - 1) {
+                         await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+                    } else {
+                         console.error(`Gemini API BF% call failed after ${maxRetries} attempts:`, error);
+                    }
+                }
+            }
+            
             try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-            
-                const result = await response.json();
-                const jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
-            
-                const parsedJson = JSON.parse(jsonText);
-            
-                const suggestedBF = parseFloat(parsedJson.suggested_bf_percentage).toFixed(1);
-                const rationale = parsedJson.rationale;
-            
-                if (suggestedBF && !isNaN(suggestedBF)) {
-                    // Update the Target BF input in the Settings tab
-                    document.getElementById('profile-target-bf').value = suggestedBF;
+                if (generatedJsonText) {
+                    const parsedJson = JSON.parse(generatedJsonText);
                     
-                    // Call the save function to persist the change in the profile document
-                    await saveProfileSettings(); 
+                    const suggestedBF = parseFloat(parsedJson.suggested_bf_percentage).toFixed(1);
+                    const rationale = parsedJson.rationale;
                     
-                    outputEl.textContent = `Suggested Target: ${suggestedBF}%\n\nRationale:\n${rationale}`;
-                    outputEl.classList.remove('hidden');
+                    if (suggestedBF && !isNaN(suggestedBF)) {
+                        // Update the Target BF input in the Settings tab
+                        document.getElementById('profile-target-bf').value = suggestedBF;
+                        
+                        // Call the save function to persist the change in the profile document
+                        await saveProfileSettings(); 
+                        
+                        outputEl.textContent = `Suggested Target: ${suggestedBF}%\n\nRationale:\n${rationale}`;
+                        outputEl.classList.remove('hidden');
+                    } else {
+                        outputEl.textContent = "Error: Could not calculate a valid Body Fat percentage. Try again or check the console.";
+                        outputEl.classList.remove('hidden');
+                    }
                 } else {
-                    outputEl.textContent = "Error: Could not calculate a valid Body Fat percentage. Try again or check the console.";
+                    outputEl.textContent = "Error: No data received from the BF% calculator.";
                     outputEl.classList.remove('hidden');
                 }
 
             } catch (error) {
-                console.error("Gemini API/JSON Error:", error);
+                console.error("Gemini API/JSON Parsing Error:", error);
                 outputEl.textContent = `A technical error occurred during calculation. (Error: ${error.message}). Please try again.`;
                 outputEl.classList.remove('hidden');
             } finally {
@@ -2337,11 +2363,14 @@
             });
             workoutSelectorContainer.classList.add('hidden');
             warmupSection.classList.add('hidden');
+            landingPage.classList.add('hidden'); // Ensure landing page is hidden when navigating to a tab
 
             // 2. Handle Navigation Visibility
-            if (dayId === 'landing-page') {
+            if (dayId === 'landing-page' || (dayId === 'settings' && !hasMinimumProfile)) {
                 hideMainNavigation();
-                landingPage.classList.remove('hidden'); 
+                if(dayId === 'landing-page') {
+                    landingPage.classList.remove('hidden'); 
+                }
             } else {
                 showMainNavigation();
             }
