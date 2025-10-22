@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile & Settings</title>
+    <!-- Load Tailwind CSS for utility classes -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* Shared Styles for consistency */
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            background-color: #F0F2F5;
+        }
+        .workout-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        /* Styling for settings inputs to take up more space */
+        .setting-input-field {
+            padding: 0.5rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 0.5rem;
+            text-align: center;
+            font-size: 1rem;
+            width: 65%;
+            flex-grow: 1;
+        }
+        .setting-select-field {
+            padding: 0.5rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 0.5rem;
+            text-align: center;
+            font-size: 1rem;
+            width: 65%;
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="container mx-auto max-w-lg p-3 pb-16">
+        <h1 class="text-3xl font-black text-center text-[#03254E] mt-4 mb-4">USER PROFILE</h1>
+        <p id="auth-status" class="text-xs text-center text-gray-500 mb-6">Connecting to data...</p>
+
+        <!-- PROFILE CONTENT -->
+        <div id="settings" class="day-content">
+            <h2 class="text-2xl font-extrabold mb-4 text-[#03254E]">👤 Profile & Initial Setup</h2>
+        
+            <div class="workout-card mb-6">
+                <h3 class="text-xl font-bold mb-3 text-[#00A6FB]">Base Metrics & Goals</h3>
+                
+                <div class="flex justify-between items-center space-x-2 p-3 border-2 border-gray-200 rounded-lg mb-3">
+                    <label for="profile-sex" class="font-bold text-gray-700">Sex:</label>
+                    <select id="profile-sex" class="setting-select-field">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </div>
+
+                <div class="flex justify-between items-center space-x-2 p-3 border-2 border-gray-200 rounded-lg mb-3">
+                    <label for="profile-age" class="font-bold text-gray-700">Age:</label>
+                    <input type="number" id="profile-age" min="16" max="100" placeholder="30" class="setting-input-field">
+                </div>
+                
+                <div class="p-3 border-2 border-gray-200 rounded-lg mb-3">
+                    <div class="flex justify-between items-center space-x-2 mb-2">
+                         <label for="profile-somatotype" class="font-bold text-gray-700">Body Type:</label>
+                         <select id="profile-somatotype" class="setting-select-field">
+                             <option value="mesomorph">Mesomorph</option>
+                             <option value="ectomorph">Ectomorph</option>
+                             <option value="endomorph">Endomorph</option>
+                         </select>
+                    </div>
+                    <div class="text-xs text-gray-500 space-y-1 mt-1 ml-1">
+                        <p><strong>Mesomorph:</strong> Naturally muscular, athletic build.</p>
+                        <p><strong>Ectomorph:</strong> Lean, slim build; struggles to gain weight/mass.</p>
+                        <p><strong>Endomorph:</strong> Broader, tends to store fat easily.</p>
+                    </div>
+                </div>
+
+                <hr class="my-4 border-gray-200">
+                
+                <div class="flex justify-between items-center space-x-2 p-3 border-2 border-gray-200 rounded-lg mb-3">
+                    <label for="profile-starting-weight" class="font-bold text-gray-700">Starting Weight (lbs):</label>
+                    <input type="number" id="profile-starting-weight" min="100" max="300" step="0.5" placeholder="177.0" class="setting-input-field">
+                </div>
+
+                <div class="flex justify-between items-center space-x-2 p-3 border-2 border-gray-200 rounded-lg mb-3">
+                    <label for="profile-starting-bf" class="font-bold text-gray-700">Starting BF (%):</label>
+                    <input type="number" id="profile-starting-bf" min="5" max="50" step="0.1" placeholder="21.0" class="setting-input-field">
+                </div>
+
+                <hr class="my-4 border-gray-200">
+                
+                <div class="flex justify-between items-center space-x-2 p-3 border-2 border-gray-200 rounded-lg mb-3">
+                    <label for="profile-target-weight" class="font-bold text-gray-700">Target Weight (lbs):</label>
+                    <input type="text" id="profile-target-weight" placeholder="165-170" class="setting-input-field">
+                </div>
+
+                <div class="flex justify-between items-center space-x-2 p-3 border-2 border-gray-200 rounded-lg">
+                    <label for="profile-target-bf" class="font-bold text-gray-700">Target BF (%):</label>
+                    <input type="number" id="profile-target-bf" min="5" max="30" step="0.1" placeholder="13.0" class="setting-input-field">
+                </div>
+
+                <button onclick="saveProfileSettings()" class="w-full mt-4 py-3 bg-[#03254E] text-white font-bold rounded-lg shadow-md hover:bg-[#001D38] transition duration-150">Save Profile & Goals</button>
+            </div>
+        
+            <div class="workout-card mb-6">
+                <h3 class="text-xl font-bold mb-3 text-[#03254E]">App Startup Settings</h3>
+                <div class="flex items-center space-x-3 p-3 border-2 border-gray-200 rounded-lg">
+                    <input type="checkbox" id="skip-startup-profile" class="text-[#00A6FB] focus:ring-[#00A6FB]" onclick="saveStartupSetting(this.checked)">
+                    <label for="skip-startup-profile" class="text-base font-bold text-gray-700 flex-grow text-left">Skip Profile on First Run</label>
+                </div>
+                <p class="text-xs text-gray-500 mt-2 ml-1">If unchecked, the app will *always* open to the Profile screen until all basic profile data is entered.</p>
+            </div>
+        
+            <div class="workout-card mb-6">
+                <h3 class="text-xl font-bold mb-3 text-[#F15946]">🎯 Target BF% Calculator (AI Powered)</h3>
+                <p class="text-sm text-gray-700 mb-4">Uses your saved Profile (Age, Sex, Body Type) and Target Weight goal to calculate an optimal BF%.</p>
+                <button onclick="suggestTargetBF()" id="bf-suggest-button" class="w-full py-3 bg-[#F15946] text-white font-bold rounded-lg shadow-md hover:bg-[#E04834] transition duration-150">Suggest Healthy Target BF%</button>
+                <p id="bf-suggest-status" class="text-sm text-center text-gray-500 mt-2 hidden">Calculating...</p>
+                <!-- API output displayed here -->
+                <div id="bf-suggest-output" class="mt-4 p-3 bg-gray-50 rounded-lg text-sm hidden"></div>
+            </div>
+        </div>
+        <!-- Link back to the main app area (Index/Goals) for easy navigation -->
+        <div class="mt-8 text-center">
+            <a href="index.html" class="text-[#00A6FB] font-bold hover:text-[#007AC1]">← Back to Goals & Tracker</a>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC (Self-Contained) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- GLOBAL CONFIGURATION (MANDATORY) ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let db;
+        let auth;
+        let userId = null;
+        let isAuthReady = false;
+        
+        // Mock/Minimal state needed for loading data placeholders
+        let bodyWeightHistory = []; // Used to determine current weight metric
+        let bodyFatHistory = [];   // Used to determine current BF metric
+        
+        // Default Target Goals for initial display/fallbacks
+        const defaultTargetGoals = {
+            targetWeight: "165-170",
+            targetBf: "13.0",
+        };
+        
+        // --- FIREBASE UTILITIES ---
+        const getProfileDocRef = (db, appId, userId) => doc(db, `artifacts/${appId}/users/${userId}/user_profile/details`);
+        const getStartupDocRef = (db, appId, userId) => doc(db, `artifacts/${appId}/users/${userId}/app_settings/startup`);
+        const getBodyMetricsCollectionRef = (db, appId, userId, metric) => collection(db, `artifacts/${appId}/users/${userId}/${metric}`);
+
+        /** Checks if required profile fields are present for app use. */
+        function checkMinimalProfile(profile) {
+             return (
+                 profile && 
+                 profile.age && 
+                 profile.sex && 
+                 profile.initialWeight && 
+                 profile.initialBf
+             );
+        }
+        
+        /** Redirects the user to the main app page (index/goals) if minimal profile data exists. */
+        function redirectToMainApp(isProfileComplete) {
+            if (isProfileComplete) {
+                // IMPORTANT: This navigation logic assumes your main app page is 'index.html'
+                // Replace 'index.html' with the correct filename if different.
+                window.location.href = 'index.html?tab=goals';
+            }
+        }
+
+        // --- AUTHENTICATION & INITIALIZATION ---
+        async function initializeFirebase() {
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+            
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        document.getElementById('auth-status').textContent = `User ID: ${userId.substring(0, 8)}... (Data Saved)`;
+                        isAuthReady = true;
+                        
+                        await loadProfileSettings(); 
+                        
+                    } else {
+                        try {
+                            if (initialAuthToken) {
+                                await signInWithCustomToken(auth, initialAuthToken);
+                            } else {
+                                await signInAnonymously(auth);
+                            }
+                        } catch (error) {
+                            console.error("Firebase Auth Error:", error);
+                            document.getElementById('auth-status').textContent = `Authentication failed.`;
+                            userId = crypto.randomUUID(); 
+                            isAuthReady = true;
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error("Firebase Initialization Error:", error);
+            }
+        }
+
+        // --- PROFILE SETTINGS AND DATA LOADING ---
+        
+        // Mocks the functionality needed for the save/load functions in this page only
+        async function loadProfileSettings() {
+            if (!isAuthReady || !db || !userId) return;
+
+            try {
+                const docRef = getProfileDocRef(db, appId, userId);
+                const docSnap = await getDoc(docRef);
+                const profile = docSnap.exists() ? docSnap.data() : {};
+                
+                // Fetch latest body metrics for accurate placeholders/defaults
+                // NOTE: This assumes you have a collection named 'body_weight_log' and 'body_fat_log'
+                // As this is the profile page, we use the initial/saved values as fallbacks.
+                const initialWeight = profile.initialWeight || '177.0';
+                const initialBf = profile.initialBf || '21.0';
+                const targetWeight = profile.targetWeightGoal || defaultTargetGoals.targetWeight;
+                const targetBf = profile.targetBfGoal || defaultTargetGoals.targetBf;
+                const somatotype = profile.somatotype || 'mesomorph';
+
+                // Update Inputs/Placeholders
+                document.getElementById('profile-sex').value = profile.sex || 'male';
+                document.getElementById('profile-age').placeholder = profile.age || '30';
+                document.getElementById('profile-age').value = profile.age || '';
+                document.getElementById('profile-somatotype').value = somatotype;
+
+                document.getElementById('profile-starting-weight').placeholder = initialWeight;
+                document.getElementById('profile-starting-weight').value = ''; // Keep field clear if user previously saved
+                document.getElementById('profile-starting-bf').placeholder = initialBf;
+                document.getElementById('profile-starting-bf').value = '';
+
+                document.getElementById('profile-target-weight').placeholder = targetWeight;
+                document.getElementById('profile-target-weight').value = targetWeight;
+                document.getElementById('profile-target-bf').placeholder = targetBf;
+                document.getElementById('profile-target-bf').value = targetBf;
+
+                // Load startup setting for checkbox sync
+                await loadStartupSettingCheckbox();
+
+            } catch (error) {
+                console.error("Error loading profile settings/goals:", error);
+            }
+        }
+
+        window.saveProfileSettings = async function() {
+            if (!isAuthReady) {
+                console.error("Authentication not ready. Cannot save settings.");
+                return;
+            }
+
+            const sex = document.getElementById('profile-sex').value;
+            const ageInput = document.getElementById('profile-age');
+            const somatotype = document.getElementById('profile-somatotype').value;
+            const startingWeightInput = document.getElementById('profile-starting-weight');
+            const startingBfInput = document.getElementById('profile-starting-bf');
+            const targetWeightInput = document.getElementById('profile-target-weight');
+            const targetBfInput = document.getElementById('profile-target-bf');
+
+            // Read values, falling back to placeholders (which hold the last saved data)
+            const age = parseInt(ageInput.value || ageInput.placeholder);
+            const initialWeight = parseFloat(startingWeightInput.value || startingWeightInput.placeholder);
+            const initialBf = parseFloat(startingBfInput.value || startingBfInput.placeholder);
+            const targetWeightGoal = targetWeightInput.value || targetWeightInput.placeholder;
+            const targetBfGoal = parseFloat(targetBfInput.value || targetBfInput.placeholder);
+
+
+            if (isNaN(age) || isNaN(initialWeight) || isNaN(initialBf) || isNaN(targetBfGoal) || age <= 0 || initialWeight <= 0 || initialBf <= 0 || targetBfGoal <= 0 || !targetWeightGoal) {
+                console.error("Please enter valid positive numbers for all fields (Age, Weights, and BF%).");
+                return;
+            }
+
+            try {
+                const docRef = getProfileDocRef(db, appId, userId);
+
+                await setDoc(docRef, {
+                    sex: sex,
+                    age: age,
+                    somatotype: somatotype,
+                    initialWeight: initialWeight.toFixed(1),
+                    initialBf: initialBf.toFixed(1),
+                    targetWeightGoal: targetWeightGoal, 
+                    targetBfGoal: targetBfGoal.toFixed(1),
+                    date: new Date().toISOString()
+                }, {
+                    merge: true
+                });
+
+                // Check for minimal profile data again after saving
+                const profile = { age, sex, initialWeight, initialBf };
+                const isComplete = checkMinimalProfile(profile);
+
+                console.log("Profile and Goals saved successfully! Redirecting...");
+
+                // Clear temporary inputs for a clean look after save
+                startingWeightInput.value = '';
+                startingBfInput.value = '';
+
+                // Redirect to main app if setup is complete
+                if (isComplete) {
+                    redirectToMainApp(true);
+                }
+
+            } catch (error) {
+                console.error("Error saving profile settings/goals:", error);
+            }
+        }
+        
+        // --- STARTUP SETTING LOGIC ---
+        
+        async function loadStartupSettingCheckbox() {
+             if (!isAuthReady || !db || !userId) return;
+
+             try {
+                 const docSnap = await getDoc(getStartupDocRef(db, appId, userId));
+                 let skipStartupSetting = false;
+                 if (docSnap.exists()) {
+                     skipStartupSetting = docSnap.data().skipLanding || false;
+                 }
+                 document.getElementById('skip-startup-profile').checked = skipStartupSetting;
+
+             } catch (error) {
+                 console.error("Error loading startup settings checkbox:", error);
+             }
+        }
+
+        window.saveStartupSetting = async function(shouldSkip) {
+             if (!isAuthReady) return;
+             
+             try {
+                 await setDoc(getStartupDocRef(db, appId, userId), {
+                     skipLanding: shouldSkip,
+                     date: new Date().toISOString()
+                 }, { merge: true });
+
+                 console.log(`Startup skip setting saved: ${shouldSkip}`);
+
+             } catch (error) {
+                 console.error("Error saving startup setting:", error);
+             }
+        }
+        
+        // --- GEMINI API CALLS ---
+
+        // GEMINI API FUNCTION FOR BF% SUGGESTION
+        window.suggestTargetBF = async function() {
+            const button = document.getElementById('bf-suggest-button');
+            const statusEl = document.getElementById('bf-suggest-status');
+            const outputEl = document.getElementById('bf-suggest-output');
+
+            button.disabled = true;
+            statusEl.classList.remove('hidden');
+            outputEl.classList.add('hidden');
+            outputEl.textContent = '';
+            statusEl.textContent = 'Calculating optimal BF% based on your profile...';
+
+            const profileRef = getProfileDocRef(db, appId, userId);
+            const profileSnap = await getDoc(profileRef);
+            const profile = profileSnap.exists() ? profileSnap.data() : null;
+            
+            // Validate required profile data
+            if (!profile || !profile.age || !profile.sex || !profile.somatotype || !profile.targetWeightGoal) {
+                console.error("Missing critical profile data for calculation.");
+                alert("Please ensure your Age, Sex, Body Type, and Target Weight are saved before calculating.");
+                button.disabled = false;
+                statusEl.classList.add('hidden');
+                return;
+            }
+
+            const { age, sex, somatotype, targetWeightGoal } = profile;
+            
+            const systemPrompt = `You are a certified sports nutritionist. Your task is to suggest a healthy and ambitious, yet achievable, body fat percentage (BF%) target for a client aiming for lean muscle mass. The suggestion must be a single numerical value (no symbols or ranges) in the OBJECT property 'suggested_bf_percentage'. Use the rationale property to briefly explain why this is a good target range for their sex, age group, and somatotype based on fitness standards.`;
+            
+            const userQuery = `My sex is ${sex}, my age is ${age}, and my body type is ${somatotype}. My goal is to achieve a lean, toned look while weighing around ${targetWeightGoal} lbs. Based on health and fitness standards, what single, numerical Body Fat Percentage (e.g., 12.5) should I aim for?`;
+
+            // NOTE FOR CAPACITOR: This MUST be replaced with your actual Gemini API Key for production deployment.
+            const apiKey = ""; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            suggested_bf_percentage: { type: "NUMBER", description: "A single numerical value representing the suggested target body fat percentage." },
+                            rationale: { type: "STRING", description: "A brief explanation of the suggestion based on health and fitness standards." }
+                        }
+                    }
+                }
+            };
+            
+            const maxRetries = 3;
+            let generatedJsonText = null;
+
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    generatedJsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                    break;
+
+                } catch (error) {
+                    if (i < maxRetries - 1) {
+                         await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+                    } else {
+                         console.error(`Gemini API BF% call failed after ${maxRetries} attempts:`, error);
+                         outputEl.textContent = `Error calculating BF%. Check your API key or network connection. (Details: ${error.message})`;
+                         outputEl.classList.remove('hidden');
+                    }
+                }
+            }
+            
+            try {
+                if (generatedJsonText) {
+                    const parsedJson = JSON.parse(generatedJsonText);
+                    
+                    const suggestedBF = parseFloat(parsedJson.suggested_bf_percentage).toFixed(1);
+                    const rationale = parsedJson.rationale;
+                    
+                    if (suggestedBF && !isNaN(suggestedBF)) {
+                        // Update the Target BF input
+                        document.getElementById('profile-target-bf').value = suggestedBF;
+                        
+                        // Persist the change
+                        await saveProfileSettings(); 
+                        
+                        outputEl.textContent = `Suggested Target: ${suggestedBF}%\n\nRationale:\n${rationale}`;
+                        outputEl.classList.remove('hidden');
+                    } else {
+                        outputEl.textContent = "Error: Could not calculate a valid Body Fat percentage. The AI response was unclear.";
+                        outputEl.classList.remove('hidden');
+                    }
+                } else {
+                    outputEl.textContent = "Error: No structured data received from the BF% calculator.";
+                    outputEl.classList.remove('hidden');
+                }
+
+            } catch (error) {
+                console.error("Gemini API/JSON Parsing Error:", error);
+                outputEl.textContent = `A technical error occurred during calculation. (Error: ${error.message}). Please try again.`;
+                outputEl.classList.remove('hidden');
+            } finally {
+                button.disabled = false;
+                statusEl.classList.add('hidden');
+            }
+        };
+
+
+        // Initialize the Profile page on load
+        initializeFirebase();
+
+    </script>
+</body>
+</html>
