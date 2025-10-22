@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gym Dashboard: Lean Mass & Toning</title>
+    <title>Daily Workout Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         body {
@@ -87,42 +88,129 @@
             background-repeat: no-repeat;
             background-position: right 0.7rem center;
             background-size: 1.5em;
+            font-size: 1rem;
+            text-align: center; /* Centering the selected text */
+        }
+        /* Styling for settings inputs to take up more space */
+        .setting-input-field {
+            padding: 0.5rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 0.5rem;
+            text-align: center;
+            font-size: 1rem;
+            width: 65%; /* Increased width for better display */
+            flex-grow: 1;
+        }
+        .setting-select-field {
+            padding: 0.5rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 0.5rem;
+            text-align: center;
+            font-size: 1rem;
+            width: 65%; /* Increased width for better display */
+            flex-grow: 1;
+        }
+        /* Modal Styles - Ensure it is display: flex when active and display: none when hidden */
+        #reset-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex; 
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        #reset-modal.hidden {
+            display: none; /* FORCE HIDING */
+        }
+        .modal-content {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            max-width: 90%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        /* NEW STYLE FOR LANDING PAGE */
+        #landing-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh; /* Takes up most of the screen height */
+            text-align: center;
         }
     </style>
 </head>
 <body class="min-h-screen">
 
+    <div id="reset-modal" class="hidden">
+        <div class="modal-content">
+            <p class="text-xl font-bold mb-4 text-[#F15946]">⚠️ Confirm Reset</p>
+            <p class="mb-6 text-gray-700">Are you sure you want to permanently delete **ALL** of your lift session history? This action cannot be undone.</p>
+            <div class="flex justify-center space-x-4">
+                <button onclick="resetLiftHistory()" class="py-2 px-4 bg-[#F15946] text-white font-bold rounded-lg hover:bg-[#E04834] transition">Yes, Clear History</button>
+                <button onclick="hideResetConfirmation()" class="py-2 px-4 bg-gray-300 text-gray-800 font-bold rounded-lg hover:bg-gray-400 transition">Cancel</button>
+            </div>
+        </div>
+    </div>
     <div class="container mx-auto max-w-lg p-3">
 
-        <h1 class="text-3xl font-black text-center text-[#03254E] mt-4 mb-4">LEAN MUSCLE FITNESS TRACKER</h1>
+        <h1 class="text-3xl font-black text-center text-[#03254E] mt-4 mb-4">DAILY WORKOUT TRACKER</h1>
         <p id="auth-status" class="text-xs text-center text-gray-500 mb-2"></p>
-
-        <!-- Navigation Tabs (Dropdown + Tabs) -->
-        <div class="flex flex-col gap-2 mb-6">
-            <!-- Row 1: Workout Day Dropdown -->
-            <select id="workout-day-selector" class="w-full p-3 bg-white border border-gray-300 rounded-lg shadow-sm text-lg font-bold text-[#03254E] focus:ring-[#00A6FB] focus:border-[#00A6FB]">
-                <option value="day1">🏋️ Day 1: Push (Chest, Shoulders, Triceps)</option>
-                <option value="day2">💪 Day 2: Pull (Back, Biceps)</option>
-                <option value="day3">🦵 Day 3: Legs (Quads, Hams, Calves)</option>
-                <option value="day4">🏃 Day 4: Active Recovery</option>
-                <option value="day5">🛠️ Day 5: Volume & Arms</option>
-                <option value="day6">🧘 Day 6: Lower Body & Abs</option>
-                <option value="day7">😴 Day 7: Full Rest & Recovery</option>
-            </select>
-            
-            <!-- Row 2: Tabs -->
-            <div class="flex justify-between gap-1 p-1 bg-white rounded-lg shadow-inner">
-                <button class="nav-button" data-day="goals">Goals & Track</button>
-                <button class="nav-button" data-day="nutrition">Nutrition Guide</button>
-                <button class="nav-button" data-day="lift-history">Lift History</button>
+        
+        <!-- LANDING PAGE - Shown first or if skipStartup is false -->
+        <div id="landing-page" class="day-content hidden">
+            <h2 class="text-4xl font-black text-[#03254E] mb-6">Welcome!</h2>
+            <p class="text-lg text-gray-700 mb-10">Start your fitness journey or continue your progress.</p>
+            <button onclick="enterTracker()" class="w-2/3 py-4 bg-[#01B492] text-white text-xl font-bold rounded-lg shadow-lg hover:bg-[#009e7d] transition duration-150 transform hover:scale-105">
+                ENTER TRACKER
+            </button>
+            <div class="mt-8 pt-4 border-t w-2/3 flex justify-center items-center space-x-2">
+                <input type="checkbox" id="skip-landing-checkbox" class="text-[#00A6FB] focus:ring-[#00A6FB]">
+                <label for="skip-landing-checkbox" class="text-sm font-medium text-gray-600">Bypass this page next time</label>
             </div>
         </div>
 
-        <!-- Workout Content -->
-        <div id="workout-content" class="min-h-[500px]">
+        <!-- MAIN NAVIGATION CONTAINER - Hidden/Shown by JS -->
+        <div id="main-navigation-container" class="hidden">
+            
+            <!-- TOP: Workout Day Selector (Remains visible when any day or the 'workout' selector page is active) -->
+            <div id="workout-selector-container" class="flex flex-col gap-2 mb-4 hidden">
+                <select id="workout-day-selector" class="w-full p-3 bg-white border border-gray-300 rounded-lg shadow-sm font-bold text-[#03254E] focus:ring-[#00A6FB] focus:border-[#00A6FB]">
+                    <option value="select" disabled selected>— Select Workout —</option>
+                    <option value="day1">🏋️ Push (Chest, Shoulders, Triceps)</option>
+                    <option value="day2">💪 Pull (Back, Biceps)</option>
+                    <option value="day3">🦵 Legs (Quads, Hams, Calves)</option>
+                    <option value="day4">🏃 Active Recovery</option>
+                    <option value="day5">🛠️ Volume & Arms</option>
+                    <option value="day6">🧘 Lower Body & Abs</option>
+                    <option value="day7">😴 Full Rest & Recovery</option>
+                </select>
+            </div>
 
-            <!-- WARM-UP SECTION (Visible on all workout days) -->
-            <div id="warmup-section" class="workout-card mb-6">
+            <!-- BOTTOM: Fixed Navigation Tabs -->
+            <div id="bottom-tabs" class="fixed bottom-0 left-0 right-0 p-3 bg-white shadow-2xl z-20">
+                <div class="flex justify-between gap-1 p-1 bg-gray-100 rounded-lg shadow-inner max-w-lg mx-auto">
+                    <button class="nav-button" data-day="goals">Goals & Track</button>
+                    <!-- NEW WORKOUT TAB -->
+                    <button class="nav-button" data-day="workout">Workout</button>
+                    <button class="nav-button" data-day="nutrition">Nutrition</button>
+                    <button class="nav-button" data-day="lift-history">Lift History</button>
+                    <!-- Renamed from Settings to Profile -->
+                    <button class="nav-button" data-day="settings">Profile</button>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="workout-content" class="min-h-[500px] pb-24">
+            
+            <!-- Warmup section is only shown on lift days -->
+            <div id="warmup-section" class="workout-card mb-6 hidden">
                 <h2 class="text-xl font-bold mb-3 text-[#00A6FB]">Warm-up Protocol</h2>
                 <div class="text-sm space-y-2 text-gray-700">
                     <p>1. **Cardio:** 10 mins light jog/bike.</p>
@@ -130,16 +218,31 @@
                     <p>3. **Core Circuit (2-3 rounds):** Plank, Mountain Climbers, Russian Twists (30 seconds each, no rest).</p>
                 </div>
             </div>
+
+            <!-- NEW WORKOUT SELECTOR PAGE -->
+            <div id="workout" class="day-content hidden">
+                <h2 class="text-2xl font-extrabold mb-4 text-[#03254E]">Select Your Session</h2>
+                <div class="workout-card space-y-4">
+                    <p id="somatotype-suggestion" class="text-center font-bold text-lg text-[#F5B700]">
+                        Select a workout to begin!
+                    </p>
+                    <div id="quick-links" class="grid grid-cols-2 gap-4">
+                        <!-- Quick links will be added via JS -->
+                        <div class="text-center text-gray-500">Loading options...</div>
+                    </div>
+                </div>
+            </div>
             
-            <!-- DAY 1: PUSH -->
-            <div id="day1" class="day-content">
-                <h2 class="text-2xl font-extrabold mb-4 text-[#03254E]">Day 1: Push (Chest, Shoulders, Triceps)</h2>
+            <!-- DAY 1 CONTENT -->
+            <div id="day1" class="day-content hidden">
+                <div id="day1-status" class="text-center mb-4 hidden"></div>
+                <h2 class="text-2xl font-extrabold mb-4 text-[#03254E]">Push (Chest, Shoulders, Triceps)</h2>
                 <div class="workout-card space-y-2">
                     <div class="exercise-item">
                         <div>
                             <p class="font-bold text-lg">Barbell Bench Press</p>
                             <p class="text-gray-500">3 sets x 5-8 reps</p>
-                            <p class="note-text mt-1">*Notes: Use 145 lbs or slightly heavier for the lower rep range.*</p>
+                            <p class="note-text mt-1">*Notes: Use slightly heavier for the lower rep range.*</p>
                         </div>
                         <div class="flex items-center space-x-2">
                             <input type="number" data-exercise-id="day1_barbellbenchpress" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
@@ -197,12 +300,14 @@
                         </div>
                     </div>
                 </div>
-                <button onclick="saveSessionLifts('Day 1: Push')" class="w-full mt-4 py-3 bg-[#F15946] text-white font-bold rounded-lg shadow-md hover:bg-[#E04834] transition duration-150">Log Day 1 Session</button>
+                <button onclick="saveSessionLifts('Push (Chest, Shoulders, Triceps)')" class="w-full mt-4 py-3 bg-[#01B492] text-white font-bold rounded-lg shadow-md hover:bg-[#009e7d] transition duration-150">Log Session</button>
+                <button onclick="markSessionSkipped('Push (Chest, Shoulders, Triceps)', 'day1-status')" class="w-full mt-2 py-3 bg-[#F15946] text-white font-bold rounded-lg shadow-md hover:bg-[#E04834] transition duration-150">Mark as Skipped</button>
             </div>
 
-            <!-- DAY 2: PULL -->
+            <!-- DAY 2 CONTENT -->
             <div id="day2" class="day-content hidden">
-                <h2 class="text-2xl font-extrabold mb-4 text-[#03254E]">Day 2: Pull (Back, Biceps)</h2>
+                <div id="day2-status" class="text-center mb-4 hidden"></div>
+                <h2 class="text-2xl font-extrabold mb-4 text-[#03254E]">Pull (Back, Biceps)</h2>
                 <div class="workout-card space-y-2">
                     <div class="exercise-item">
                         <div>
@@ -267,12 +372,14 @@
                         </div>
                     </div>
                 </div>
-                <button onclick="saveSessionLifts('Day 2: Pull')" class="w-full mt-4 py-3 bg-[#F15946] text-white font-bold rounded-lg shadow-md hover:bg-[#E04834] transition duration-150">Log Day 2 Session</button>
+                <button onclick="saveSessionLifts('Pull (Back, Biceps)')" class="w-full mt-4 py-3 bg-[#01B492] text-white font-bold rounded-lg shadow-md hover:bg-[#009e7d] transition duration-150">Log Session</button>
+                <button onclick="markSessionSkipped('Pull (Back, Biceps)', 'day2-status')" class="w-full mt-2 py-3 bg-[#F15946] text-white font-bold rounded-lg shadow-md hover:bg-[#E04834] transition duration-150">Mark as Skipped</button>
             </div>
 
-            <!-- DAY 3: LEGS -->
+            <!-- DAY 3 CONTENT -->
             <div id="day3" class="day-content hidden">
-                <h2 class="text-2xl font-extrabold mb-4 text-[#03254E]">Day 3: Legs (Quads, Hams, Calves)</h2>
+                <div id="day3-status" class="text-center mb-4 hidden"></div>
+                <h2 class="text-2xl font-extrabold mb-4 text-[#03254E]">Legs (Quads, Hams, Calves)</h2>
                 <div class="workout-card space-y-2">
                     <div class="exercise-item">
                         <div>
@@ -326,12 +433,13 @@
                         </div>
                     </div>
                 </div>
-                <button onclick="saveSessionLifts('Day 3: Legs')" class="w-full mt-4 py-3 bg-[#F15946] text-white font-bold rounded-lg shadow-md hover:bg-[#E04834] transition duration-150">Log Day 3 Session</button>
+                <button onclick="saveSessionLifts('Legs (Quads, Hams, Calves)')" class="w-full mt-4 py-3 bg-[#01B492] text-white font-bold rounded-lg shadow-md hover:bg-[#009e7d] transition duration-150">Log Session</button>
+                <button onclick="markSessionSkipped('Legs (Quads, Hams, Calves)', 'day3-status')" class="w-full mt-2 py-3 bg-[#F15946] text-white font-bold rounded-lg shadow-md hover:bg-[#E04834] transition duration-150">Mark as Skipped</button>
             </div>
             
-            <!-- DAY 4: REST / ACTIVE RECOVERY (NEW) -->
+            <!-- DAY 4 CONTENT: Active Recovery -->
             <div id="day4" class="day-content hidden">
-                <h2 class="text-2xl font-extrabold mb-4 text-[#F5B700]">Day 4: Active Recovery</h2>
+                <h2 class="text-2xl font-extrabold mb-4 text-[#F5B700]">Active Recovery</h2>
                 <div class="workout-card space-y-4 text-gray-700">
                     <p class="text-lg font-semibold">Focus: Enhance recovery and circulation without intense stress.</p>
                     <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-md">
@@ -346,9 +454,10 @@
                 </div>
             </div>
 
-            <!-- DAY 5: UPPER BODY VOLUME & ARM HYPERTROPHY -->
+            <!-- DAY 5 CONTENT -->
             <div id="day5" class="day-content hidden">
-                <h2 class="text-2xl font-extrabold mb-4 text-[#03254E]">Day 5: Volume & Arms</h2>
+                <div id="day5-status" class="text-center mb-4 hidden"></div>
+                <h2 class="text-2xl font-extrabold mb-4 text-[#03254E]">Volume & Arms</h2>
                 <div class="workout-card space-y-2">
                     <div class="exercise-item">
                         <div>
@@ -423,12 +532,14 @@
                         </div>
                     </div>
                 </div>
-                <button onclick="saveSessionLifts('Day 5: Volume & Arms')" class="w-full mt-4 py-3 bg-[#F15946] text-white font-bold rounded-lg shadow-md hover:bg-[#E04834] transition duration-150">Log Day 5 Session</button>
+                <button onclick="saveSessionLifts('Volume & Arms')" class="w-full mt-4 py-3 bg-[#01B492] text-white font-bold rounded-lg shadow-md hover:bg-[#009e7d] transition duration-150">Log Session</button>
+                <button onclick="markSessionSkipped('Volume & Arms', 'day5-status')" class="w-full mt-2 py-3 bg-[#F15946] text-white font-bold rounded-lg shadow-md hover:bg-[#E04834] transition duration-150">Mark as Skipped</button>
             </div>
 
-            <!-- DAY 6: LOWER BODY, ABS & FAT BURN FOCUS -->
+            <!-- DAY 6 CONTENT -->
             <div id="day6" class="day-content hidden">
-                <h2 class="text-2xl font-extrabold mb-4 text-[#03254E]">Day 6: Lower Body & Abs</h2>
+                <div id="day6-status" class="text-center mb-4 hidden"></div>
+                <h2 class="text-2xl font-extrabold mb-4 text-[#03254E]">Lower Body & Abs</h2>
                 <div class="workout-card space-y-2">
                     <div class="exercise-item">
                         <div>
@@ -466,7 +577,6 @@
                             <p class="font-bold text-lg">Cable Crunch (Kneeling)</p>
                             <p class="text-gray-500">3 sets x 15-20 reps</p>
                         </div>
-                        <!-- Core is often bodyweight or small weight, but loggable -->
                         <div class="flex items-center space-x-2">
                             <input type="number" data-exercise-id="day6_cablecrunch" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
                             <span class="text-gray-500">lbs</span>
@@ -477,7 +587,7 @@
                             <p class="font-bold text-lg">Hanging Leg/Knee Raises</p>
                             <p class="text-gray-500">3 sets x 10-15 reps</p>
                         </div>
-                         <div class="flex items-center space-x-2">
+                        <div class="flex items-center space-x-2">
                             <input type="number" data-exercise-id="day6_legraises" placeholder="Max" class="weight-input" onchange="saveWeight(this)">
                             <span class="text-gray-500">lbs</span>
                         </div>
@@ -490,12 +600,13 @@
                         <div></div>
                     </div>
                 </div>
-                <button onclick="saveSessionLifts('Day 6: Lower Body & Abs')" class="w-full mt-4 py-3 bg-[#F15946] text-white font-bold rounded-lg shadow-md hover:bg-[#E04834] transition duration-150">Log Day 6 Session</button>
+                <button onclick="saveSessionLifts('Lower Body & Abs')" class="w-full mt-4 py-3 bg-[#01B492] text-white font-bold rounded-lg shadow-md hover:bg-[#009e7d] transition duration-150">Log Session</button>
+                <button onclick="markSessionSkipped('Lower Body & Abs', 'day6-status')" class="w-full mt-2 py-3 bg-[#F15946] text-white font-bold rounded-lg shadow-md hover:bg-[#E04834] transition duration-150">Mark as Skipped</button>
             </div>
 
-            <!-- DAY 7: FULL REST (NEW) -->
+            <!-- DAY 7 CONTENT: Full Rest -->
             <div id="day7" class="day-content hidden">
-                <h2 class="text-2xl font-extrabold mb-4 text-[#F15946]">Day 7: Full Rest & Recovery</h2>
+                <h2 class="text-2xl font-extrabold mb-4 text-[#F15946]">Full Rest & Recovery</h2>
                 <div class="workout-card space-y-4 text-gray-700">
                     <p class="text-lg font-semibold">Focus: Zero activity. Prioritize sleep and high-quality food to prepare for the next week.</p>
                     <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-md">
@@ -503,50 +614,135 @@
                         <ul class="list-disc list-inside space-y-1 ml-2 text-sm">
                             <li>**Sleep:** Aim for 7-9 hours of deep, uninterrupted sleep.</li>
                             <li>**Hydration:** Drink plenty of water (50-70% of your body weight in ounces).</li>
-                            <li>**Nutrition:** Continue hitting your **150-177g protein goal**. Fueling recovery prevents muscle loss.</li>
+                            <li>**Nutrition:** Continue hitting your **protein goal**. Fueling recovery prevents muscle loss.</li>
                         </ul>
                     </div>
                     <p class="note-text pt-2">**Crucial:** Do NOT lift heavy or perform intense HIIT. This day is non-negotiable for progress.</p>
                 </div>
             </div>
 
-            <!-- GOALS & TRACK (Focused on Numbers and Training Principles) -->
+            <!-- PROFILE (SETTINGS) CONTENT -->
+            <div id="settings" class="day-content hidden">
+                <h2 class="text-2xl font-extrabold mb-4 text-[#03254E]">👤 Profile & Initial Setup</h2>
+            
+                <div class="workout-card mb-6">
+                    <h3 class="text-xl font-bold mb-3 text-[#00A6FB]">Base Metrics & Goals</h3>
+                    
+                    <div class="flex justify-between items-center space-x-2 p-3 border-2 border-gray-200 rounded-lg mb-3">
+                        <label for="profile-sex" class="font-bold text-gray-700">Sex:</label>
+                        <select id="profile-sex" class="setting-select-field">
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+
+                    <div class="flex justify-between items-center space-x-2 p-3 border-2 border-gray-200 rounded-lg mb-3">
+                        <label for="profile-age" class="font-bold text-gray-700">Age:</label>
+                        <input type="number" id="profile-age" min="16" max="100" placeholder="30" class="setting-input-field">
+                    </div>
+                    
+                    <div class="p-3 border-2 border-gray-200 rounded-lg mb-3">
+                        <div class="flex justify-between items-center space-x-2 mb-2">
+                             <label for="profile-somatotype" class="font-bold text-gray-700">Body Type:</label>
+                             <select id="profile-somatotype" class="setting-select-field">
+                                 <option value="mesomorph">Mesomorph</option>
+                                 <option value="ectomorph">Ectomorph</option>
+                                 <option value="endomorph">Endomorph</option>
+                             </select>
+                        </div>
+                        <div class="text-xs text-gray-500 space-y-1 mt-1 ml-1">
+                            <p><strong>Mesomorph:</strong> Naturally muscular, athletic build.</p>
+                            <p><strong>Ectomorph:</strong> Lean, slim build; struggles to gain weight/mass.</p>
+                            <p><strong>Endomorph:</strong> Broader, tends to store fat easily.</p>
+                        </div>
+                    </div>
+
+                    <hr class="my-4 border-gray-200">
+                    
+                    <div class="flex justify-between items-center space-x-2 p-3 border-2 border-gray-200 rounded-lg mb-3">
+                        <label for="profile-starting-weight" class="font-bold text-gray-700">Starting Weight (lbs):</label>
+                        <input type="number" id="profile-starting-weight" min="100" max="300" step="0.5" placeholder="177.0" class="setting-input-field">
+                    </div>
+
+                    <div class="flex justify-between items-center space-x-2 p-3 border-2 border-gray-200 rounded-lg mb-3">
+                        <label for="profile-starting-bf" class="font-bold text-gray-700">Starting BF (%):</label>
+                        <input type="number" id="profile-starting-bf" min="5" max="50" step="0.1" placeholder="21.0" class="setting-input-field">
+                    </div>
+
+                    <hr class="my-4 border-gray-200">
+                    
+                    <div class="flex justify-between items-center space-x-2 p-3 border-2 border-gray-200 rounded-lg mb-3">
+                        <label for="profile-target-weight" class="font-bold text-gray-700">Target Weight (lbs):</label>
+                        <input type="text" id="profile-target-weight" placeholder="165-170" class="setting-input-field">
+                    </div>
+
+                    <div class="flex justify-between items-center space-x-2 p-3 border-2 border-gray-200 rounded-lg">
+                        <label for="profile-target-bf" class="font-bold text-gray-700">Target BF (%):</label>
+                        <input type="number" id="profile-target-bf" min="5" max="30" step="0.1" placeholder="13.0" class="setting-input-field">
+                    </div>
+
+                    <button onclick="saveProfileSettings()" class="w-full mt-4 py-3 bg-[#03254E] text-white font-bold rounded-lg shadow-md hover:bg-[#001D38] transition duration-150">Save Profile & Goals</button>
+                </div>
+            
+                <div class="workout-card mb-6">
+                    <h3 class="text-xl font-bold mb-3 text-[#03254E]">App Startup Settings</h3>
+                    <div class="flex items-center space-x-3 p-3 border-2 border-gray-200 rounded-lg">
+                        <input type="checkbox" id="skip-startup-profile" class="text-[#00A6FB] focus:ring-[#00A6FB]" onclick="saveStartupSetting(this.checked)">
+                        <label for="skip-startup-profile" class="text-base font-bold text-gray-700 flex-grow text-left">Skip Profile on First Run</label>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2 ml-1">If unchecked, the app will *always* open to the Profile screen until all basic profile data is entered.</p>
+                </div>
+            
+                <div class="workout-card mb-6">
+                    <h3 class="text-xl font-bold mb-3 text-[#F15946]">🎯 Target BF% Calculator</h3>
+                    <p class="text-sm text-gray-700 mb-4">Uses your saved Profile (Age, Sex, Body Type) and Target Weight goal to calculate an optimal BF%.</p>
+                    <button onclick="suggestTargetBF()" id="bf-suggest-button" class="w-full py-3 bg-[#F15946] text-white font-bold rounded-lg shadow-md hover:bg-[#E04834] transition duration-150">Suggest Healthy Target BF%</button>
+                    <p id="bf-suggest-status" class="text-sm text-center text-gray-500 mt-2 hidden">Calculating...</p>
+                    <div id="bf-suggest-output" class="mt-4 p-3 bg-gray-50 rounded-lg text-sm hidden"></div>
+                </div>
+            </div>
+
+            <!-- GOALS & TRACKING CONTENT -->
             <div id="goals" class="day-content hidden">
                 <h2 class="text-2xl font-extrabold mb-4 text-[#01B492]">Goals & Weekly Tracking</h2>
-                
-                <!-- STAT BOXES FOR WEIGHT AND BODY FAT -->
+            
                 <div class="grid grid-cols-2 gap-4 mb-6">
-                    <!-- Row 1: Body Fat -->
                     <div class="stat-box bg-[#F15946]">
                         <p class="text-xs font-semibold uppercase">Current BF</p>
-                        <p class="text-3xl font-black">21%</p>
+                        <p class="text-3xl font-black" id="current-bf">21%</p>
                     </div>
                     <div class="stat-box bg-[#00A6FB]">
                         <p class="text-xs font-semibold uppercase">Target BF</p>
-                        <p class="text-3xl font-black">~13%</p>
+                        <p class="text-3xl font-black" id="target-bf">~13%</p>
                     </div>
-                    <!-- Row 2: Body Weight -->
                     <div class="stat-box bg-[#03254E]">
                         <p class="text-xs font-semibold uppercase">Current Weight</p>
-                        <p class="text-3xl font-black">177 lbs</p>
+                        <p class="text-3xl font-black" id="current-weight">177 lbs</p>
                     </div>
                     <div class="stat-box bg-[#F5B700]">
                         <p class="text-xs font-semibold uppercase">Target Weight</p>
-                        <p class="text-3xl font-black">165-170 lbs</p>
+                        <p class="text-3xl font-black" id="target-weight">165-170 lbs</p>
                     </div>
-                    <!-- Row 3: Protein Goal (Spanning) -->
                     <div class="stat-box bg-[#01B492] col-span-2">
                         <p class="text-xs font-semibold uppercase">Daily Protein Goal</p>
-                        <p class="text-3xl font-black">150-177g</p>
+                        <p class="text-3xl font-black" id="daily-protein-goal">150-177g</p>
                         <p class="text-xs mt-1 text-gray-100">Crucial for Recomposition</p>
                     </div>
                 </div>
 
-                <!-- WEEKLY TRACKING INPUTS -->
-                <div class="workout-card mb-6">
-                    <h3 class="text-xl font-bold mb-3 text-[#03254E]">Weekly Check-In (Archived)</h3>
 
-                    <!-- Weight Tracking -->
+            
+                <div class="workout-card mb-6">
+                    <h3 class="text-xl font-bold mb-3 text-[#03254E]">Weekly Check-in</h3>
+
+                    <div class="flex justify-between items-center space-x-2 p-3 border-2 border-gray-200 rounded-lg mb-3">
+                        <label for="bf-input" class="font-bold text-lg text-gray-700">Measured BF%:</label>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" id="bf-input" min="5" max="50" step="0.1" placeholder="Latest %" class="weight-input text-base w-24">
+                            <span class="text-gray-500">%</span>
+                        </div>
+                    </div>
+
                     <div class="flex justify-between items-center space-x-2 p-3 border-2 border-gray-200 rounded-lg mb-3">
                         <label for="weight-input" class="font-bold text-lg text-gray-700">Measured Weight:</label>
                         <div class="flex items-center space-x-2">
@@ -554,26 +750,13 @@
                             <span class="text-gray-500">lbs</span>
                         </div>
                     </div>
-                    <p id="last-weight-date" class="text-xs text-gray-500 mt-2 text-right mb-4">Last Logged: N/A</p>
-
-                    <!-- BF Tracking -->
-                    <div class="flex justify-between items-center space-x-2 p-3 border-2 border-gray-200 rounded-lg">
-                        <label for="bf-input" class="font-bold text-lg text-gray-700">Measured BF%:</label>
-                        <div class="flex items-center space-x-2">
-                            <input type="number" id="bf-input" min="5" max="50" step="0.1" placeholder="Latest %" class="weight-input text-base w-24">
-                            <span class="text-gray-500">%</span>
-                        </div>
-                    </div>
-                    <p id="last-bf-date" class="text-xs text-gray-500 mt-2 text-right"></p>
 
                     <button id="weekly-log-button" class="w-full mt-4 py-3 bg-[#00A6FB] text-white font-bold rounded-lg shadow-md hover:bg-[#0095E0] transition duration-150">Log This Week's Data</button>
                 </div>
 
-                <!-- HISTORY DISPLAY SECTION -->
                 <div class="workout-card">
                     <h3 class="text-xl font-bold mb-3 text-[#03254E]">History Log</h3>
                     
-                    <!-- Comparison Results -->
                     <div id="comparison-display" class="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-3 mb-4 hidden">
                         <h4 class="font-bold text-lg text-yellow-700 mb-2" id="comparison-title">Comparison Against Last Logged:</h4>
                         <p class="text-sm text-gray-700 mb-1" id="comparison-weight"></p>
@@ -594,8 +777,7 @@
                         </ul>
                     </div>
                 </div>
-                
-                <!-- PROGRESSIVE OVERLOAD -->
+            
                 <div class="workout-card my-6">
                     <h3 class="text-xl font-bold mb-3 text-[#03254E]">Training Principle: Overload</h3>
                     <p class="text-gray-700 text-sm mb-4">You MUST challenge yourself every week to build mass. Focus on one of these:</p>
@@ -603,83 +785,117 @@
                         <li>**Increase Weight:** Use slightly heavier weight.</li>
                         <li>**Increase Reps:** Do more reps within the 8-12 range.</li>
                         <li>**Time Under Tension:** Slow down the lowering (negative) phase to 3-4 seconds.</li>
+                        <p class="text-sm text-gray-500 mt-2">Your lift tracking automatically uses your last weight as your target for the next session.</p>
                     </ul>
                 </div>
             </div>
 
-            <!-- NUTRITION GUIDE -->
+            <!-- NUTRITION CONTENT -->
             <div id="nutrition" class="day-content hidden">
                 <h2 class="text-2xl font-extrabold mb-4 text-[#01B492]">Nutrition & Supplementation</h2>
 
-                <!-- Strategy Card -->
-                <div class="workout-card mb-6 bg-[#E6F7F5]">
+                <div id="strategy-card" class="workout-card mb-6 bg-[#E6F7F5]">
                     <h3 class="text-xl font-bold mb-3 text-[#03254E]">Strategy: Calorie Deficit for Toning</h3>
-                    <p class="text-gray-700 text-sm mb-4">To achieve fat loss and "toning," maintain a **Slight Calorie Deficit** (300-500 kcal deficit). Crucially, keep protein intake high to spare muscle.</p>
-                    <ul class="list-disc list-inside space-y-2 text-gray-700 ml-2 text-sm">
-                        <li>**Calorie Focus:** Reduce simple carbs (sugary drinks, white bread, processed snacks) and processed fats.</li>
-                        <li>**Carb Timing:** Consume complex carbs (rice, oats, sweet potatoes) mainly around your workouts for energy.</li>
-                    </ul>
+                    <div id="strategy-content">
+                        <p class="text-gray-700 text-sm">Loading somatotype strategy...</p>
+                    </div>
                 </div>
 
-                <!-- Protein Sources Card -->
                 <div class="workout-card mb-6">
-                    <h3 class="text-xl font-bold mb-3 text-[#03254E]">Protein Sources (No Pork or Beef)</h3>
-                    <p class="text-gray-700 text-sm mb-3">Target: **150-177 grams** daily. This is achievable by prioritizing these sources:</p>
+                    <h3 class="text-xl font-bold mb-3 text-[#03254E]">Protein Sources (Select All That Apply)</h3>
+                    <p class="text-gray-700 text-sm mb-3">Select your preferred sources for meal suggestions:</p>
                     
-                    <ul class="space-y-3 text-gray-700 ml-2 text-sm">
-                        <li>
-                            <p class="font-bold text-[#F15946]">1. Protein Powder (Whey/Casein)</p>
-                            <p>Delivers 20-30g protein for 120-150 calories. Use post-workout (Whey) and potentially before bed (Casein).</p>
-                        </li>
-                        <li>
-                            <p class="font-bold text-[#F15946]">2. Poultry & Fish</p>
-                            <p>Chicken breast, turkey, tuna, salmon (excellent for healthy fats), and cod. Aim for 4-6 oz per main meal.</p>
-                        </li>
-                        <li>
-                            <p class="font-bold text-[#F15946]">3. Dairy</p>
-                            <p>Greek yogurt (0% fat) and cottage cheese. A cup of cottage cheese provides 25-30g protein—perfect snack!</p>
-                        </li>
-                        <li>
-                            <p class="font-bold text-[#F15946]">4. Eggs</p>
-                            <p>Prioritize egg whites (pure protein), mixed with a whole egg for nutrients. A quick, easy protein hit.</p>
-                        </li>
-                        <li>
-                            <p class="font-bold text-[#F15946]">5. Plant-Based</p>
-                            <p>Tofu, edamame, beans, and lentils. Incorporate these into vegetarian meals.</p>
-                        </li>
-                    </ul>
+                    <div id="protein-checkboxes" class="grid grid-cols-2 gap-y-2 text-sm text-gray-700 font-medium">
+                        <div class="flex items-center space-x-2">
+                            <input type="checkbox" id="prot_poultry" value="Poultry (Chicken/Turkey)" data-source-id="poultry" class="text-[#F15946] focus:ring-[#F15946]">
+                            <label for="prot_poultry">Poultry</label>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="checkbox" id="prot_fish" value="Fish & Seafood" data-source-id="fish" class="text-[#F15946] focus:ring-[#F15946]">
+                            <label for="prot_fish">Fish & Seafood</label>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="checkbox" id="prot_eggs" value="Eggs/Egg Whites" data-source-id="eggs" class="text-[#F15946] focus:ring-[#F15946]">
+                            <label for="prot_eggs">Eggs</label>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="checkbox" id="prot_dairy" value="Dairy (Yogurt/Cottage Cheese)" data-source-id="dairy" class="text-[#F15946] focus:ring-[#F15946]">
+                            <label for="prot_dairy">Dairy</label>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="checkbox" id="prot_plant" value="Plant-Based (Tofu, Lentils)" data-source-id="plant" class="text-[#F15946] focus:ring-[#F15946]">
+                            <label for="prot_plant">Plant-Based</label>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="checkbox" id="prot_powder" value="Protein Powder" data-source-id="powder" class="text-[#F15946] focus:ring-[#F15946]">
+                            <label for="prot_powder">Protein Powder</label>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="checkbox" id="prot_pork" value="Pork" data-source-id="pork" class="text-[#F15946] focus:ring-[#F15946]">
+                            <label for="prot_pork">Pork</label>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="checkbox" id="prot_beef" value="Beef" data-source-id="beef" class="text-[#F15946] focus:ring-[#F15946]">
+                            <label for="prot_beef">Beef</label>
+                        </div>
+                    </div>
+                    <button onclick="saveProteinSources()" class="w-full mt-4 py-3 bg-[#F15946] text-white font-bold rounded-lg shadow-md hover:bg-[#E04834] transition duration-150">Save Protein Selection</button>
                 </div>
 
-                <!-- Supplement Card -->
+                <div class="workout-card mb-6">
+                    <h3 class="text-xl font-bold mb-3 text-[#03254E]">Dietary Exclusions / Allergies</h3>
+                    <p class="text-gray-700 text-sm mb-3">List any specific foods or ingredients to **exclude** from meal suggestions (e.g., Peanuts, Tree Nuts, Soy, Shellfish, Onions, etc.):</p>
+                    <input type="text" id="exclusion-input" placeholder="e.g., Peanuts, Tree Nuts, Soy, Shellfish, Onions, etc." class="w-full p-2 border-2 border-gray-300 rounded-lg text-sm" onchange="saveExclusions(this.value)">
+                </div>
+
+
+                <div class="workout-card mb-6">
+                    <h3 class="text-xl font-bold mb-3 text-[#00A6FB]">AI Meal Suggestions</h3>
+                    <button onclick="suggestRecipes()" id="recipe-button" class="w-full py-3 bg-[#F5B700] text-white font-bold rounded-lg shadow-md hover:bg-[#E4A700] transition duration-150">Generate High-Protein Meal Idea</button>
+                    <p id="recipe-status" class="text-sm text-center text-gray-500 mt-2 hidden">Generating...</p>
+                    <div id="recipe-output" class="mt-4 p-3 bg-gray-50 rounded-lg text-sm whitespace-pre-wrap">
+                        Tap "Generate" for a high-protein, delicious meal idea customized to your body type and protein choices!
+                    </div>
+                </div>
+
                 <div class="workout-card mb-6">
                     <h3 class="text-xl font-bold mb-3 text-[#03254E]">Recommended Supplements</h3>
-                    <p class="text-gray-700 text-sm mb-3">Your ideal stack: **Protein Powder + Creatine Monohydrate**.</p>
+                    <p class="text-gray-700 text-sm mb-3">Your ideal stack is tailored to your body type:</p>
 
-                    <ul class="space-y-3 text-gray-700 ml-2 text-sm">
-                        <li>
-                            <p class="font-bold text-[#00A6FB]">Creatine (Highly Recommended)</p>
-                            <p>Increases muscle strength and power during lifts. **Dosage: 5 grams per day, consistently (timing doesn't matter).**</p>
-                        </li>
-                        <li>
-                            <p class="font-bold text-[#F15946]">Mass Gainers (AVOID)</p>
-                            <p>These are too high in calories and will work against your goal of reducing body fat to ~13%. Stick to normal protein powder.</p>
-                        </li>
-                    </ul>
+                    <div id="supplement-recommendations">
+                        <p class="text-sm text-gray-700">Loading supplement recommendations based on profile...</p>
+                    </div>
+
+                    <div class="mt-4 border-t pt-4">
+                       <p class="font-bold text-[#F15946] text-sm mb-1">Mass Gainers (AVOID)</p>
+                       <p class="text-gray-700 text-sm">These are too high in calories and will work against your goal of reducing body fat to ~13%. Stick to normal protein powder.</p>
+                    </div>
                 </div>
             </div>
             
-            <!-- LIFT HISTORY TAB (NEW) -->
+            <!-- LIFT HISTORY CONTENT -->
             <div id="lift-history" class="day-content hidden">
                 <h2 class="text-2xl font-extrabold mb-4 text-[#F15946]">Lift Session History</h2>
-                
-                <!-- Comparison Display Area -->
+            
+                <div class="workout-card mb-6">
+                    <h3 class="text-xl font-bold mb-3 text-[#03254E]">Progression Chart</h3>
+                    <div class="mb-3">
+                        <label for="chart-exercise-selector" class="block text-sm font-medium text-gray-700 mb-1">Select Exercise to Track:</label>
+                        <select id="chart-exercise-selector" class="w-full p-2 border border-gray-300 rounded-lg text-sm"></select>
+                    </div>
+                    <div class="relative h-64">
+                        <canvas id="liftChart"></canvas>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2 text-center" id="chart-description">Visualizes your lifting progress over time.</p>
+                </div>
+            
                 <div id="lift-comparison-display" class="workout-card mb-6 hidden">
                     <h3 class="text-xl font-bold mb-3 text-[#00A6FB]" id="lift-comparison-title">Comparison Against Latest Session</h3>
                     <ul id="lift-comparison-list" class="space-y-1 text-sm text-gray-700">
                         <li class="text-center text-gray-400">Select a past session below to compare.</li>
                     </ul>
                 </div>
-                
+            
                 <div class="workout-card mb-6">
                     <h3 class="text-xl font-bold mb-3 text-[#03254E]">Past Sessions (Tap to Compare)</h3>
                     <p class="text-sm text-gray-700 mb-4">Tap a past session to see how your weights have changed since then compared to your latest workout.</p>
@@ -687,6 +903,8 @@
                         <li class="text-center text-gray-400">Loading history...</li>
                     </ul>
                 </div>
+
+                <button onclick="showResetConfirmation()" class="w-full mt-4 py-3 bg-[#F15946] text-white font-bold rounded-lg shadow-md hover:bg-[#E04834] transition duration-150">Reset All Lift History</button>
             </div>
 
         </div>
@@ -696,7 +914,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot, collection, addDoc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection, addDoc, query, orderBy, getDocs, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Global Firebase Configuration
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
@@ -711,29 +929,118 @@
         // Storage for history data
         let bodyWeightHistory = [];
         let bodyFatHistory = [];
-        let liftSessionsHistory = []; // Stores all archived lift sessions
+        let liftSessionsHistory = []; 
+        let liftChartInstance = null; 
+        let currentSomatotype = 'mesomorph'; // Track current body type
+        let selectedProteinSources = []; // Track selected protein sources
+        let currentExclusions = ""; // Track current exclusions
+        // NEW GLOBAL STATE FOR STARTUP
+        let skipStartup = false;
+        let hasMinimumProfile = false;
+
+
+        // Default Target Goals
+        const defaultTargetGoals = {
+            targetWeight: "165-170",
+            targetBf: "13.0",
+        };
+
+        // Somatotype-specific workout suggestions and messaging
+        const somatotypeWorkoutSuggestions = {
+            ectomorph: {
+                dayId: "day5",
+                message: "As an **Ectomorph**, focus on volume and high intensity to gain lean mass. Try the **Volume & Arms** day!"
+            },
+            mesomorph: {
+                dayId: "day1",
+                message: "As a **Mesomorph**, you respond well to balanced programs. Start with a main lift like **Push (Chest, Shoulders, Triceps)**."
+            },
+            endomorph: {
+                dayId: "day6",
+                message: "As an **Endomorph**, prioritize metabolic work and large muscle groups. The **Lower Body & Abs** day with HIIT is highly suggested!"
+            }
+        };
+
+        // Somatotype-specific nutrition strategies
+        const nutritionStrategies = {
+            ectomorph: {
+                title: "Strategy: Conservative Deficit & High Carbs",
+                calorie: "Aim for a **VERY SLIGHT deficit (100-300 kcal)** or even **maintenance** calories on lifting days. You need fuel to build mass.",
+                macros: [
+                    "**Carbs (40-50%):** Higher carb intake to fuel intensity and growth.",
+                    "**Protein (30%):** Keep high for muscle repair.",
+                    "**Fats (20-30%):** Healthy fats are key."
+                ],
+                training: "Prioritize volume and lifting intensity. Limit cardio (1-2 sessions/week) to maintain mass.",
+                supplements: [
+                    "**Protein Powder:** Crucial for hitting high protein targets without large meal volumes.",
+                    "**Creatine:** Essential for maximizing strength gains needed for muscle building.",
+                    "**Optional:** Calorie-dense shakes (not Mass Gainers, but high-quality food blended) may help energy."
+                ]
+            },
+            mesomorph: {
+                title: "Strategy: Balanced Deficit & Optimal Macros",
+                calorie: "Aim for a **MODERATE deficit (300-500 kcal)**. You respond well to cutting fat and building muscle simultaneously.",
+                macros: [
+                    "**Protein (35-40%):** Essential for simultaneous muscle retention and fat loss.",
+                    "**Carbs (30-40%):** Moderate intake, emphasizing complex carbs around workouts.",
+                    "**Fats (20-30%):** Maintain moderate healthy fat intake."
+                ],
+                training: "Maintain the current split. Use the 10-min HIIT finisher consistently for best results.",
+                supplements: [
+                    "**Protein Powder:** Excellent for convenient, low-fat, high-protein servings.",
+                    "**Creatine:** Essential for enhancing strength and muscle endurance."
+                ]
+            },
+            endomorph: {
+                title: "Strategy: Stricter Deficit & Carb Cycling",
+                calorie: "Aim for a **STRICTER deficit (500-750 kcal)** to drive fat loss. You tend to store energy efficiently.",
+                macros: [
+                    "**Protein (40%):** Highest priority to preserve lean mass in a large deficit.",
+                    "**Fats (30-35%):** Prioritize healthy sources.",
+                    "**Carbs (25-30%):** Lower carb intake overall. Cycle carbs higher only immediately post-workout."
+                ],
+                training: "Focus on compound movements and consistency. Increase non-exercise activity (walking) on rest days.",
+                supplements: [
+                    "**Protein Powder:** Vital for hitting high protein goals while keeping overall calories low.",
+                    "**Creatine:** Important for strength maintenance while in a calorie deficit."
+                ]
+            }
+        };
+
+        // Dynamic map to hold all logged exercises (ID -> Name)
+        let loggedExerciseMap = {};
+        let selectedChartExerciseId = 'day1_barbellbenchpress'; // Default initial selection
 
         // Helper functions
         const formatDate = (isoString) => new Date(isoString).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const isSameDay = (d1, d2) => d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
+        const getTodayIsoDate = () => new Date().toISOString().substring(0, 10);
 
         const getColorClass = (value) => {
-            if (value > 0) return 'text-green-600'; // Green for positive change (weight lifted, muscle growth)
-            if (value < 0) return 'text-red-600';   // Red for negative change
+            if (value > 0) return 'text-green-600';
+            if (value < 0) return 'text-red-600';
             return 'text-gray-600';
         };
 
         const getMetricColorClass = (value, isWeight) => {
-            // Weight and BF% should be RED for a decrease, GREEN for an increase.
-            // Since we WANT weight/BF to decrease, we flip the colors.
             if (isWeight) {
-                if (value < 0) return 'text-green-600'; // Weight decreased (good)
-                if (value > 0) return 'text-red-600';   // Weight increased (bad for cut)
-            } else { // BF%
-                if (value < 0) return 'text-green-600'; // BF% decreased (good)
-                if (value > 0) return 'text-red-600';   // BF% increased (bad)
+                if (value < 0) return 'text-green-600'; 
+                if (value > 0) return 'text-red-600'; 
+            } else { 
+                if (value < 0) return 'text-green-600'; 
+                if (value > 0) return 'text-red-600'; 
             }
             return 'text-gray-600';
         };
+        
+        // Function to get the document reference for goals
+        const getProfileDocRef = (db, appId, userId) => doc(db, `artifacts/${appId}/users/${userId}/user_profile/details`);
+        const getProteinDocRef = (db, appId, userId) => doc(db, `artifacts/${appId}/users/${userId}/nutrition_settings/proteins`);
+        const getExclusionsDocRef = (db, appId, userId) => doc(db, `artifacts/${appId}/users/${userId}/nutrition_settings/exclusions`);
+        // DOC REFERENCE FOR STARTUP SETTING
+        const getStartupDocRef = (db, appId, userId) => doc(db, `artifacts/${appId}/users/${userId}/app_settings/startup`);
+
 
         // 1. Firebase Initialization and Authentication
         async function initializeFirebase() {
@@ -741,15 +1048,35 @@
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
-                
+            
                 onAuthStateChanged(auth, async (user) => {
                     if (user) {
                         userId = user.uid;
                         document.getElementById('auth-status').textContent = `User ID: ${userId.substring(0, 8)}... (Data Saved)`;
                         isAuthReady = true;
+                        
+                        // Wait for the minimal profile data to load before deciding where to navigate
+                        await loadStartupSettings(); // Load the 'skip' setting first
+                        await loadProfileSettings(); // Load profile details and checks for hasMinimumProfile
+
                         loadWeights(); 
+                        loadProteinSources();
+                        loadExclusions(); 
                         loadBodyFatHistory();
                         loadBodyWeightHistory();
+                        loadLiftHistory(); 
+
+                        // NAVIGATION LOGIC: Decide initial screen
+                        if (skipStartup || hasMinimumProfile) {
+                            showDay('landing-page'); // Show the landing page 
+                        } else {
+                            // First run and no minimal data, force to Profile/Settings
+                            showDay('settings'); 
+                            // Add a visual cue to save settings
+                            document.getElementById('settings').querySelector('h2').textContent = '⚠️ First-Time Setup: Please Complete & Save Profile';
+                        }
+
+
                     } else {
                         try {
                             if (initialAuthToken) {
@@ -772,6 +1099,405 @@
 
         initializeFirebase();
 
+        // --- NAVIGATION HELPER FUNCTIONS ---
+
+        /**
+         * Hides the Navigation elements (Dropdown/Tabs)
+         */
+        function hideMainNavigation() {
+            document.getElementById('main-navigation-container').classList.add('hidden');
+        }
+
+        /**
+         * Shows the Navigation elements (Dropdown/Tabs)
+         */
+        function showMainNavigation() {
+            document.getElementById('main-navigation-container').classList.remove('hidden');
+        }
+
+        /**
+         * Handles the transition from Landing Page to the main tracker content.
+         */
+        window.enterTracker = function() {
+            // 1. Check/Save Bypass State
+            const landingSkipCheckbox = document.getElementById('skip-landing-checkbox');
+            if (landingSkipCheckbox.checked !== skipStartup) {
+                saveStartupSetting(landingSkipCheckbox.checked); 
+            }
+
+            // 2. Determine next page based on setup status
+            if (hasMinimumProfile) {
+                showDay('goals'); // Proceed to the default content tab
+            } else {
+                showDay('settings'); // Force them to the Profile/Settings tab
+            }
+        }
+
+        /**
+         * Checks if minimal profile data exists for auto-bypass on first run
+         */
+        function checkMinimalProfile(profile) {
+             return (
+                 profile && 
+                 profile.age && 
+                 profile.sex && 
+                 profile.initialWeight && 
+                 profile.initialBf
+             );
+        }
+
+        // --- STARTUP SETTING PERSISTENCE ---
+
+        async function loadStartupSettings() {
+            if (!isAuthReady || !db || !userId) return;
+
+            try {
+                const docSnap = await getDoc(getStartupDocRef(db, appId, userId));
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    skipStartup = data.skipLanding || false;
+                    
+                    // Update the checkboxes to reflect the saved state
+                    document.getElementById('skip-startup-profile').checked = skipStartup;
+                    document.getElementById('skip-landing-checkbox').checked = skipStartup;
+
+                }
+            } catch (error) {
+                console.error("Error loading startup settings:", error);
+            }
+        }
+
+        window.saveStartupSetting = async function(shouldSkip) {
+             if (!isAuthReady) return;
+             skipStartup = shouldSkip; // Update global state
+             
+             try {
+                 await setDoc(getStartupDocRef(db, appId, userId), {
+                     skipLanding: shouldSkip,
+                     date: new Date().toISOString()
+                 }, { merge: true });
+
+                 // Sync the two checkboxes
+                 document.getElementById('skip-startup-profile').checked = shouldSkip;
+                 document.getElementById('skip-landing-checkbox').checked = shouldSkip;
+
+             } catch (error) {
+                 console.error("Error saving startup setting:", error);
+             }
+        }
+
+        // --- SOMATOTYPE LOGIC FOR WORKOUTS ---
+
+        const workoutDays = [
+            { id: "day1", name: "Push (Chest, Shoulders, Triceps)", icon: "🏋️" },
+            { id: "day2", name: "Pull (Back, Biceps)", icon: "💪" },
+            { id: "day3", name: "Legs (Quads, Hams, Calves)", icon: "🦵" },
+            { id: "day4", name: "Active Recovery", icon: "🏃" },
+            { id: "day5", name: "Volume & Arms", icon: "🛠️" },
+            { id: "day6", name: "Lower Body & Abs", icon: "🧘" },
+            { id: "day7", name: "Full Rest & Recovery", icon: "😴" }
+        ];
+
+        function populateWorkoutSelectorAndQuickLinks(currentDayId = null) {
+            const selector = document.getElementById('workout-day-selector');
+            const quickLinks = document.getElementById('quick-links');
+            const suggestionEl = document.getElementById('somatotype-suggestion');
+
+            // 1. Update Dropdown
+            let selectedValue = currentDayId || 'select';
+            selector.innerHTML = '<option value="select" disabled>— Select Workout —</option>';
+            workoutDays.forEach(day => {
+                const option = document.createElement('option');
+                option.value = day.id;
+                option.textContent = `${day.icon} ${day.name}`;
+                selector.appendChild(option);
+            });
+            selector.value = selectedValue;
+
+            // 2. Update Quick Links
+            quickLinks.innerHTML = '';
+            workoutDays.forEach(day => {
+                const button = document.createElement('button');
+                button.textContent = `${day.icon} ${day.name.split('(')[0].trim()}`;
+                button.className = `p-3 rounded-lg shadow-md font-bold text-sm transition ${day.id === currentDayId ? 'bg-[#00A6FB] text-white' : 'bg-gray-100 text-[#03254E] hover:bg-gray-200'}`;
+                button.onclick = () => showDay(day.id);
+                quickLinks.appendChild(button);
+            });
+            
+            // 3. Somatotype Suggestion
+            const suggestion = somatotypeWorkoutSuggestions[currentSomatotype];
+            if (suggestion) {
+                suggestionEl.innerHTML = suggestion.message;
+            } else {
+                suggestionEl.innerHTML = "Select a workout to begin!";
+            }
+        }
+
+
+        // NUTRITION STRATEGY & PROTEIN SOURCE LOGIC
+        function updateNutritionStrategyUI(somatotype) {
+            currentSomatotype = somatotype;
+            const strategy = nutritionStrategies[somatotype];
+            const contentDiv = document.getElementById('strategy-content');
+            const supplementDiv = document.getElementById('supplement-recommendations');
+            
+            // 1. Strategy Card Content
+            let strategyHtml = `
+                <p class="text-lg font-semibold text-[#F15946] mb-2">${strategy.title}</p>
+                <p class="text-gray-700 text-sm mb-3">**Calorie Focus:** ${strategy.calorie}</p>
+                <p class="font-bold text-sm text-[#03254E] mb-1">Macro Breakdown:</p>
+                <ul class="list-disc list-inside space-y-1 text-gray-700 ml-2 text-sm">
+            `;
+            strategy.macros.forEach(macro => {
+                strategyHtml += `<li>${macro}</li>`;
+            });
+            strategyHtml += `
+                </ul>
+                <p class="font-bold text-sm text-[#03254E] mb-1">Training Emphasis:</p>
+                <p class="text-gray-700 text-sm">${strategy.training}</p>
+            `;
+            contentDiv.innerHTML = strategyHtml;
+
+            // 2. Supplement Card Content
+            let supplementHtml = `
+                <ul class="space-y-3 text-gray-700 ml-2 text-sm">
+            `;
+            strategy.supplements.forEach(sup => {
+                supplementHtml += `
+                    <li>
+                        <p class="font-bold text-[#00A6FB]">${sup.split(':')[0]}:</p>
+                        <p>${sup.split(':').slice(1).join(':').trim()}</p>
+                    </li>
+                `;
+            });
+            supplementHtml += `</ul>`;
+            supplementDiv.innerHTML = supplementHtml;
+        }
+
+        window.saveProteinSources = async function() {
+            if (!isAuthReady) return;
+            
+            const checkboxes = document.querySelectorAll('#protein-checkboxes input[type="checkbox"]');
+            const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+
+            try {
+                await setDoc(getProteinDocRef(db, appId, userId), {
+                    sources: selected,
+                    date: new Date().toISOString()
+                });
+                selectedProteinSources = selected;
+                console.log("Preferred protein sources saved!"); 
+            } catch (error) {
+                console.error("Error saving protein sources:", error);
+            }
+        }
+
+        async function loadProteinSources() {
+            if (!isAuthReady) return;
+            
+            try {
+                const docSnap = await getDoc(getProteinDocRef(db, appId, userId));
+                const savedSources = docSnap.exists() ? docSnap.data().sources : [];
+                selectedProteinSources = savedSources;
+            
+                const checkboxes = document.querySelectorAll('#protein-checkboxes input[type="checkbox"]');
+                checkboxes.forEach(cb => {
+                    cb.checked = savedSources.includes(cb.value);
+                    // Update the global state when a box is manually changed
+                    cb.onchange = () => selectedProteinSources = Array.from(document.querySelectorAll('#protein-checkboxes input[type="checkbox"]:checked')).map(cb => cb.value);
+                });
+            } catch (error) {
+                console.error("Error loading protein sources:", error);
+            }
+        }
+        
+        window.saveExclusions = async function(value) {
+            if (!isAuthReady) return;
+            currentExclusions = value.trim();
+            try {
+                await setDoc(getExclusionsDocRef(db, appId, userId), {
+                    exclusions: currentExclusions,
+                    date: new Date().toISOString()
+                });
+                console.log("Exclusions saved!");
+            } catch (error) {
+                console.error("Error saving exclusions:", error);
+            }
+        }
+
+        async function loadExclusions() {
+            if (!isAuthReady) return;
+            try {
+                const docSnap = await getDoc(getExclusionsDocRef(db, appId, userId));
+                currentExclusions = docSnap.exists() ? docSnap.data().exclusions : "";
+                document.getElementById('exclusion-input').value = currentExclusions;
+            } catch (error) {
+                console.error("Error loading exclusions:", error);
+            }
+        }
+
+        
+        // PROFILE SETTINGS & GOALS FUNCTIONS
+        async function loadProfileSettings() {
+            if (!isAuthReady || !db || !userId) return;
+
+            try {
+                const docRef = getProfileDocRef(db, appId, userId);
+                const docSnap = await getDoc(docRef);
+                const profile = docSnap.exists() ? docSnap.data() : {};
+
+                // Check for minimal profile data
+                hasMinimumProfile = checkMinimalProfile(profile);
+
+                // Set defaults if data is missing, using the original request's values
+                const initialWeight = profile.initialWeight || '177.0';
+                const initialBf = profile.initialBf || '21.0';
+                const targetWeight = profile.targetWeightGoal || defaultTargetGoals.targetWeight;
+                const targetBf = profile.targetBfGoal || defaultTargetGoals.targetBf;
+                const somatotype = profile.somatotype || 'mesomorph';
+                currentSomatotype = somatotype; // Update global somatotype
+
+                // 1. Update Settings Inputs/Placeholders
+                document.getElementById('profile-sex').value = profile.sex || 'male';
+                document.getElementById('profile-age').placeholder = profile.age || '30';
+                document.getElementById('profile-age').value = profile.age || '';
+                document.getElementById('profile-somatotype').value = somatotype;
+
+                document.getElementById('profile-starting-weight').placeholder = initialWeight;
+                document.getElementById('profile-starting-weight').value = '';
+                document.getElementById('profile-starting-bf').placeholder = initialBf;
+                document.getElementById('profile-starting-bf').value = '';
+
+                document.getElementById('profile-target-weight').placeholder = targetWeight;
+                document.getElementById('profile-target-weight').value = targetWeight; // Show current target value
+                document.getElementById('profile-target-bf').placeholder = targetBf;
+                document.getElementById('profile-target-bf').value = targetBf; // Show current target value
+
+                // 2. Update Goals Stat Boxes (Targets)
+                document.getElementById('target-weight').textContent = `${targetWeight} lbs`;
+                document.getElementById('target-bf').textContent = `${targetBf}%`;
+
+                // 3. Update Goals Stat Boxes (Current - only if history is empty)
+                const currentWeight = bodyWeightHistory.length > 0 ? bodyWeightHistory[0].weight : initialWeight;
+                const currentBf = bodyFatHistory.length > 0 ? bodyFatHistory[0].percentage : initialBf;
+
+                document.getElementById('current-weight').textContent = `${currentWeight} lbs`;
+                document.getElementById('current-bf').textContent = `${currentBf}%`;
+
+                // 4. Update Protein Goal based on Current Weight
+                const pGoalMin = Math.round(parseFloat(currentWeight) * 0.85); // 0.85g per lb
+                const pGoalMax = Math.round(parseFloat(currentWeight) * 1.0); // 1.0g per lb
+                document.getElementById('daily-protein-goal').textContent = `${pGoalMin}-${pGoalMax}g`;
+
+                // 5. Update Nutrition Strategy & Workout Selector
+                updateNutritionStrategyUI(somatotype);
+                populateWorkoutSelectorAndQuickLinks();
+
+            } catch (error) {
+                console.error("Error loading profile settings/goals:", error);
+            }
+        }
+
+        window.saveProfileSettings = async function() {
+            if (!isAuthReady) {
+                console.error("Please wait for authentication to load before saving.");
+                return;
+            }
+
+            const sex = document.getElementById('profile-sex').value;
+            const ageInput = document.getElementById('profile-age');
+            const somatotype = document.getElementById('profile-somatotype').value;
+            const startingWeightInput = document.getElementById('profile-starting-weight');
+            const startingBfInput = document.getElementById('profile-starting-bf');
+            const targetWeightInput = document.getElementById('profile-target-weight');
+            const targetBfInput = document.getElementById('profile-target-bf');
+
+            // Read values, falling back to placeholders (which hold the last saved data)
+            const age = parseInt(ageInput.value || ageInput.placeholder);
+            const initialWeight = parseFloat(startingWeightInput.value || startingWeightInput.placeholder);
+            const initialBf = parseFloat(startingBfInput.value || startingBfInput.placeholder);
+            const targetWeightGoal = targetWeightInput.value || targetWeightInput.placeholder;
+            const targetBfGoal = parseFloat(targetBfInput.value || targetBfInput.placeholder);
+
+
+            if (isNaN(age) || isNaN(initialWeight) || isNaN(initialBf) || isNaN(targetBfGoal) || age <= 0 || initialWeight <= 0 || initialBf <= 0 || targetBfGoal <= 0 || !targetWeightGoal) {
+                console.error("Please enter valid positive numbers for all fields (Age, Weights, and BF%).");
+                return;
+            }
+
+            try {
+                const docRef = getProfileDocRef(db, appId, userId);
+
+                await setDoc(docRef, {
+                    sex: sex,
+                    age: age,
+                    somatotype: somatotype,
+                    initialWeight: initialWeight.toFixed(1),
+                    initialBf: initialBf.toFixed(1),
+                    targetWeightGoal: targetWeightGoal, // String range
+                    targetBfGoal: targetBfGoal.toFixed(1),
+                    date: new Date().toISOString()
+                }, {
+                    merge: true
+                });
+
+                // Check for minimal profile data again after saving
+                const profile = {
+                    age: age,
+                    sex: sex,
+                    initialWeight: initialWeight,
+                    initialBf: initialBf
+                };
+                hasMinimumProfile = checkMinimalProfile(profile);
+                currentSomatotype = somatotype; // Update global somatotype
+
+                // UI Updates
+                document.getElementById('target-weight').textContent = `${targetWeightGoal} lbs`;
+                document.getElementById('target-bf').textContent = `${targetBfGoal.toFixed(1)}%`;
+
+                // Update Current metrics and Protein Goal based on latest saved/checked values
+                const currentWeight = bodyWeightHistory.length > 0 ? bodyWeightHistory[0].weight : initialWeight.toFixed(1);
+                const currentBf = bodyFatHistory.length > 0 ? bodyFatHistory[0].percentage : initialBf.toFixed(1);
+
+                document.getElementById('current-weight').textContent = `${currentWeight} lbs`;
+                document.getElementById('current-bf').textContent = `${currentBf}%`;
+
+                const pGoalMin = Math.round(parseFloat(currentWeight) * 0.85);
+                const pGoalMax = Math.round(parseFloat(currentWeight) * 1.0);
+                document.getElementById('daily-protein-goal').textContent = `${pGoalMin}-${pGoalMax}g`;
+
+                // Update Nutrition Strategy & Workout Selector
+                updateNutritionStrategyUI(somatotype);
+                populateWorkoutSelectorAndQuickLinks();
+
+
+                // Clear input values but keep placeholders (saved values)
+                startingWeightInput.value = '';
+                startingBfInput.value = '';
+                targetWeightInput.value = targetWeightGoal;
+                targetBfInput.value = targetBfGoal.toFixed(1);
+
+                // Update placeholders (important if no value was entered)
+                startingWeightInput.placeholder = initialWeight.toFixed(1);
+                startingBfInput.placeholder = initialBf.toFixed(1);
+                targetWeightInput.placeholder = targetWeightGoal;
+                targetBfInput.placeholder = targetBfGoal.toFixed(1);
+
+
+                console.log("Profile and Goals saved successfully!");
+
+                // REDIRECTION LOGIC: If successfully saved minimal profile data AND current screen is settings (first run), take them to the main goals screen.
+                const activeId = document.querySelector('.day-content:not(.hidden)').id;
+                if (hasMinimumProfile && activeId === 'settings') {
+                    showDay('goals'); // Redirect to main app flow
+                }
+
+            } catch (error) {
+                console.error("Error saving profile settings/goals:", error);
+            }
+        }
+
+
         // 2. Data Persistence Logic (Saving Lifts - Updates Max Weight for PO)
         window.saveWeight = async function(inputElement) {
             if (!isAuthReady) {
@@ -789,16 +1515,17 @@
             }
 
             try {
-                // This stores the single highest/most recent weight as the target for the next session
                 const docRef = doc(db, `artifacts/${appId}/users/${userId}/max_lifts`, exerciseId);
-                
+
                 await setDoc(docRef, {
                     weight: weightValue,
                     date: new Date().toISOString()
-                }, { merge: true });
+                }, {
+                    merge: true
+                });
 
                 console.log(`PO Target saved for ${exerciseId}: ${weightValue} lbs.`);
-                inputElement.placeholder = `${weightValue} lbs`; 
+                inputElement.placeholder = `${weightValue} lbs`;
             } catch (error) {
                 console.error("Error saving weight:", error);
             }
@@ -809,9 +1536,9 @@
             if (!isAuthReady || !db || !userId) {
                 return;
             }
-            
+
             const maxLiftsRef = collection(db, `artifacts/${appId}/users/${userId}/max_lifts`);
-            
+
             onSnapshot(maxLiftsRef, (snapshot) => {
                 const weightInputs = document.querySelectorAll('.weight-input');
                 const maxLifts = {};
@@ -836,14 +1563,15 @@
             });
         }
 
-        // 4. ARCHIVING LOGIC: Save Lift Session (NEW)
+        // 4. ARCHIVING LOGIC: Save Lift Session
         window.saveSessionLifts = async function(dayName) {
             if (!isAuthReady) {
-                alert("Authentication not ready. Cannot save session.");
+                console.error("Authentication not ready. Cannot save session.");
                 return;
             }
             
-            const activeDayContent = document.querySelector('.day-content:not(.hidden)');
+            const activeDayId = document.querySelector('.day-content:not(.hidden)').id;
+            const activeDayContent = document.getElementById(activeDayId);
             if (!activeDayContent) return;
 
             const liftInputs = activeDayContent.querySelectorAll('.weight-input');
@@ -853,8 +1581,7 @@
             liftInputs.forEach(input => {
                 const weightValue = parseFloat(input.value);
                 const nameElement = input.closest('.exercise-item').querySelector('.font-bold');
-                
-                // Only archive non-empty, valid entries
+            
                 if (!isNaN(weightValue) && weightValue > 0) {
                     sessionData[input.getAttribute('data-exercise-id')] = {
                         name: nameElement ? nameElement.textContent.trim() : input.getAttribute('data-exercise-id'),
@@ -865,7 +1592,7 @@
             });
 
             if (count === 0) {
-                alert("Please enter weights for at least one exercise before logging the session.");
+                console.error("Please enter weights for at least one exercise before logging the session.");
                 return;
             }
 
@@ -873,23 +1600,112 @@
             
             try {
                 await addDoc(collection(db, `artifacts/${appId}/users/${userId}/lift_sessions`), {
+                    dayId: activeDayId,
                     dayName: dayName,
                     date: timestamp,
                     lifts: JSON.stringify(sessionData)
                 });
 
-                alert(`${dayName} session logged successfully! (${count} lifts recorded)`);
-                
+                console.log(`Session logged successfully! (${count} lifts recorded)`);
+            
+                // Set status marker for today
+                updateWorkoutStatus(activeDayId, 'LOGGED');
+
                 // Clear inputs after archiving
                 liftInputs.forEach(input => input.value = '');
 
             } catch (error) {
                 console.error("Error saving lift session:", error);
-                alert("Failed to save lift session. Check console for details.");
             }
         };
-        
-        // 5. LIFT HISTORY RETRIEVAL & RENDERING
+
+        // 5. ARCHIVING LOGIC: Mark Session Skipped
+        window.markSessionSkipped = async function(dayName, statusElementId) {
+            if (!isAuthReady) {
+                console.error("Authentication not ready. Cannot skip session.");
+                return;
+            }
+
+            const today = getTodayIsoDate();
+            const activeDayId = document.querySelector('.day-content:not(.hidden)').id;
+
+            // Check if already logged (should prevent logging/skipping twice)
+            const sessionCheck = liftSessionsHistory.find(s => s.dayId === activeDayId && s.date.startsWith(today));
+            const skipCheck = skipLogs.find(s => s.dayId === activeDayId && s.date.startsWith(today));
+            
+            if (sessionCheck || skipCheck) {
+                console.error("Session already logged or skipped for today.");
+                return;
+            }
+            
+            try {
+                await addDoc(collection(db, `artifacts/${appId}/users/${userId}/skip_logs`), {
+                    dayId: activeDayId,
+                    dayName: dayName,
+                    date: new Date().toISOString()
+                });
+
+                console.log(`Session marked as SKIPPED for today.`);
+                updateWorkoutStatus(activeDayId, 'SKIPPED');
+
+            } catch (error) {
+                console.error("Error marking session skipped:", error);
+            }
+        };
+
+        // 6. WORKOUT STATUS LOGIC
+        let skipLogs = [];
+        const today = new Date();
+
+        function loadSkipLogs() {
+            if (!isAuthReady || !db || !userId) return;
+
+            const skipRef = collection(db, `artifacts/${appId}/users/${userId}/skip_logs`);
+            onSnapshot(skipRef, (snapshot) => {
+                skipLogs = snapshot.docs.map(doc => doc.data());
+                checkCurrentDayStatus(daySelector.value); 
+            }, (error) => {
+                console.error("Error loading skip logs:", error);
+            });
+        }
+
+        function checkCurrentDayStatus(dayId) {
+            if (!dayId.startsWith('day')) return;
+
+            const statusEl = document.getElementById(`${dayId}-status`);
+            if (!statusEl) return;
+            
+            const sessionLoggedToday = liftSessionsHistory.some(s => s.dayId === dayId && isSameDay(new Date(s.date), today));
+            const skippedToday = skipLogs.some(s => s.dayId === dayId && isSameDay(new Date(s.date), today));
+            
+            if (sessionLoggedToday) {
+                updateWorkoutStatus(dayId, 'LOGGED');
+            } else if (skippedToday) {
+                updateWorkoutStatus(dayId, 'SKIPPED');
+            } else {
+                statusEl.classList.add('hidden');
+            }
+        }
+
+        function updateWorkoutStatus(dayId, status) {
+            const statusEl = document.getElementById(`${dayId}-status`);
+            if (!statusEl) return;
+
+            statusEl.classList.remove('hidden');
+            statusEl.classList.remove('bg-green-100', 'bg-red-100');
+            statusEl.classList.remove('text-green-800', 'text-red-800');
+            statusEl.innerHTML = '';
+            
+            if (status === 'LOGGED') {
+                statusEl.classList.add('bg-green-100', 'text-green-800', 'p-2', 'rounded-lg');
+                statusEl.innerHTML = '✅ **LOGGED** for today.';
+            } else if (status === 'SKIPPED') {
+            	statusEl.classList.add('bg-red-100', 'text-red-800', 'p-2', 'rounded-lg');
+                statusEl.innerHTML = '❌ **SKIPPED** for today.';
+            }
+        }
+
+        // 7. LIFT HISTORY RETRIEVAL & RENDERING (and Chart)
         function loadLiftHistory() {
             if (!isAuthReady || !db || !userId) {
                 document.getElementById('session-history-list').innerHTML = '<li class="text-center text-gray-500">Authentication needed to view history.</li>';
@@ -897,46 +1713,156 @@
             }
 
             const historyRef = collection(db, `artifacts/${appId}/users/${userId}/lift_sessions`);
-            const historyQuery = query(historyRef, orderBy("date", "desc"));
+            // Sorting by date descending to get most recent sessions first
+            const historyQuery = query(historyRef, orderBy("date", "desc")); 
             const historyList = document.getElementById('session-history-list');
 
             onSnapshot(historyQuery, (snapshot) => {
                 historyList.innerHTML = '';
                 liftSessionsHistory = [];
+                loggedExerciseMap = {}; // Reset map for dynamic population
                 document.getElementById('lift-comparison-display').classList.add('hidden');
 
                 if (snapshot.empty) {
                     historyList.innerHTML = '<li class="text-center text-gray-400">No lift sessions logged yet.</li>';
+                    renderLiftChart([]);
                     return;
                 }
 
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    // Deserialize the lifts array for easy comparison later
                     data.lifts = JSON.parse(data.lifts);
                     liftSessionsHistory.push(data);
+                    
+                    // Populate dynamic exercise map
+                    for (const id in data.lifts) {
+                        if (!loggedExerciseMap[id]) {
+                            loggedExerciseMap[id] = data.lifts[id].name;
+                        }
+                    }
                     
                     const date = formatDate(data.date);
                     const listItem = document.createElement('li');
                     listItem.className = 'flex justify-between p-2 border-b border-dashed border-gray-200 history-item font-bold text-[#03254E]';
                     listItem.textContent = `${data.dayName} - ${date}`;
                     
-                    // Set up click handler to display comparison
                     listItem.onclick = () => displayLiftComparison(data);
                     historyList.appendChild(listItem);
                 });
+            
+                // Populate chart selector dynamically
+                const selector = document.getElementById('chart-exercise-selector');
+                const prevSelectedId = selector.value;
+                selector.innerHTML = ''; // Clear existing options
+
+                for (const id in loggedExerciseMap) {
+                    const option = document.createElement('option');
+                    option.value = id;
+                    option.textContent = loggedExerciseMap[id];
+                    selector.appendChild(option);
+                }
+
+                // Restore previous selection or set new default
+                if (selector.querySelector(`option[value="${prevSelectedId}"]`)) {
+                    selectedChartExerciseId = prevSelectedId;
+                    selector.value = prevSelectedId;
+                } else if (selector.options.length > 0) {
+                    selectedChartExerciseId = selector.options[0].value;
+                }
+            
+                // Re-attach change listener if not already done (safe guard)
+                if (!selector.hasListener) {
+                    selector.addEventListener('change', (e) => {
+                        selectedChartExerciseId = e.target.value;
+                        renderLiftChart(liftSessionsHistory.slice().reverse());
+                    });
+                    selector.hasListener = true;
+                }
+
+                // Render Chart on history load (reverse is necessary for chronological display on chart)
+                renderLiftChart(liftSessionsHistory.slice().reverse()); 
+                loadSkipLogs(); 
             }, (error) => {
                 console.error("Error loading lift history:", error);
             });
         }
+        
+        // 8. CHART.JS VISUALIZATION FUNCTION
+        function renderLiftChart(history) {
+            if (liftChartInstance) {
+                liftChartInstance.destroy();
+            }
 
-        // 6. DISPLAY LIFT COMPARISON
-        function displayLiftComparison(pastSession) {
+            const exerciseId = selectedChartExerciseId;
+            const exerciseName = loggedExerciseMap[exerciseId] || "Lifting Progress";
+
+            // Filter history to only include sessions where the selected exercise was logged
+            const relevantHistory = history.filter(session => session.lifts[exerciseId] !== undefined);
+
+            const dataPoints = relevantHistory.map(session => session.lifts[exerciseId].weight);
+            const labels = relevantHistory.map(session => formatDate(session.date).substring(0, 6)); 
+            
+            // Update chart title description
+            document.getElementById('chart-description').textContent = `Visualizing ${exerciseName} progression over time.`;
+
+            const ctx = document.getElementById('liftChart').getContext('2d');
+            
+            liftChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `${exerciseName} (lbs)`,
+                        data: dataPoints,
+                        borderColor: '#00A6FB',
+                        backgroundColor: 'rgba(0, 166, 251, 0.2)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#03254E'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Weight (lbs)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const item = tooltipItems[0];
+                                    let label = item.chart.data.labels[item.dataIndex];
+                                    if (Array.isArray(label)) {
+                                        return label.join(' ');
+                                    } else {
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
+        // 9. DISPLAY LIFT COMPARISON 
+        window.displayLiftComparison = function(pastSession) {
             const comparisonDiv = document.getElementById('lift-comparison-display');
             const comparisonList = document.getElementById('lift-comparison-list');
             const comparisonTitle = document.getElementById('lift-comparison-title');
             
-            // The most recent session is always at index 0 of the stored array
             const latestSession = liftSessionsHistory[0];
 
             if (!latestSession || latestSession.date === pastSession.date) {
@@ -979,10 +1905,10 @@
         }
 
         
-        // 7. ARCHIVING LOGIC: Save Weekly Log (Body Weight & Body Fat)
+        // 10. ARCHIVING LOGIC: Save Weekly Log (Body Weight & Body Fat)
         document.getElementById('weekly-log-button').addEventListener('click', async () => {
             if (!isAuthReady) {
-                alert("Please wait for authentication to load before logging.");
+                console.error("Please wait for authentication to load before logging.");
                 return;
             }
 
@@ -992,7 +1918,7 @@
             const bfValue = parseFloat(bfInput.value);
 
             if (isNaN(bwValue) || bwValue <= 0 || isNaN(bfValue) || bfValue <= 0) {
-                alert("Please enter valid weight (lbs) and body fat (%) before logging.");
+                console.error("Please enter valid weight (lbs) and body fat (%) before logging.");
                 return;
             }
 
@@ -1010,26 +1936,33 @@
                     percentage: bfValue,
                     date: timestamp
                 });
+            
+                // --- INSTANT UPDATE FOR CURRENT METRICS & PROTEIN GOAL ---
+                document.getElementById('current-weight').textContent = `${bwValue} lbs`;
+                document.getElementById('current-bf').textContent = `${bfValue}%`;
+            
+                const pGoalMin = Math.round(bwValue * 0.85); 
+                const pGoalMax = Math.round(bwValue * 1.0); 
+                document.getElementById('daily-protein-goal').textContent = `${pGoalMin}-${pGoalMax}g`;
+                // --- END INSTANT UPDATE ---
 
                 // Clear inputs and give feedback
                 bwInput.value = '';
                 bfInput.value = '';
-                alert(`Weekly log saved successfully for ${formatDate(timestamp)}!`);
+                console.log(`Weekly log saved successfully for ${formatDate(timestamp)}!`);
 
             } catch (error) {
                 console.error("Error saving weekly log:", error);
-                alert("Failed to save data. Check console for details.");
             }
         });
 
-        // 8. Comparison Logic (Weight and BF%)
+        // 11. Comparison Logic (Weight and BF%)
         function updateComparisonDisplay(pastWeightData, pastBFData) {
             const comparisonDiv = document.getElementById('comparison-display');
             const weightP = document.getElementById('comparison-weight');
             const bfP = document.getElementById('comparison-bf');
             const title = document.getElementById('comparison-title');
 
-            // Find the most recent entry (index 0)
             const latestWeight = bodyWeightHistory[0] ? bodyWeightHistory[0].weight : null;
             const latestBF = bodyFatHistory[0] ? bodyFatHistory[0].percentage : null;
 
@@ -1053,7 +1986,6 @@
 
             title.textContent = `Change Since ${formatDate(pastWeightData ? pastWeightData.date : pastBFData.date)}:`;
 
-            // Calculate Weight Change (Lower is good)
             if (pastWeight !== null) {
                 const diff = (latestWeight - pastWeight).toFixed(1);
                 const colorClass = getMetricColorClass(diff, true); 
@@ -1061,7 +1993,6 @@
                 weightHtml += ` (Net Change: <span class="${colorClass} font-bold">${direction} ${Math.abs(diff)} lbs</span>)`;
             }
 
-            // Calculate BF Change (Lower is good)
             if (pastBF !== null) {
                 const diff = (latestBF - pastBF).toFixed(1);
                 const colorClass = getMetricColorClass(diff, false);
@@ -1073,7 +2004,7 @@
             bfP.innerHTML = bfHtml;
         }
 
-        // 9. HISTORY RETRIEVAL & RENDERING: Body Weight
+        // 12. HISTORY RETRIEVAL & RENDERING: Body Weight
         function loadBodyWeightHistory() {
             if (!isAuthReady || !db || !userId) {
                 return;
@@ -1082,18 +2013,26 @@
             const historyRef = collection(db, `artifacts/${appId}/users/${userId}/body_weight_log`);
             const historyQuery = query(historyRef, orderBy("date", "desc"));
 
-            onSnapshot(historyQuery, (snapshot) => {
+            onSnapshot(historyQuery, async (snapshot) => {
                 bodyWeightHistory = [];
                 const bwInput = document.getElementById('weight-input');
-                const dateElement = document.getElementById('last-weight-date');
                 const historyList = document.getElementById('weight-history-list');
-                
+                const currentWeightEl = document.getElementById('current-weight');
+            
                 historyList.innerHTML = '';
 
                 if (snapshot.empty) {
+                    const profileDoc = await getDoc(getProfileDocRef(db, appId, userId));
+                    const initialWeight = profileDoc.exists() ? profileDoc.data().initialWeight : 177;
+                    
                     historyList.innerHTML = '<li class="text-center text-gray-400">No weight history logged yet.</li>';
-                    dateElement.textContent = 'Last Logged: N/A';
                     bwInput.placeholder = 'Latest lbs';
+                    currentWeightEl.textContent = `${initialWeight} lbs`; 
+                    
+                    // Update protein goal based on initial weight
+                    const pGoalMin = Math.round(parseFloat(initialWeight) * 0.85); 
+                    const pGoalMax = Math.round(parseFloat(initialWeight) * 1.0); 
+                    document.getElementById('daily-protein-goal').textContent = `${pGoalMin}-${pGoalMax}g`;
                     return;
                 }
 
@@ -1113,7 +2052,12 @@
 
                     if (index === 0) {
                         bwInput.placeholder = `${data.weight} lbs`;
-                        dateElement.textContent = `Last Logged: ${date}`;
+                        currentWeightEl.textContent = `${data.weight} lbs`; // UPDATE CURRENT STAT
+                        
+                        // Update protein goal based on current weight
+                        const pGoalMin = Math.round(data.weight * 0.85); 
+                        const pGoalMax = Math.round(data.weight * 1.0); 
+                        document.getElementById('daily-protein-goal').textContent = `${pGoalMin}-${pGoalMax}g`;
                     }
                 });
 
@@ -1122,7 +2066,7 @@
             });
         }
 
-        // 10. HISTORY RETRIEVAL & RENDERING: Body Fat
+        // 13. HISTORY RETRIEVAL & RENDERING: Body Fat
         function loadBodyFatHistory() {
             if (!isAuthReady || !db || !userId) {
                 return;
@@ -1131,18 +2075,21 @@
             const historyRef = collection(db, `artifacts/${appId}/users/${userId}/body_fat_log`);
             const historyQuery = query(historyRef, orderBy("date", "desc"));
 
-            onSnapshot(historyQuery, (snapshot) => {
+            onSnapshot(historyQuery, async (snapshot) => {
                 bodyFatHistory = [];
                 const bfInput = document.getElementById('bf-input');
-                const dateElement = document.getElementById('last-bf-date');
                 const historyList = document.getElementById('bf-history-list');
-                
+                const currentBfEl = document.getElementById('current-bf');
+            
                 historyList.innerHTML = '';
 
                 if (snapshot.empty) {
+                    const profileDoc = await getDoc(getProfileDocRef(db, appId, userId));
+                    const initialBf = profileDoc.exists() ? profileDoc.data().initialBf : 21;
+                    
                     historyList.innerHTML = '<li class="text-center text-gray-400">No body fat history logged yet.</li>';
-                    dateElement.textContent = 'Last Logged: N/A';
                     bfInput.placeholder = 'Latest %';
+                    currentBfEl.textContent = `${initialBf}%`; // Default value
                     return;
                 }
 
@@ -1162,7 +2109,7 @@
 
                     if (index === 0) {
                         bfInput.placeholder = `${data.percentage}%`;
-                        dateElement.textContent = `Last Logged: ${date}`;
+                        currentBfEl.textContent = `${data.percentage}%`; // UPDATE CURRENT STAT
                     }
                 });
 
@@ -1171,44 +2118,279 @@
             });
         }
 
+        // 14. NUTRITION RECIPE SUGGESTION (Gemini API Integration)
+        window.suggestRecipes = async function() {
+            const button = document.getElementById('recipe-button');
+            const statusEl = document.getElementById('recipe-status');
+            const outputEl = document.getElementById('recipe-output');
 
-        // 11. Tab Navigation Logic (Updated for Dropdown)
+            button.disabled = true;
+            statusEl.classList.remove('hidden');
+            outputEl.textContent = 'Hold tight! Generating a high-protein, delicious meal idea...';
+
+            const proteins = selectedProteinSources.length > 0 
+                ? selectedProteinSources.join(', ') 
+                : 'Chicken, Fish, Eggs, Dairy, or Plant-Based sources';
+
+            const exclusionText = currentExclusions.trim() 
+                ? `The meal must strictly EXCLUDE all of the following ingredients/foods: ${currentExclusions}.`
+                : '';
+
+            const systemPrompt = "Act as a nutritionist specializing in lean muscle gain. Provide a high-protein, easy-to-make recipe (including ingredients, calorie deficit guidance based on body type, macros (Protein/Fat/Carbs), and instructions). Use a warm, encouraging tone. Format the output using markdown for readability, with a maximum of 250 words.";
+            
+            const userQuery = `Suggest one high-protein meal for dinner. The user is a ${currentSomatotype} and wants to incorporate the following protein sources: ${proteins}. ${exclusionText} Also include suggested macro percentages for their body type in the response.`;
+            
+            const apiKey = ""; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+            };
+            
+            const maxRetries = 3;
+            let responseText = "Failed to fetch recipe idea. Please check network connection.";
+
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                       throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    responseText = result.candidates?.[0]?.content?.parts?.[0]?.text || "No recipe generated.";
+                    break; 
+
+                } catch (error) {
+                    console.error(`Attempt ${i + 1} failed:`, error);
+                    if (i < maxRetries - 1) {
+                        await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000)); // Exponential backoff
+                    }
+                }
+            }
+
+            outputEl.textContent = responseText;
+            button.disabled = false;
+            statusEl.classList.add('hidden');
+        };
+
+        // GEMINI API FUNCTION FOR BF% SUGGESTION
+        window.suggestTargetBF = async function() {
+            const button = document.getElementById('bf-suggest-button');
+            const statusEl = document.getElementById('bf-suggest-status');
+            const outputEl = document.getElementById('bf-suggest-output');
+
+            button.disabled = true;
+            statusEl.classList.remove('hidden');
+            outputEl.classList.add('hidden');
+            outputEl.textContent = '';
+            statusEl.textContent = 'Calculating optimal BF% based on your profile...';
+
+            const profileRef = getProfileDocRef(db, appId, userId);
+            const profileSnap = await getDoc(profileRef);
+            const profile = profileSnap.exists() ? profileSnap.data() : null;
+            
+            // Get necessary profile data
+            const targetWeight = profile ? profile.targetWeightGoal : defaultTargetGoals.targetWeight;
+            
+            if (!profile || !profile.age || !profile.sex || !profile.somatotype) {
+                console.error("Please ensure your Age, Sex, and Body Type are saved in the 'Base Metrics & Goals' section before using the calculator.");
+                button.disabled = false;
+                statusEl.classList.add('hidden');
+                return;
+            }
+
+            const age = profile.age;
+            const sex = profile.sex;
+            const somatotype = profile.somatotype;
+            
+            const systemPrompt = `You are a certified sports nutritionist. Your task is to suggest a healthy and ambitious, yet achievable, body fat percentage (BF%) target for a client aiming for lean muscle mass. The suggestion must be a single numerical value (no symbols or ranges) in the OBJECT property 'suggested_bf_percentage'. Use the rationale property to briefly explain why this is a good target range for their sex, age group, and somatotype based on fitness standards.`;
+            
+            const userQuery = `My sex is ${sex}, my age is ${age}, and my body type is ${somatotype}. My goal is to achieve a lean, toned look while weighing around ${targetWeight} lbs. Based on health and fitness standards, what single, numerical Body Fat Percentage (e.g., 12.5) should I aim for?`;
+
+            // Using the user-provided API key
+            const apiKey = ""; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            suggested_bf_percentage: { type: "NUMBER", description: "A single numerical value representing the suggested target body fat percentage." },
+                            rationale: { type: "STRING", description: "A brief explanation of the suggestion based on health and fitness standards." }
+                        }
+                    }
+                }
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            
+                const result = await response.json();
+                const jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+            
+                const parsedJson = JSON.parse(jsonText);
+            
+                const suggestedBF = parseFloat(parsedJson.suggested_bf_percentage).toFixed(1);
+                const rationale = parsedJson.rationale;
+            
+                if (suggestedBF && !isNaN(suggestedBF)) {
+                    // Update the Target BF input in the Settings tab
+                    document.getElementById('profile-target-bf').value = suggestedBF;
+                    
+                    // Call the save function to persist the change in the profile document
+                    await saveProfileSettings(); 
+                    
+                    outputEl.textContent = `Suggested Target: ${suggestedBF}%\n\nRationale:\n${rationale}`;
+                    outputEl.classList.remove('hidden');
+                } else {
+                    outputEl.textContent = "Error: Could not calculate a valid Body Fat percentage. Try again or check the console.";
+                    outputEl.classList.remove('hidden');
+                }
+
+            } catch (error) {
+                console.error("Gemini API/JSON Error:", error);
+                outputEl.textContent = `A technical error occurred during calculation. (Error: ${error.message}). Please try again.`;
+                outputEl.classList.remove('hidden');
+            } finally {
+                button.disabled = false;
+                statusEl.classList.add('hidden');
+            }
+        };
+
+
+        // 15. Reset History Functions
+        window.showResetConfirmation = function() {
+            document.getElementById('reset-modal').classList.remove('hidden');
+        }
+
+        window.hideResetConfirmation = function() {
+            document.getElementById('reset-modal').classList.add('hidden');
+        }
+
+        window.resetLiftHistory = async function() {
+            hideResetConfirmation();
+
+            if (!isAuthReady) {
+                console.error("Authentication not ready. Cannot reset history.");
+                return;
+            }
+
+            try {
+                const collectionsToClear = ['lift_sessions', 'max_lifts', 'skip_logs'];
+                let totalDeleted = 0;
+
+                for (const collectionName of collectionsToClear) {
+                    const collectionRef = collection(db, `artifacts/${appId}/users/${userId}/${collectionName}`);
+                    const snapshot = await getDocs(collectionRef);
+                    
+                    const deletePromises = snapshot.docs.map(docSnapshot => 
+                        deleteDoc(doc(db, `artifacts/${appId}/users/${userId}/${collectionName}`, docSnapshot.id))
+                    );
+
+                    await Promise.all(deletePromises);
+                    totalDeleted += snapshot.docs.length;
+                }
+            
+                // Clear inputs/placeholders on the workout pages after full reset
+                document.querySelectorAll('.weight-input').forEach(input => {
+                    input.value = '';
+                    input.placeholder = 'Max';
+                });
+
+                console.log(`Successfully cleared ${totalDeleted} historical lift and target records.`);
+            
+            } catch (error) {
+                console.error("Error during history reset:", error);
+            }
+        }
+
+
+        // 16. Tab Navigation Logic (Updated for Dropdown)
         const navButtons = document.querySelectorAll('.nav-button');
         const dayContents = document.querySelectorAll('.day-content');
+        const workoutSelectorContainer = document.getElementById('workout-selector-container');
         const warmupSection = document.getElementById('warmup-section');
         const daySelector = document.getElementById('workout-day-selector');
+        const landingPage = document.getElementById('landing-page');
+        const workoutDaysIds = ['day1', 'day2', 'day3', 'day4', 'day5', 'day6', 'day7'];
+
 
         function showDay(dayId) {
+            // 1. Hide all content containers
             dayContents.forEach(content => {
                 content.classList.add('hidden');
             });
+            workoutSelectorContainer.classList.add('hidden');
+            warmupSection.classList.add('hidden');
 
+            // 2. Handle Navigation Visibility
+            if (dayId === 'landing-page') {
+                hideMainNavigation();
+                landingPage.classList.remove('hidden'); 
+            } else {
+                showMainNavigation();
+            }
+
+            // 3. Update active tab/dropdown state
             navButtons.forEach(btn => {
                 btn.classList.remove('active');
             });
             
-            daySelector.classList.remove('active');
-            daySelector.value = '';
+            let targetDayId = dayId;
 
-            const targetDay = document.getElementById(dayId);
+            // Determine if the requested page is a workout session (dayX) or a main tab
+            if (workoutDaysIds.includes(dayId)) {
+                // If it's a workout day, treat 'workout' tab as active, and show selector
+                document.querySelector(`#bottom-tabs .nav-button[data-day="workout"]`).classList.add('active');
+                workoutSelectorContainer.classList.remove('hidden');
+                daySelector.value = dayId;
+                
+                // Show/Hide Warmup section
+                if (dayId !== 'day4' && dayId !== 'day7') {
+                    warmupSection.classList.remove('hidden');
+                }
+                checkCurrentDayStatus(dayId);
+
+                // Highlight the quick link button as well
+                populateWorkoutSelectorAndQuickLinks(dayId);
+
+            } else {
+                // It's a main tab (goals, nutrition, lift-history, settings, or workout selector itself)
+                const navButtonSelector = document.querySelector(`#bottom-tabs .nav-button[data-day="${dayId}"]`);
+                if (navButtonSelector) {
+                    navButtonSelector.classList.add('active');
+                }
+                
+                // If the user selected the main 'workout' tab, display the selector screen
+                if (dayId === 'workout') {
+                    targetDayId = 'workout';
+                    workoutSelectorContainer.classList.remove('hidden');
+                    daySelector.value = 'select'; // Clear selection visually
+                    populateWorkoutSelectorAndQuickLinks(); // Update suggestion/quick links
+                } else {
+                    daySelector.value = 'select'; // Reset dropdown selection visually
+                }
+            }
+
+
+            const targetDay = document.getElementById(targetDayId);
             if (targetDay) {
                 targetDay.classList.remove('hidden');
-            }
-
-            const navButtonSelector = document.querySelector(`.nav-button[data-day="${dayId}"]`);
-            if (navButtonSelector) {
-                navButtonSelector.classList.add('active');
-            }
-            
-            if (daySelector.querySelector(`option[value="${dayId}"]`)) {
-                 daySelector.value = dayId;
-                 // Mark the dropdown as conceptually "active" for styling consistency if needed
-            }
-
-            if (dayId === 'goals' || dayId === 'nutrition' || dayId === 'day4' || dayId === 'day7' || dayId === 'lift-history') {
-                warmupSection.classList.add('hidden');
-            } else {
-                warmupSection.classList.remove('hidden');
             }
             
             if (dayId === 'lift-history') {
@@ -1217,22 +2399,25 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-             // Handle Tab button clicks
-             navButtons.forEach(button => {
+            
+            navButtons.forEach(button => {
                 button.addEventListener('click', (e) => {
                     const dayId = e.target.getAttribute('data-day');
                     showDay(dayId);
                 });
             });
 
-            // Handle Dropdown changes
             daySelector.addEventListener('change', (e) => {
                 const dayId = e.target.value;
-                showDay(dayId);
+                if (dayId !== 'select') {
+                    showDay(dayId);
+                }
             });
+
+            // Populate initial quick links (needed even if we start on landing page)
+            populateWorkoutSelectorAndQuickLinks();
             
-            // Set initial view
-            showDay('day1');
+            // The initial state is handled by initializeFirebase() above.
         });
     </script>
 </body>
