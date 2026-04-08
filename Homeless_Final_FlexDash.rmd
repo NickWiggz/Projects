@@ -251,9 +251,9 @@ This treemap provides a comprehensive overview of the demographics of individual
 ### Spatial Map
 
 ```{=html}
-<iframe width='100%' height='400px' src="https://api.mapbox.com/styles/v1/njwiggins/cm2p9jhr400ak01qi5ruc7ydf.html?title=false&access_token=pk.eyJ1Ijoibmp3aWdnaW5zIiwiYSI6ImNtMnA4OWxzNzBvaHMycHE1MWZ4c2MyMXEifQ.kWvvh_Aq30rm9ZAzjK6WKw&zoomwheel=false#12/38.90795/-77.01565" title="DC Homelessness" style="border:none;"></iframe>
+<iframe width='100%' height='400px' src="https://api.mapbox.com/styles/v1/njwiggins/cm2p9jhr400ak01qi5ruc7ydf.html?title=false&access_token=&zoomwheel=false#12/38.90795/-77.01565" title="DC Homelessness" style="border:none;"></iframe>
 ```
-[Map: Homeless Shelter Vicinity to Homeless Facility Shuttle Stops](https://api.mapbox.com/styles/v1/njwiggins/cm2p9jhr400ak01qi5ruc7ydf.html?title=view&access_token=pk.eyJ1Ijoibmp3aWdnaW5zIiwiYSI6ImNtMnA4OWxzNzBvaHMycHE1MWZ4c2MyMXEifQ.kWvvh_Aq30rm9ZAzjK6WKw&zoomwheel=true&fresh=true#12/38.90795/-77.01565)
+[Map: Homeless Shelter Vicinity to Homeless Facility Shuttle Stops](https://api.mapbox.com/styles/v1/njwiggins/cm2p9jhr400ak01qi5ruc7ydf.html?title=view&access_token=&zoomwheel=true&fresh=true#12/38.90795/-77.01565)
 
 This analysis utilizes three spatial indicators. First, there is the 'Homeless Facility Shuttle Stops,' represented by the blue markers with buses. These show the locations where shuttles specifically serving homeless individuals make stops, providing crucial transportation to shelters, service centers, and other essential destinations. This aligns with the concept of "smart mobility" discussed in the readings, as it utilizes technology (GPS data) to provide real-time information about transportation services relevant to homeless individuals.
 
