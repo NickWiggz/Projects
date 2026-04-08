@@ -431,9 +431,9 @@ Expanding and improving affordable housing programs in Washington, DC, while sim
 # Characterizing the Spatial Indicators
 
 ```{=html}
-<iframe width='100%' height='400px' src="https://api.mapbox.com/styles/v1/njwiggins/cm2p9jhr400ak01qi5ruc7ydf.html?title=false&access_token=pk.eyJ1Ijoibmp3aWdnaW5zIiwiYSI6ImNtMnA4OWxzNzBvaHMycHE1MWZ4c2MyMXEifQ.kWvvh_Aq30rm9ZAzjK6WKw&zoomwheel=false#11/38.8889/-77.0033" title="DC Homelessness" style="border:none;"></iframe>
+<iframe width='100%' height='400px' src="https://api.mapbox.com/styles/v1/njwiggins/cm2p9jhr400ak01qi5ruc7ydf.html?title=false&access_token=&zoomwheel=false#11/38.8889/-77.0033" title="DC Homelessness" style="border:none;"></iframe>
 ```
-[Map: Homeless Shelter Vicinity to Homeless Facility Shuttle Stops](https://api.mapbox.com/styles/v1/njwiggins/cm2p9jhr400ak01qi5ruc7ydf.html?title=view&access_token=pk.eyJ1Ijoibmp3aWdnaW5zIiwiYSI6ImNtMnA4OWxzNzBvaHMycHE1MWZ4c2MyMXEifQ.kWvvh_Aq30rm9ZAzjK6WKw&zoomwheel=true&fresh=true#11/38.8889/-77.0033)
+[Map: Homeless Shelter Vicinity to Homeless Facility Shuttle Stops](https://api.mapbox.com/styles/v1/njwiggins/cm2p9jhr400ak01qi5ruc7ydf.html?title=view&access_token=&zoomwheel=true&fresh=true#11/38.8889/-77.0033)
 
 ## Type and Source of Spatial Indicators
 
