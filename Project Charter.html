@@ -15,7 +15,6 @@ body {
 font-family: 'Inter', sans-serif;
 }
 /* High-fidelity print rules to format PDF precisely */
-/* High-fidelity print rules to format PDF precisely */
 @media print {
 * {
 -webkit-print-color-adjust: exact !important;
@@ -222,7 +221,6 @@ border-radius: 4px;
 <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
 Enterprise CI Workspace
 </span>
-<!-- Dynamic Header Title -->
 <h1 id="hdr-title" class="text-3xl font-extrabold tracking-tight md:text-4xl bg-gradient-to-r from-white via-slate-100 to-indigo-200 bg-clip-text text-transparent">
 Continuous Improvement (CI) Project Charter
 </h1>
@@ -245,7 +243,6 @@ Continuous Improvement Program Initiative Template
 <span id="hdr-owner-badge" class="font-bold text-indigo-300">Continuous Improvement Lead</span>
 </div>
 </div>
-<!-- Autosave Status Area -->
 <div class="flex justify-between items-center text-[11px] px-2 text-slate-300 font-medium">
 <span id="autosave-status" class="flex items-center gap-1">
 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Persistent Local Storage Active
@@ -308,7 +305,6 @@ Continuous Improvement Program Initiative Template
 
 <!-- =================== TAB 1: SETUP WIZARD =================== -->
 <section id="content-wizard" class="tab-content block space-y-8 no-print animate-fade-in">
-<!-- Save & Load Local Backup Header Banner -->
 <div class="bg-indigo-50 border border-indigo-200 p-4 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
 <div>
 <h3 class="text-indigo-900 font-bold text-sm">Local Workspace Controls</h3>
@@ -368,14 +364,19 @@ Clear Template
 <input id="inp-end-date" onchange="triggerAutosave()" type="date" class="w-full p-2 text-xs bg-white border border-slate-300 rounded focus:outline-indigo-600 text-slate-800 font-semibold" value="">
 </div>
 </div>
-<div class="grid grid-cols-2 gap-4">
+<div class="grid grid-cols-1 gap-4">
 <div>
 <label class="block text-xs font-bold text-slate-600 mb-1">CI Project Lead (POC)</label>
 <input id="inp-poc" oninput="triggerAutosave()" type="text" class="w-full p-2 text-xs bg-white border border-slate-300 rounded focus:outline-indigo-600 text-slate-800 font-medium" value="">
 </div>
 <div>
-<label class="block text-xs font-bold text-slate-600 mb-1">Sponsor / Champion</label>
-<input id="inp-sponsor" oninput="triggerAutosave()" type="text" class="w-full p-2 text-xs bg-white border border-slate-300 rounded focus:outline-indigo-600 text-slate-800 font-medium" value="">
+<label class="block text-xs font-bold text-slate-600 mb-1">Project Champion(s) / Sponsor(s)</label>
+<div id="sponsors-wizard-container" class="space-y-2">
+<!-- Sponsor inputs injected dynamically -->
+</div>
+<button onclick="addSponsorInput()" class="mt-2 text-[10px] font-bold text-indigo-600 flex items-center gap-1 hover:text-indigo-800">
+<span>+ Add Sponsor</span>
+</button>
 </div>
 </div>
 </div>
@@ -546,7 +547,6 @@ Compile and Synchronize Project Assets
 <section id="content-charter" class="tab-content hidden space-y-8 animate-fade-in">
 <!-- PORTRAIT PRINT AREA -->
 <div id="charter-print-area" class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm print-card">
-<!-- Charter Header Block -->
 <div class="border-b pb-6 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
 <div>
 <h2 id="lbl-charter-title-h2" class="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
@@ -556,26 +556,24 @@ Compile and Synchronize Project Assets
 </div>
 </div>
 
-<!-- Structured Grid Row 1 (Problem Statement and Authority) -->
+<!-- Structured Grid Row 1 -->
 <div id="charter-grid-row-1" class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-<!-- 1. Problem Statement & Impact -->
 <div id="charter-prob-card" class="lg:col-span-2 bg-slate-50 p-6 rounded-xl border border-slate-200 flex flex-col justify-between">
 <div>
 <h3 class="font-bold text-slate-900 text-xs uppercase tracking-wider mb-2 text-indigo-700">1. Problem Statement & Impact</h3>
 <p id="lbl-problem-statement" class="text-slate-600 text-xs md:text-sm leading-relaxed whitespace-pre-wrap text-justify text-slate-700 font-medium"></p>
 </div>
 </div>
-<!-- 3. CI Execution Authority (Next to Problem Statement, Smaller Width) -->
 <div id="charter-auth-card" class="lg:col-span-1 bg-slate-50 p-6 rounded-xl border border-slate-200 flex flex-col justify-between">
 <div>
-<h3 class="font-bold text-slate-900 text-xs uppercase tracking-wider mb-3 text-indigo-700">3. CI Execution Authority</h3>
+<h3 class="font-bold text-slate-900 text-xs uppercase tracking-wider mb-3 text-indigo-700">3. Project Authority</h3>
 <div class="space-y-4 text-xs text-slate-500">
 <div>
-<span class="block font-bold text-slate-700">Project POC (CI Lead):</span>
+<span class="block font-bold text-slate-700">Project Lead:</span>
 <span id="lbl-poc-sig" class="font-semibold text-slate-900"></span>
 </div>
 <div class="border-t pt-2">
-<span class="block font-bold text-slate-700">Project Champion / Sponsor:</span>
+<span class="block font-bold text-slate-700">Project Champion(s) / Sponsor(s):</span>
 <span id="lbl-sponsor-sig" class="font-semibold text-slate-900"></span>
 </div>
 </div>
@@ -583,18 +581,15 @@ Compile and Synchronize Project Assets
 </div>
 </div>
 
-<!-- Structured Grid Row 2 (SMART Project Objectives and Goal) -->
+<!-- Structured Grid Row 2 -->
 <div id="charter-grid-row-2" class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch mt-6">
-<!-- 2. SMART Project Objectives -->
 <div id="charter-obj-card" class="lg:col-span-2 bg-slate-50 p-6 rounded-xl border border-slate-200 flex flex-col justify-between">
 <div>
 <h3 class="font-bold text-slate-900 text-xs uppercase tracking-wider mb-3 text-indigo-700">2. SMART Project Objectives</h3>
 <ul id="lbl-objectives-list" class="space-y-3 text-xs md:text-sm text-slate-700 font-medium">
-<!-- Objectives list injected dynamically -->
 </ul>
 </div>
 </div>
-<!-- 4. Primary Initiative Goal (Next to Objectives, Smaller Width) -->
 <div id="charter-goal-card" class="lg:col-span-1 bg-indigo-950 text-indigo-100 p-6 rounded-xl shadow-inner relative overflow-hidden flex flex-col justify-between">
 <div class="absolute -right-12 -bottom-12 w-32 h-32 bg-indigo-900 rounded-full opacity-25"></div>
 <div>
@@ -604,17 +599,15 @@ Compile and Synchronize Project Assets
 </div>
 </div>
 
-<!-- Timeline Milestone CSS/SVG Graphic inside Project Charter page -->
+<!-- Timeline Flow -->
 <div class="mt-8 border-t pt-8">
 <h3 class="font-bold text-slate-900 text-xs uppercase tracking-wider mb-6 text-indigo-700">5. Project Milestone Timeline Flow</h3>
 <div class="relative py-4">
-<div id="lbl-timeline-flow-graphic-charter" class="flex flex-col md:flex-row justify-between items-start md:items-center relative gap-8 md:gap-4">
-<!-- Visual Graphic bars/points built dynamically -->
-</div>
+<div id="lbl-timeline-flow-graphic-charter" class="flex flex-col md:flex-row justify-between items-start md:items-center relative gap-8 md:gap-4"></div>
 </div>
 </div>
 
-<!-- Stakeholder Matrix - MOVED LAST ON THE CHARTER PAGE (Requested) -->
+<!-- Stakeholders Matrix -->
 <div id="charter-stakeholders-container" class="mt-8 border-t pt-8">
 <h3 class="font-bold text-slate-900 text-xs uppercase tracking-wider mb-4 text-indigo-700">6. Stakeholders Directory</h3>
 <div class="overflow-x-auto border border-slate-200 rounded-xl custom-scroll">
@@ -626,38 +619,30 @@ Compile and Synchronize Project Assets
 <th class="px-4 py-3 w-6/12">Specific Project Responsibility</th>
 </tr>
 </thead>
-<tbody id="lbl-stakeholders-charter-list" class="divide-y divide-slate-200 bg-white text-slate-600">
-<!-- Stakeholders list rows injected dynamically -->
-</tbody>
+<tbody id="lbl-stakeholders-charter-list" class="divide-y divide-slate-200 bg-white text-slate-600"></tbody>
 </table>
 </div>
 </div>
 
-<!-- RACI Matrix Container (HIDDEN ON CHARTER VIEW - ONLY FOR PRINT COMPILER) -->
 <div id="print-raci-container" class="hidden">
 <h3 class="font-bold text-slate-900 text-xs uppercase tracking-wider mb-4 text-indigo-700">7. Stakeholder Accountability RACI Matrix</h3>
 <div class="overflow-x-auto border border-slate-200 rounded-xl custom-scroll">
-<table class="min-w-full divide-y divide-slate-200 text-xs md:text-sm" id="raci-output-table-embedded">
-<!-- Embedded table built dynamically -->
-</table>
+<table class="min-w-full divide-y divide-slate-200 text-xs md:text-sm" id="raci-output-table-embedded"></table>
 </div>
 </div>
 
-<!-- Milestone Timeline Table Wrapper (HIDDEN ON CHARTER VIEW - ONLY FOR PRINT COMPILER) -->
 <div id="print-timeline-table-container" class="hidden">
 <h3 class="font-bold text-slate-900 text-xs uppercase tracking-wider mb-4 text-indigo-700">8. Proposed Timeline Targets Table</h3>
 <div class="overflow-x-auto border border-slate-200 rounded-xl custom-scroll">
-<table class="min-w-full divide-y divide-slate-200 text-xs md:text-sm text-left" id="timeline-table-embedded">
-<!-- Embedded table built dynamically -->
-</table>
+<table class="min-w-full divide-y divide-slate-200 text-xs md:text-sm text-left" id="timeline-table-embedded"></table>
 </div>
 </div>
 
-<!-- Combined Scope boundaries & Proposed Deliverables on the Same Row (Requested) -->
+<!-- Scope & Deliverables -->
 <div id="print-scope-timeline-container" class="mt-8 border-t pt-8">
 <div>
 <h3 class="font-bold text-slate-900 text-xs uppercase tracking-wider mb-4 text-indigo-700">7. BOUNDARIES, SCOPE, AND PROPOSED DELIVERABLES</h3>
-<div id="print-scope-three-cards" class="grid grid-cols-1 md:grid-cols-3 gap-4"> <!-- Enforced side-by-side single-row print cards -->
+<div id="print-scope-three-cards" class="grid grid-cols-1 md:grid-cols-3 gap-4">
 <div class="p-3 bg-emerald-50/60 rounded-xl border border-emerald-100 flex flex-col justify-between">
 <div>
 <span class="font-bold text-emerald-800 block text-xs mb-1">✓ IN SCOPE</span>
@@ -681,152 +666,6 @@ Compile and Synchronize Project Assets
 </div>
 
 </div>
-
-<!-- LANDSCAPE ONE-PAGER PRINT AREA (SIBLING OUTSIDE OF PORTRAIT WRAPPER) -->
-<div id="charter-one-pager-landscape" class="hidden bg-white w-full h-full pt-1 px-6 pb-6 text-slate-900 flex-col justify-between" style="aspect-ratio: 16/9; max-height: 100vh; overflow: hidden; font-family: 'Inter', sans-serif;">
-<!-- Header Block -->
-<div class="text-center mb-4 flex flex-col items-center justify-center">
-<h1 id="hl-title-text" class="text-xl font-extrabold text-[#0f172a] uppercase tracking-wider mb-1">CI WORKSPACE PROJECT CHARTER</h1>
-<div class="text-[#fbbf24] text-lg font-bold">★</div>
-</div>
-
-<!-- Main Slide Content Grid (Split 9 columns Left, 3 columns Right Milestone Sidebar) -->
-<div class="grid grid-cols-12 gap-4 flex-grow items-stretch" style="height: calc(100% - 60px);">
-<!-- LEFT SECTION (takes 9/12 columns) -->
-<div class="col-span-9 flex flex-col justify-between space-y-4" style="height: calc(100% - 60px);">
-<!-- Project Insight (Problem Statement) Card (Height locked to 18%) -->
-<div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col justify-center" style="height: 18%; overflow: hidden;">
-<h3 class="text-xs font-bold text-indigo-900 uppercase tracking-widest mb-1 flex items-center gap-1.5">
-<span class="text-[#0a1d37]">💡</span> PROJECT INSIGHT
-</h3>
-<p id="hl-problem-text" class="text-[10px] leading-relaxed text-slate-700 text-justify font-medium overflow-hidden"></p>
-</div>
-
-<!-- 3-Column Sub-Grid (Goal, Deliverables, Scope) (Height locked to 48%) -->
-<div class="grid grid-cols-3 gap-4 flex-grow" style="height: 48%; overflow: hidden;">
-<!-- Goal Card -->
-<div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex flex-col justify-between">
-<div>
-<h3 class="text-[10px] font-bold text-indigo-900 uppercase tracking-widest mb-1 flex items-center gap-1">
-<span>🎯</span> PROJECT GOAL
-</h3>
-<p id="hl-goal-text" class="text-[9.5px] leading-relaxed text-slate-700 font-semibold mb-1.5 overflow-hidden"></p>
-<ul id="hl-objectives-list" class="space-y-1 text-[8.5px] text-slate-600 font-medium"></ul>
-</div>
-</div>
-<!-- Proposed Deliverables Card -->
-<div class="bg-slate-50 p-3 rounded-xl border border-slate-200 overflow-hidden">
-<h3 class="text-[10px] font-bold text-indigo-900 uppercase tracking-widest mb-1.5 flex items-center gap-1">
-<span>📋</span> PROJECT PROPOSED DELIVERABLES
-</h3>
-<ol id="hl-deliverables-list" class="list-decimal list-inside space-y-1 text-[8.5px] text-slate-600 font-medium"></ol>
-</div>
-<!-- Scope Card -->
-<div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex flex-col justify-between space-y-1 overflow-hidden">
-<div>
-<span class="font-bold text-emerald-800 block text-[9.5px] mb-0.5">✓ IN SCOPE</span>
-<ul id="hl-scope-in" class="list-disc list-inside text-[8.5px] text-slate-600 space-y-0.5 leading-tight"></ul>
-</div>
-<div class="border-t pt-1">
-<span class="font-bold text-rose-800 block text-[9.5px] mb-0.5">✗ OUT OF SCOPE</span>
-<ul id="hl-scope-out" class="list-disc list-inside text-[8.5px] text-slate-600 space-y-0.5 leading-tight"></ul>
-</div>
-</div>
-</div>
-
-<!-- 4-Column Balanced Bottom Sub-Grid (Height locked to 30%) -->
-<div class="grid grid-cols-4 gap-4" style="height: 30%; overflow: hidden;">
-<!-- Column 1: Key Insights (Risks) -->
-<div class="bg-slate-50 p-3 rounded-xl border border-slate-200 overflow-hidden flex flex-col justify-between h-full" style="height: 100%;">
-<div>
-<h3 class="text-[9px] font-bold text-indigo-900 uppercase tracking-widest mb-1 flex items-center gap-1">
-<span>📉</span> KEY INSIGHT
-</h3>
-<ul id="hl-risks" class="list-disc list-inside text-[8px] text-slate-600 space-y-0.5 font-medium leading-tight"></ul>
-</div>
-</div>
-<!-- Column 2: Assumptions -->
-<div class="bg-slate-50 p-3 rounded-xl border border-slate-200 overflow-hidden flex flex-col justify-between h-full" style="height: 100%;">
-<div>
-<h3 class="text-[9px] font-bold text-indigo-900 uppercase tracking-widest mb-1 flex items-center gap-1">
-<span>💭</span> ASSUMPTIONS
-</h3>
-<ul id="hl-assumptions" class="list-disc list-inside text-[8px] text-slate-600 space-y-0.5 font-medium leading-tight"></ul>
-</div>
-</div>
-<!-- Column 3: Stakeholders Directory -->
-<div class="bg-slate-50 p-3 rounded-xl border border-slate-200 overflow-hidden flex flex-col justify-between h-full" style="height: 100%;">
-<div>
-<h3 class="text-[9px] font-bold text-indigo-900 uppercase tracking-widest mb-1 flex items-center gap-1">
-<span>👥</span> STAKEHOLDERS
-</h3>
-<ul id="hl-stakeholders" class="text-[8px] text-slate-600 space-y-1 font-medium leading-tight"></ul>
-</div>
-</div>
-<!-- Column 4: Project Authority -->
-<div class="bg-slate-50 p-3 rounded-xl border border-slate-200 overflow-hidden flex flex-col justify-between h-full" style="height: 100%;">
-<div>
-<h3 class="text-[9px] font-bold text-indigo-900 uppercase tracking-widest mb-1 flex items-center gap-1">
-<span>✍️</span> PROJECT AUTHORITY
-</h3>
-<div class="space-y-1 text-[8px] text-slate-500 mt-1">
-<div>
-<span class="block font-bold text-slate-700">CI Project Lead:</span>
-<span id="hl-auth-poc" class="font-semibold text-slate-900"></span>
-</div>
-<div class="border-t pt-1 mt-1">
-<span class="block font-bold text-slate-700">Sponsor / Champion:</span>
-<span id="hl-auth-sponsor" class="font-semibold text-slate-900"></span>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-
-<!-- RIGHT SECTION - MILESTONE SIDEBAR (takes 3/12 columns) -->
-<div class="col-span-3 bg-[#0a1d37] text-white rounded-2xl p-4 flex flex-col items-center justify-between shadow-lg relative overflow-hidden" style="min-height: 100%;">
-<div class="absolute -right-8 -bottom-8 w-24 h-24 bg-white/5 rounded-full"></div>
-<div class="w-full text-center border-b border-white/20 pb-2 mb-4">
-<h3 class="text-xs font-extrabold uppercase tracking-widest text-[#fbbf24]">PROPOSED MILESTONES</h3>
-</div>
-
-<!-- Vertical Connected Timeline -->
-<div class="relative flex-grow flex flex-col justify-between py-2 z-10 w-full pl-2">
-<!-- Connecting Line styled as a Dashed Track Pathway -->
-<div class="absolute left-[13px] top-[14px] bottom-[14px] w-0.5 border-l-2 border-dashed border-white/30 z-0"></div>
-
-<!-- Project Start Node -->
-<div class="flex items-center gap-3 relative z-10">
-<div class="w-7 h-7 rounded-full bg-[#fbbf24] border-2 border-white text-slate-900 flex items-center justify-center text-[10px] font-extrabold shadow-sm">
-🚩
-</div>
-<div>
-<span class="block text-[8px] uppercase tracking-wider text-slate-400 font-bold">PROJECT START</span>
-<span id="hl-milestone-start" class="block text-[9px] text-slate-200 font-bold">TBD</span>
-</div>
-</div>
-
-<!-- Dynamic Milestones Container -->
-<div id="hl-dynamic-milestones" class="flex-grow flex flex-col justify-around my-2 w-full space-y-2">
-<!-- Milestone rows injected dynamically -->
-</div>
-
-<!-- Project End Node -->
-<div class="flex items-center gap-3 relative z-10">
-<div class="w-7 h-7 rounded-full bg-[#10b981] border-2 border-white text-white flex items-center justify-center text-[10px] font-extrabold shadow-sm">
-★
-</div>
-<div>
-<span class="block text-[8px] uppercase tracking-wider text-slate-400 font-bold">PROJECT END</span>
-<span id="hl-milestone-end" class="block text-[9px] text-slate-200 font-bold">TBD</span>
-</div>
-</div>
-
-</div>
-</div>
-</div>
-</div>
 </section>
 
 <!-- =================== TAB 3: RACI MATRIX =================== -->
@@ -837,29 +676,18 @@ Compile and Synchronize Project Assets
 <h2 class="text-xl font-bold text-slate-955">Project Accountability RACI Grid</h2>
 <p class="text-slate-500 text-sm">Assign Responsibility (R), Accountability (A), Consultation (C), and Information (I) for each step.</p>
 </div>
-<!-- Direct RACI Tab Exporters Panel -->
 <div class="flex flex-wrap gap-2 items-center">
 <span class="text-xs text-slate-500 font-bold">Export RACI:</span>
-<button onclick="exportRaciPDF()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg transition-colors flex items-center gap-1">
-PDF (Landscape)
-</button>
-<button onclick="exportRaciWord()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-lg transition-colors flex items-center gap-1">
-Word (.doc)
-</button>
-<button onclick="exportRaciCSV()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg transition-colors flex items-center gap-1">
-Excel (.csv)
-</button>
+<button onclick="exportRaciPDF()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg transition-colors flex items-center gap-1">PDF (Landscape)</button>
+<button onclick="exportRaciWord()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-lg transition-colors flex items-center gap-1">Word (.doc)</button>
+<button onclick="exportRaciCSV()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg transition-colors flex items-center gap-1">Excel (.csv)</button>
 </div>
 </div>
 
-<!-- RACI Matrix Table container -->
 <div class="overflow-x-auto border border-slate-200 rounded-xl custom-scroll">
-<table class="min-w-full divide-y divide-slate-200 text-xs md:text-sm" id="raci-output-table">
-<!-- Table header and rows are dynamic -->
-</table>
+<table class="min-w-full divide-y divide-slate-200 text-xs md:text-sm" id="raci-output-table"></table>
 </div>
 
-<!-- RACI Key -->
 <div class="flex flex-wrap gap-4 mt-4 justify-end text-xs font-semibold no-print">
 <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 bg-indigo-600 rounded"></span> R: Responsible</span>
 <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 bg-emerald-600 rounded"></span> A: Accountable (Ultimate Decision Authority)</span>
@@ -872,7 +700,6 @@ Excel (.csv)
 <!-- =================== TAB 4: SCOPE & DELIVERABLES =================== -->
 <section id="content-scope" class="tab-content hidden space-y-8 no-print animate-fade-in">
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-<!-- Scope Card -->
 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm print-card">
 <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
 <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" /></svg>
@@ -881,32 +708,23 @@ Project Scope Boundaries
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm">
 <div class="p-3 bg-emerald-50/60 rounded-xl border border-emerald-100">
 <span class="font-bold text-emerald-800 block mb-1">✓ IN SCOPE</span>
-<ul id="lbl-scope-in-list" class="list-disc list-inside space-y-1 text-slate-600">
-<!-- in scope dynamic items -->
-</ul>
+<ul id="lbl-scope-in-list" class="list-disc list-inside space-y-1 text-slate-600"></ul>
 </div>
 <div class="p-3 bg-rose-50/60 rounded-xl border border-rose-100">
 <span class="font-bold text-rose-800 block mb-1">✗ OUT OF SCOPE</span>
-<ul id="lbl-scope-out-list" class="list-disc list-inside space-y-1 text-slate-600">
-<!-- out of scope dynamic items -->
-</ul>
+<ul id="lbl-scope-out-list" class="list-disc list-inside space-y-1 text-slate-600"></ul>
 </div>
 </div>
 </div>
-
-<!-- Proposed Deliverables Card -->
 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm print-card">
 <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
 <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
 Proposed Project Deliverables
 </h3>
-<div class="space-y-3 text-xs md:text-sm" id="lbl-deliverables-list">
-<!-- deliverables lists injected dynamically -->
-</div>
+<div class="space-y-3 text-xs md:text-sm" id="lbl-deliverables-list"></div>
 </div>
 </div>
 
-<!-- Automated AI SIPOC Matrix Section -->
 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm mt-8">
 <div class="border-b pb-4 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
 <div>
@@ -920,37 +738,31 @@ Proposed Project Deliverables
 <span id="sipoc-btn-text">Generate SIPOC with AI</span>
 </button>
 </div>
-<!-- The SIPOC Grid -->
 <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-<!-- Suppliers -->
 <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
 <span class="block text-xs font-bold text-indigo-900 uppercase tracking-wider mb-2 border-b pb-1">S - Suppliers</span>
 <ul id="sipoc-suppliers" class="list-disc list-inside text-xs text-slate-700 space-y-1">
 <li class="italic text-slate-400">Not generated yet</li>
 </ul>
 </div>
-<!-- Inputs -->
 <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
 <span class="block text-xs font-bold text-indigo-900 uppercase tracking-wider mb-2 border-b pb-1">I - Inputs</span>
 <ul id="sipoc-inputs" class="list-disc list-inside text-xs text-slate-700 space-y-1">
 <li class="italic text-slate-400">Not generated yet</li>
 </ul>
 </div>
-<!-- Process -->
 <div class="p-4 bg-indigo-50/50 rounded-xl border border-indigo-100">
 <span class="block text-xs font-bold text-indigo-900 uppercase tracking-wider mb-2 border-b pb-1">P - Process Steps</span>
 <ol id="sipoc-process" class="list-decimal list-inside text-xs text-slate-700 space-y-1">
 <li class="italic text-slate-400">Not generated yet</li>
 </ol>
 </div>
-<!-- Outputs -->
 <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
 <span class="block text-xs font-bold text-indigo-900 uppercase tracking-wider mb-2 border-b pb-1">O - Outputs</span>
 <ul id="sipoc-outputs" class="list-disc list-inside text-xs text-slate-700 space-y-1">
 <li class="italic text-slate-400">Not generated yet</li>
 </ul>
 </div>
-<!-- Customers -->
 <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
 <span class="block text-xs font-bold text-indigo-900 uppercase tracking-wider mb-2 border-b pb-1">C - Customers</span>
 <ul id="sipoc-customers" class="list-disc list-inside text-xs text-slate-700 space-y-1">
@@ -974,17 +786,13 @@ Active Timeline Range: <span class="lbl-start-date">June 1, 2026</span> — <spa
 </span>
 </div>
 
-<!-- Timeline Visual Graphic (Requested) -->
 <div class="mb-10 bg-slate-50 p-6 rounded-xl border border-slate-200">
 <h3 class="text-xs font-bold text-indigo-700 uppercase tracking-wider mb-6">Milestone Visualization Flow</h3>
 <div class="relative py-4">
-<div id="lbl-timeline-flow-graphic" class="flex flex-col md:flex-row justify-between items-start md:items-center relative gap-8 md:gap-4">
-<!-- Visual Graphic bars/points built dynamically -->
-</div>
+<div id="lbl-timeline-flow-graphic" class="flex flex-col md:flex-row justify-between items-start md:items-center relative gap-8 md:gap-4"></div>
 </div>
 </div>
 
-<!-- Timeline Table (Requested) -->
 <div>
 <h3 class="text-xs font-bold text-indigo-700 uppercase tracking-wider mb-4">Timeline Milestones Table</h3>
 <div class="overflow-x-auto border border-slate-200 rounded-xl custom-scroll">
@@ -997,9 +805,7 @@ Active Timeline Range: <span class="lbl-start-date">June 1, 2026</span> — <spa
 <th class="px-4 py-3 w-3/12">Status</th>
 </tr>
 </thead>
-<tbody id="lbl-timeline-table-body" class="divide-y divide-slate-200 bg-white">
-<!-- Timelines table rows are dynamic -->
-</tbody>
+<tbody id="lbl-timeline-table-body" class="divide-y divide-slate-200 bg-white"></tbody>
 </table>
 </div>
 </div>
@@ -1009,35 +815,26 @@ Active Timeline Range: <span class="lbl-start-date">June 1, 2026</span> — <spa
 <!-- =================== TAB 6: RISKS & ASSUMPTIONS =================== -->
 <section id="content-risks" class="tab-content hidden space-y-8 no-print animate-fade-in">
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-<!-- Risks -->
 <div class="bg-red-50/40 p-6 rounded-2xl border border-red-100 print-card">
 <h4 class="font-bold text-red-900 mb-4 flex items-center gap-2 text-sm border-b border-red-100 pb-2">
 <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77(1.333.192 3 1.732 3z" /></svg>
 Project Risks & Mitigations
 </h4>
-<ul class="space-y-4 text-xs md:text-sm text-slate-700" id="lbl-risks-list">
-<!-- Risks dynamic load -->
-</ul>
+<ul class="space-y-4 text-xs md:text-sm text-slate-700" id="lbl-risks-list"></ul>
 </div>
-<!-- Constraints -->
 <div class="bg-amber-50/40 p-6 rounded-2xl border border-amber-100 print-card">
 <h4 class="font-bold text-amber-900 mb-4 flex items-center gap-2 text-sm border-b border-amber-100 pb-2">
 <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
 Project Constraints
 </h4>
-<ul class="list-disc list-inside space-y-3 text-xs md:text-sm text-slate-700" id="lbl-constraints-list">
-<!-- Constraints load -->
-</ul>
+<ul class="list-disc list-inside space-y-3 text-xs md:text-sm text-slate-700" id="lbl-constraints-list"></ul>
 </div>
-<!-- Assumptions -->
 <div class="bg-blue-50/40 p-6 rounded-2xl border border-blue-100 print-card">
 <h4 class="font-bold text-blue-900 mb-4 flex items-center gap-2 text-sm border-b border-blue-100 pb-2">
 <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
 Key Assumptions
 </h4>
-<ul class="list-disc list-inside space-y-3 text-xs md:text-sm text-slate-700" id="lbl-assumptions-list">
-<!-- Assumptions load -->
-</ul>
+<ul class="list-disc list-inside space-y-3 text-xs md:text-sm text-slate-700" id="lbl-assumptions-list"></ul>
 </div>
 </div>
 </section>
@@ -1150,7 +947,7 @@ Copy Code Block
 <script>
 // Central Reactive Project State Object
 let projectState = {
-metadata: { name: "", id: "", start: "", end: "", poc: "", sponsor: "" },
+metadata: { name: "", id: "", start: "", end: "", poc: "", sponsors: [] },
 problem: "",
 goal: "",
 stakeholders: [],
@@ -1163,12 +960,12 @@ milestones: [],
 risks: [],
 constraints: [],
 assumptions: [],
-raciMatrix: {} // Structure: { [stepId]: { [stakeholderId]: 'R'/'A'/'C'/'I'/'-' } }
+raciMatrix: {}
 };
 
 // Static Baseline fasttrack values
 const fasttrackBaseline = {
-metadata: { name: "Operation FastTrack", id: "CIP-2026-FT", start: "2026-06-01", end: "2026-09-30", poc: "Continuous Improvement Lead", sponsor: "CI Directorate Head" },
+metadata: { name: "Operation FastTrack", id: "CIP-2026-FT", start: "2026-06-01", end: "2026-09-30", poc: "Continuous Improvement Lead", sponsors: ["CI Directorate Head"] },
 problem: "The current training acquisition process suffers from operational ambiguity, redundant approval layers, and late submissions. Requesters consistently confuse SF-182 (Individual) and IG-4100 (Group) training request paths, and the routing sequence is extremely slow and opaque. Approvals often happen fewer than 14 days before classes start, causing targeted classes to fill up, cardholder delays, manual routing workarounds, and lost budget execution opportunities.",
 goal: "Streamline, standardize, and optimize the training acquisition workflow, reducing lead times and eliminating manual bottlenecks by September 30, 2026.",
 stakeholders: [
@@ -1229,7 +1026,6 @@ assumptions: [
 ]
 };
 
-// UI Toast Notification Helper (Defined globally at the very top of script to resolve ReferenceError)
 function showNotification(title, message, type = "info") {
 const container = document.getElementById("custom-notification");
 const icon = document.getElementById("notif-icon");
@@ -1272,7 +1068,28 @@ container.classList.add("hidden");
 }, 5000);
 }
 
-// Setup Wizard DOM Injection Handlers
+// Sponsor Functions
+function addSponsorInput(val = "", isFirst = false) {
+const container = document.getElementById("sponsors-wizard-container");
+const id = "sp-" + Date.now() + Math.random().toString(36).substr(2, 4);
+
+let btnHtml = isFirst ? '' : `
+<button onclick="this.parentElement.remove(); triggerAutosave();" class="p-2 text-slate-400 hover:text-rose-600 transition-colors" title="Remove Sponsor">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+</button>`;
+
+const html = `
+<div class="flex items-center gap-2 sponsor-row" id="${id}">
+<input type="text" oninput="triggerAutosave()" class="w-full p-2 text-xs bg-white border border-slate-300 rounded focus:outline-indigo-600 text-slate-800 font-medium sponsor-input" placeholder="e.g. Division Head" value="${val}">
+${btnHtml}
+</div>`;
+container.insertAdjacentHTML('beforeend', html);
+}
+
+// Initial Call
+addSponsorInput("", true);
+
+
 function createStakeholderHTMLRow(id, name = "", title = "", role = "") {
 return `
 <div class="p-3 bg-white rounded-lg border border-slate-250 flex flex-col md:flex-row gap-3 items-start md:items-center relative group" id="wz-stakeholder-${id}">
@@ -1499,7 +1316,8 @@ document.getElementById("inp-init-id").value = "";
 document.getElementById("inp-start-date").value = "";
 document.getElementById("inp-end-date").value = "";
 document.getElementById("inp-poc").value = "";
-document.getElementById("inp-sponsor").value = "";
+document.getElementById("sponsors-wizard-container").innerHTML = "";
+addSponsorInput("", true);
 document.getElementById("inp-problem").value = "";
 document.getElementById("inp-goal").value = "";
 document.getElementById("stakeholder-wizard-container").innerHTML = "";
@@ -1522,7 +1340,10 @@ document.getElementById("inp-init-id").value = fasttrackBaseline.metadata.id;
 document.getElementById("inp-start-date").value = fasttrackBaseline.metadata.start;
 document.getElementById("inp-end-date").value = fasttrackBaseline.metadata.end;
 document.getElementById("inp-poc").value = fasttrackBaseline.metadata.poc;
-document.getElementById("inp-sponsor").value = fasttrackBaseline.metadata.sponsor;
+
+document.getElementById("sponsors-wizard-container").innerHTML = "";
+fasttrackBaseline.metadata.sponsors.forEach((sp, i) => addSponsorInput(sp, i === 0));
+
 document.getElementById("inp-problem").value = fasttrackBaseline.problem;
 document.getElementById("inp-goal").value = fasttrackBaseline.goal;
 
@@ -1537,7 +1358,6 @@ fasttrackBaseline.risks.forEach(r => addRiskRow(r.text, r.mitigation));
 fasttrackBaseline.constraints.forEach(c => addConstraintRow(c));
 fasttrackBaseline.assumptions.forEach(a => addAssumptionRow(a));
 
-// Load original RACI mapping state into memory temporarily
 projectState.raciMatrix = JSON.parse(JSON.stringify(fasttrackBaseline.raciMatrix));
 compileAndSaveAllWizardData(true);
 showNotification("FASTTRACK LOADED", "Operation FastTrack template state populated successfully.", "success");
@@ -1550,7 +1370,12 @@ projectState.metadata.id = document.getElementById("inp-init-id").value.trim() |
 projectState.metadata.start = document.getElementById("inp-start-date").value.trim() || "N/A";
 projectState.metadata.end = document.getElementById("inp-end-date").value.trim() || "N/A";
 projectState.metadata.poc = document.getElementById("inp-poc").value.trim() || "N/A";
-projectState.metadata.sponsor = document.getElementById("inp-sponsor").value.trim() || "N/A";
+
+projectState.metadata.sponsors = [];
+document.querySelectorAll(".sponsor-input").forEach(inp => {
+if(inp.value.trim()) projectState.metadata.sponsors.push(inp.value.trim());
+});
+
 projectState.problem = document.getElementById("inp-problem").value.trim() || "";
 projectState.goal = document.getElementById("inp-goal").value.trim() || "";
 
@@ -1683,7 +1508,7 @@ document.getElementById("lbl-problem-statement").innerText = projectState.proble
 document.getElementById("lbl-main-goal").innerText = projectState.goal || "No primary goal defined.";
 
 document.getElementById("lbl-poc-sig").innerText = projectState.metadata.poc;
-document.getElementById("lbl-sponsor-sig").innerText = projectState.metadata.sponsor;
+document.getElementById("lbl-sponsor-sig").innerText = projectState.metadata.sponsors.join(', ');
 
 const listContainer = document.getElementById("lbl-objectives-list");
 listContainer.innerHTML = "";
@@ -1717,102 +1542,6 @@ charterStakesContainer.insertAdjacentHTML('beforeend', `
 }
 
 renderMilestoneTimelineFlowchart("lbl-timeline-flow-graphic-charter");
-
-const projName = projectState.metadata.name || "CI Workspace Sprints";
-document.getElementById("hl-title-text").innerText = `${projName.toUpperCase()} PROJECT CHARTER`;
-document.getElementById("hl-problem-text").innerText = projectState.problem || "No problem statement defined yet.";
-document.getElementById("hl-goal-text").innerText = projectState.goal || "No primary goal defined.";
-
-const hlObjList = document.getElementById("hl-objectives-list");
-hlObjList.innerHTML = "";
-if (projectState.objectives.length === 0) {
-hlObjList.innerHTML = `<li class="italic text-slate-400">No objectives mapped</li>`;
-} else {
-projectState.objectives.slice(0, 4).forEach(item => {
-hlObjList.insertAdjacentHTML('beforeend', `<li class="flex items-start gap-1"><span class="text-indigo-600">•</span><span>${item}</span></li>`);
-});
-}
-
-const hlDelList = document.getElementById("hl-deliverables-list");
-hlDelList.innerHTML = "";
-if (projectState.deliverables.length === 0) {
-hlDelList.innerHTML = `<li class="italic text-slate-400">No deliverables mapped</li>`;
-} else {
-projectState.deliverables.slice(0, 3).forEach((item, idx) => {
-hlDelList.insertAdjacentHTML('beforeend', `<li><span class="font-bold text-slate-800">Deliverable ${idx+1}:</span> ${item}</li>`);
-});
-}
-
-const hlScopeIn = document.getElementById("hl-scope-in");
-hlScopeIn.innerHTML = "";
-if (projectState.scopeIn.length === 0) {
-hlScopeIn.innerHTML = `<li class="italic text-slate-400">Empty</li>`;
-} else {
-projectState.scopeIn.slice(0, 4).forEach(item => {
-hlScopeIn.insertAdjacentHTML('beforeend', `<li>${item}</li>`);
-});
-}
-
-const hlScopeOut = document.getElementById("hl-scope-out");
-hlScopeOut.innerHTML = "";
-if (projectState.scopeOut.length === 0) {
-hlScopeOut.innerHTML = `<li class="italic text-slate-400">Empty</li>`;
-} else {
-projectState.scopeOut.slice(0, 4).forEach(item => {
-hlScopeOut.insertAdjacentHTML('beforeend', `<li>${item}</li>`);
-});
-}
-
-const hlRisks = document.getElementById("hl-risks");
-hlRisks.innerHTML = "";
-if (projectState.risks.length === 0) {
-hlRisks.innerHTML = `<li class="italic text-slate-400">No risks mapped</li>`;
-} else {
-projectState.risks.slice(0, 3).forEach(r => {
-hlRisks.insertAdjacentHTML('beforeend', `<li><span class="font-bold text-red-905">Risk:</span> ${r.text}</li>`);
-});
-}
-
-const hlAssumptions = document.getElementById("hl-assumptions");
-hlAssumptions.innerHTML = "";
-if (projectState.assumptions.length === 0) {
-hlAssumptions.innerHTML = `<li class="italic text-slate-400">No assumptions mapped</li>`;
-} else {
-projectState.assumptions.slice(0, 3).forEach(a => {
-hlAssumptions.insertAdjacentHTML('beforeend', `<li>${a}</li>`);
-});
-}
-
-document.getElementById("hl-milestone-start").innerText = formatReadableDate(projectState.metadata.start);
-document.getElementById("hl-milestone-end").innerText = formatReadableDate(projectState.metadata.end);
-
-const hlMilestones = document.getElementById("hl-dynamic-milestones");
-hlMilestones.innerHTML = "";
-if (projectState.milestones.length === 0) {
-hlMilestones.innerHTML = `<div class="text-slate-400 italic text-[9px] text-center w-full">Empty</div>`;
-} else {
-projectState.milestones.slice(0, 3).forEach((m, idx) => {
-let flagBgColor = "bg-slate-500 text-white";
-if (m.status === "Complete") {
-flagBgColor = "bg-emerald-500 text-white";
-} else if (m.status === "In Progress") {
-flagBgColor = "bg-blue-500 text-white";
-} else if (m.status === "Delayed") {
-flagBgColor = "bg-rose-500 text-white";
-}
-hlMilestones.insertAdjacentHTML('beforeend', `
-<div class="flex items-center gap-3 relative z-10">
-<div class="w-7 h-7 rounded-full ${flagBgColor} border-2 border-white flex items-center justify-center text-[10px] shadow-sm transition-all">
-🏳
-</div>
-<div>
-<span class="block text-[8px] uppercase tracking-wider text-slate-400 font-bold">${m.text}</span>
-<span class="block text-[9px] text-slate-200 font-semibold">${formatReadableDate(m.date)}</span>
-</div>
-</div>
-`);
-});
-}
 }
 
 function renderVisualRACIMatrixTable() {
@@ -2106,7 +1835,7 @@ let md = `# PROJECT CHARTER & PLAN: ${projectState.metadata.name || "CI Project 
 `**Date Generated:** ${new Date().toLocaleDateString()}\n` +
 `**Timeline Window:** ${formatReadableDate(projectState.metadata.start)} — ${formatReadableDate(projectState.metadata.end)}\n` +
 `**CI Project POC:** ${projectState.metadata.poc}\n` +
-`**Project Sponsor:** ${projectState.metadata.sponsor}\n` +
+`**Project Sponsor(s):** ${projectState.metadata.sponsors.join(', ')}\n` +
 `**Submission Status:** ${projectState.workflowState}\n\n` +
 `---\n\n` +
 `## 1. Executive Summary & Problem Statement\n` +
@@ -2162,7 +1891,7 @@ md += `\n---\n\n` +
 `---\n\n` +
 `## 9. Authorizations & Executive Sign-off\n\n` +
 `**Project Lead Signature:** ___________________________\n` +
-`**Sponsor Signature:** ___________________________\n`;
+projectState.metadata.sponsors.map(sp => `**Sponsor Signature (${sp}):** ___________________________\n`).join('');
 
 document.getElementById("markdown-output-text").value = md;
 }
@@ -2360,13 +2089,25 @@ reader.onload = function(e) {
 try {
 const loadedState = JSON.parse(e.target.result);
 if (loadedState.metadata && loadedState.stakeholders) {
+// Backwards compatibility for single sponsor
+if (loadedState.metadata.sponsor && !loadedState.metadata.sponsors) {
+loadedState.metadata.sponsors = [loadedState.metadata.sponsor];
+}
+
 projectState = loadedState;
 document.getElementById("inp-proj-name").value = projectState.metadata.name;
 document.getElementById("inp-init-id").value = projectState.metadata.id;
 document.getElementById("inp-start-date").value = projectState.metadata.start;
 document.getElementById("inp-end-date").value = projectState.metadata.end;
 document.getElementById("inp-poc").value = projectState.metadata.poc;
-document.getElementById("inp-sponsor").value = projectState.metadata.sponsor;
+
+document.getElementById("sponsors-wizard-container").innerHTML = "";
+if (projectState.metadata.sponsors && projectState.metadata.sponsors.length > 0) {
+projectState.metadata.sponsors.forEach((sp, i) => addSponsorInput(sp, i === 0));
+} else {
+addSponsorInput("", true);
+}
+
 document.getElementById("inp-problem").value = projectState.problem;
 document.getElementById("inp-goal").value = projectState.goal;
 
@@ -2439,7 +2180,7 @@ margin: 1.0in 1.0in 1.0in 1.0in;
 <p><strong>Initiative ID:</strong> ${pID}<br>
 <strong>Timeline Window:</strong> ${formatReadableDate(projectState.metadata.start)} — ${formatReadableDate(projectState.metadata.end)}<br>
 <strong>CI Project Lead:</strong> ${projectState.metadata.poc}<br>
-<strong>Champion / Sponsor:</strong> ${projectState.metadata.sponsor}<br>
+<strong>Project Sponsor(s):</strong> ${projectState.metadata.sponsors.join(', ')}<br>
 <strong>State Status:</strong> ${projectState.workflowState}</p>
 <hr>
 <h2>1. Problem Statement & Impact</h2>
@@ -2709,17 +2450,21 @@ const objItems = (s.objectives || []).map(o =>
 + '<span style="font-size:9px;color:#1e293b;font-weight:600;line-height:1.35;">' + o + '</span></div>'
 ).join('');
 
-const insights = [...(s.risks || []).map(r => r.text), ...(s.constraints || [])].slice(0, 3);
-const insightItems = insights.map(i => '<li style="margin-bottom:4px;">' + i + '</li>').join('') || '<li>No key insights noted.</li>';
-const assumptItems = (s.assumptions || []).map(a => '<li style="margin-bottom:4px;">' + a + '</li>').join('') || '<li>Stakeholder engagement will continue.</li>';
+const insightsList = (s.constraints || []).slice(0, 5);
+const insightItems = insightsList.map(i => '<li style="margin-bottom:4px;">' + i + '</li>').join('') || '<li>No constraints noted.</li>';
 
-const poc = s.metadata.poc || 'Sample Name';
-const sponsor = s.metadata.sponsor || 'Sample Name';
-const teamMembers = (s.stakeholders || []).slice(0, 3).map(st => st.name).join(', ') || 'Sample Name';
+const riskAssumpt = [...(s.risks || []).map(r => r.text), ...(s.assumptions || [])].slice(0, 5);
+const riskAssumptItems = riskAssumpt.map(i => '<li style="margin-bottom:4px;">' + i + '</li>').join('') || '<li>None</li>';
 
-const approvalHTML = '<div style="margin-bottom:5px;"><span style="font-size:9px;color:#475569;font-weight:600;">Project Lead:</span><br><span style="font-size:9.5px;font-weight:800;color:#0a1d37;">' + poc + '</span></div>'
-+ '<div style="margin-bottom:5px;"><span style="font-size:9px;color:#475569;font-weight:600;">Project Champion/Sponsor(s):</span><br><span style="font-size:9.5px;font-weight:800;color:#0a1d37;">' + sponsor + '</span></div>'
-+ '<div style="margin-top:10px;"><span style="font-size:9px;color:#475569;font-weight:600;">Sponsor Signature(s):</span><br><div style="border-bottom:1px solid #94a3b8; width:100%; margin-top:15px;"></div></div>';
+const teamItems = (s.stakeholders || []).map(st => '<li style="margin-bottom:4px;"><b>' + st.name + '</b> - ' + st.title + '</li>').join('') || '<li>No stakeholders listed.</li>';
+
+const poc = s.metadata.poc || 'Project Lead';
+const sponsors = s.metadata.sponsors || [];
+let approvalHTML = '<div style="margin-bottom:5px;"><span style="font-size:9px;color:#475569;font-weight:600;">Project Lead:</span><br><span style="font-size:9.5px;font-weight:800;color:#0a1d37;">' + poc + '</span></div>';
+sponsors.forEach(sp => {
+    approvalHTML += '<div style="margin-bottom:5px;"><span style="font-size:9px;color:#475569;font-weight:600;">Project Sponsor:</span><br><span style="font-size:9.5px;font-weight:800;color:#0a1d37;">' + sp + '</span></div>';
+});
+approvalHTML += '<div style="margin-top:10px;"><span style="font-size:9px;color:#475569;font-weight:600;">Sponsor Signature(s):</span><br><div style="border-bottom:1px solid #94a3b8; width:100%; margin-top:15px;"></div></div>';
 
 const iconSVG = {
 insight: '<svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:#f59e0b;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>',
@@ -2741,13 +2486,13 @@ const css = [
 'body { font-family: Inter, sans-serif; background: #f1f5f9; display:flex; align-items:center; justify-content:center; min-height:100vh; padding:20px; }',
 '.page { width:1122px; min-height:794px; background:#fff; display:flex; flex-direction:column; padding:24px 26px; box-shadow:0 20px 60px rgba(0,0,0,0.18); border-radius:4px; overflow:hidden; }',
 '.charter-title { font-size:34px; font-weight:900; color:#0a1d37; letter-spacing:-0.02em; line-height:1; text-transform:uppercase; border-bottom:3px solid #0a1d37; padding-bottom:7px; margin-bottom:16px; }',
-'.content-wrapper { display:grid; grid-template-columns:1fr 220px; gap:20px; flex:1; }',
-'.left { display:flex; flex-direction:column; gap:14px; justify-content:space-between; padding:0; }',
+'.content-wrapper { display:grid; grid-template-columns:1fr 220px; gap:12px; flex:1; }',
+'.left { display:flex; flex-direction:column; gap:8px; justify-content:space-between; padding:0; }',
 '.section-label { font-size:10px; font-weight:800; color:#0a1d37; letter-spacing:0.07em; text-transform:uppercase; margin-bottom:4px; }',
 '.insight-block { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:12px 14px; display:flex; gap:12px; align-items:flex-start; }',
-'.mid-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }',
+'.mid-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }',
 '.mid-card { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:11px 13px; }',
-'.bottom-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }',
+'.bottom-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }',
 '.bottom-card { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:10px 12px; }',
 '.sidebar { background:#0a1d37; display:flex; flex-direction:column; border-radius:10px; overflow:hidden; }',
 '.sidebar-hdr { background:#0f2a50; padding:14px; text-align:center; border-bottom:2px solid rgba(245,158,11,0.3); }',
@@ -2774,7 +2519,7 @@ const body = [
 '  <div class="left">',
 '   <div class="insight-block">',
 '    ' + iconCircle(iconSVG.insight, 40),
-'    <div><div class="section-label">Project Insight</div>',
+'    <div><div class="section-label">Project Insights</div>',
 '    <p style="font-size:10px;color:#334155;line-height:1.55;font-weight:500;">' + (s.problem || 'No problem statement provided.').substring(0, 400) + '</p></div>',
 '   </div>',
 '   <div class="mid-grid">',
@@ -2796,9 +2541,9 @@ const body = [
 '    </div>',
 '   </div>',
 '   <div class="bottom-grid">',
-'    <div class="bottom-card">' + iconCircle(iconSVG.insight_sm, 30) + '<div class="section-label" style="font-size:8.5px;margin-top:6px;">Key Insight</div><ul style="font-size:8.5px;color:#475569;padding-left:13px;margin-top:4px;line-height:1.45;">' + insightItems + '</ul></div>',
-'    <div class="bottom-card">' + iconCircle(iconSVG.team, 30) + '<div class="section-label" style="font-size:8.5px;margin-top:6px;">Stakeholders</div><div style="font-size:8.5px;color:#475569;margin-top:4px;line-height:1.7;"><b style="color:#1e293b;">Project Manager:</b><br>' + poc + '<br><b style="color:#1e293b;">Sponsor:</b><br>' + sponsor + '<br><b style="color:#1e293b;">Members:</b><br>' + teamMembers + '</div></div>',
-'    <div class="bottom-card">' + iconCircle(iconSVG.assumptions, 30) + '<div class="section-label" style="font-size:8.5px;margin-top:6px;">Assumptions</div><ul style="font-size:8.5px;color:#475569;padding-left:13px;margin-top:4px;line-height:1.45;">' + assumptItems + '</ul></div>',
+'    <div class="bottom-card">' + iconCircle(iconSVG.insight_sm, 30) + '<div class="section-label" style="font-size:8.5px;margin-top:6px;">Key Insights</div><ul style="font-size:8.5px;color:#475569;padding-left:13px;margin-top:4px;line-height:1.45;">' + insightItems + '</ul></div>',
+'    <div class="bottom-card">' + iconCircle(iconSVG.team, 30) + '<div class="section-label" style="font-size:8.5px;margin-top:6px;">Stakeholders</div><ul style="font-size:8.5px;color:#475569;padding-left:13px;margin-top:4px;line-height:1.7;">' + teamItems + '</ul></div>',
+'    <div class="bottom-card">' + iconCircle(iconSVG.assumptions, 30) + '<div class="section-label" style="font-size:8.5px;margin-top:6px;">Risks & Assumptions</div><ul style="font-size:8.5px;color:#475569;padding-left:13px;margin-top:4px;line-height:1.45;">' + riskAssumptItems + '</ul></div>',
 '    <div class="bottom-card">' + iconCircle(iconSVG.approval, 30) + '<div class="section-label" style="font-size:8.5px;margin-top:6px;">Project Authority</div><div style="margin-top:4px;">' + approvalHTML + '</div></div>',
 '   </div>',
 '  </div>',
@@ -2826,7 +2571,7 @@ btn.textContent = 'Generating...'; btn.disabled = true;
 try {
 const pptx = new PptxGenJS();
 pptx.layout = 'LAYOUT_WIDE';
-const W=13.3, H=7.5, SW=2.6, CW=10.7, PAD=0.28;
+const W=13.3, H=7.5, SW=2.6, CW=10.7, PAD=0.20;
 const NAVY='0a1d37', GOLD='f59e0b', WHITE='FFFFFF', LIGHT='f8fafc', BORDER='e2e8f0', DARK='334155';
 const s = window._STATE;
 const fmt = d => d ? new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '<Date>';
@@ -2834,26 +2579,26 @@ const fmt = d => d ? new Date(d).toLocaleDateString('en-US',{month:'short',day:'
 const slide = pptx.addSlide();
 slide.background = { color: WHITE };
 
-slide.addShape(pptx.shapes.RECTANGLE, { x:CW, y:0, w:SW, h:H, fill:{color:NAVY}, line:{color:NAVY} });
-slide.addShape(pptx.shapes.RECTANGLE, { x:CW, y:0, w:SW, h:0.5, fill:{color:'0f2a50'}, line:{color:'0f2a50'} });
+slide.addShape('rect', { x:CW, y:0, w:SW, h:H, fill:{color:NAVY}, line:{color:NAVY} });
+slide.addShape('rect', { x:CW, y:0, w:SW, h:0.5, fill:{color:'0f2a50'}, line:{color:'0f2a50'} });
 slide.addText('PROPOSED MILESTONES', { x:CW, y:0.04, w:SW, h:0.42, align:'center', valign:'middle', fontSize:10, bold:true, color:WHITE, charSpacing:5, margin:0 });
-slide.addShape(pptx.shapes.LINE, { x:CW+0.14, y:0.52, w:SW-0.28, h:0, line:{color:GOLD, width:1, transparency:40} });
+slide.addShape('line', { x:CW+0.14, y:0.52, w:SW-0.28, h:0, line:{color:GOLD, width:1, transparency:40} });
 
 const ms = s.milestones || [];
 let mY = 0.65;
 const mSlot = ms.length > 0 ? Math.min((H - mY - 0.8) / (ms.length + 1), 0.9) : 0.9;
 const cx = CW+0.17, D=0.36, tx=cx+D+0.08, tw=SW-(tx-CW)-0.08;
 
-slide.addShape(pptx.shapes.OVAL, { x:cx, y:mY, w:D, h:D, fill:{color:GOLD}, line:{color:GOLD} });
-slide.addShape(pptx.shapes.RIGHT_ARROW, { x:cx+0.07, y:mY+0.1, w:0.22, h:0.16, fill:{color:NAVY}, line:{color:NAVY} });
+slide.addShape('oval', { x:cx, y:mY, w:D, h:D, fill:{color:GOLD}, line:{color:GOLD} });
+slide.addShape('rightArrow', { x:cx+0.07, y:mY+0.1, w:0.22, h:0.16, fill:{color:NAVY}, line:{color:NAVY} });
 slide.addText('PROJECT START', { x:tx, y:mY+0.01, w:tw, h:0.17, fontSize:7, bold:true, color:GOLD, charSpacing:2, margin:0 });
 slide.addText(fmt(s.metadata.start), { x:tx, y:mY+0.18, w:tw, h:0.15, fontSize:7, color:'aab4c4', margin:0 });
 
 mY += 0.52;
 ms.forEach((m,i) => {
-slide.addShape(pptx.shapes.LINE, { x:cx+D/2-0.005, y:mY, w:0, h:0.13, line:{color:WHITE, width:1, transparency:65, dashType:'dash'} });
+slide.addShape('line', { x:cx+D/2-0.005, y:mY, w:0, h:0.13, line:{color:WHITE, width:1, transparency:65, dashType:'dash'} });
 mY += 0.14;
-slide.addShape(pptx.shapes.OVAL, { x:cx, y:mY, w:0.33, h:0.33, fill:{color:WHITE}, line:{color:GOLD, width:2} });
+slide.addShape('oval', { x:cx, y:mY, w:0.33, h:0.33, fill:{color:WHITE}, line:{color:GOLD, width:2} });
 slide.addText(String(i+1), { x:cx, y:mY, w:0.33, h:0.33, align:'center', valign:'middle', fontSize:8.5, bold:true, color:NAVY, margin:0 });
 slide.addText('MILESTONE '+(i+1), { x:tx, y:mY+0.01, w:tw, h:0.14, fontSize:6.5, bold:true, color:GOLD, charSpacing:1.5, margin:0 });
 slide.addText(m.text||'Milestone', { x:tx, y:mY+0.15, w:tw, h:0.15, fontSize:6.5, color:WHITE, margin:0 });
@@ -2861,36 +2606,36 @@ slide.addText(fmt(m.date), { x:tx, y:mY+0.3, w:tw, h:0.12, fontSize:6, color:'aa
 mY += mSlot;
 });
 
-slide.addShape(pptx.shapes.LINE, { x:cx+D/2-0.005, y:mY, w:0, h:0.13, line:{color:WHITE, width:1, transparency:65, dashType:'dash'} });
+slide.addShape('line', { x:cx+D/2-0.005, y:mY, w:0, h:0.13, line:{color:WHITE, width:1, transparency:65, dashType:'dash'} });
 mY += 0.14;
 
-slide.addShape(pptx.shapes.OVAL, { x:cx, y:mY, w:D, h:D, fill:{color:GOLD}, line:{color:GOLD} });
-slide.addShape(pptx.shapes.STAR_5_POINT, { x:cx+0.06, y:mY+0.06, w:0.24, h:0.24, fill:{color:NAVY}, line:{color:NAVY} });
+slide.addShape('oval', { x:cx, y:mY, w:D, h:D, fill:{color:GOLD}, line:{color:GOLD} });
+slide.addShape('star5', { x:cx+0.06, y:mY+0.06, w:0.24, h:0.24, fill:{color:NAVY}, line:{color:NAVY} });
 slide.addText('PROJECT END', { x:tx, y:mY+0.01, w:tw, h:0.17, fontSize:7, bold:true, color:GOLD, charSpacing:2, margin:0 });
 slide.addText(fmt(s.metadata.end), { x:tx, y:mY+0.18, w:tw, h:0.15, fontSize:7, color:'aab4c4', margin:0 });
 
 let y = 0.15;
 slide.addText((s.metadata.name || '[Project Title]') + ' PROJECT CHARTER', { x:PAD, y, w:CW-PAD*2, h:0.42, fontSize:27, bold:true, color:NAVY, charSpacing:1.5, margin:0 });
-y += 0.44;
-slide.addShape(pptx.shapes.LINE, { x:PAD, y, w:CW-PAD*2, h:0, line:{color:NAVY, width:2} });
-y += 0.1;
+y += 0.40;
+slide.addShape('line', { x:PAD, y, w:CW-PAD*2, h:0, line:{color:NAVY, width:2} });
+y += 0.08;
 
-const IH=0.72, iD=0.4, iX=PAD+0.09, iY=y+(IH-iD)/2;
-slide.addShape(pptx.shapes.RECTANGLE, { x:PAD, y, w:CW-PAD*2, h:IH, fill:{color:LIGHT}, line:{color:BORDER, width:1} });
-slide.addShape(pptx.shapes.OVAL, { x:iX, y:iY, w:iD, h:iD, fill:{color:NAVY}, line:{color:NAVY} });
-slide.addShape(pptx.shapes.OVAL, { x:iX+0.07, y:iY+0.05, w:0.16, h:0.16, fill:{color:WHITE, transparency:100}, line:{color:GOLD, width:1.5} });
-slide.addShape(pptx.shapes.LINE, { x:iX+0.2, y:iY+0.2, w:0.1, h:0.1, line:{color:GOLD, width:2} });
-slide.addText('PROJECT INSIGHT', { x:iX+iD+0.08, y:y+0.06, w:CW-PAD*2-iD-0.25, h:0.15, fontSize:7, bold:true, color:NAVY, charSpacing:2, margin:0 });
+const IH=0.65, iD=0.4, iX=PAD+0.09, iY=y+(IH-iD)/2;
+slide.addShape('rect', { x:PAD, y, w:CW-PAD*2, h:IH, fill:{color:LIGHT}, line:{color:BORDER, width:1} });
+slide.addShape('oval', { x:iX, y:iY, w:iD, h:iD, fill:{color:NAVY}, line:{color:NAVY} });
+slide.addShape('oval', { x:iX+0.07, y:iY+0.05, w:0.16, h:0.16, fill:{color:WHITE, transparency:100}, line:{color:GOLD, width:1.5} });
+slide.addShape('line', { x:iX+0.2, y:iY+0.2, w:0.1, h:0.1, line:{color:GOLD, width:2} });
+slide.addText('PROJECT INSIGHTS', { x:iX+iD+0.08, y:y+0.06, w:CW-PAD*2-iD-0.25, h:0.15, fontSize:7, bold:true, color:NAVY, charSpacing:2, margin:0 });
 slide.addText((s.problem||'No problem statement provided.').substring(0,340), { x:iX+iD+0.08, y:y+0.22, w:CW-PAD*2-iD-0.26, h:IH-0.28, fontSize:7.5, color:DARK, margin:0 });
-y += IH+0.1;
+y += IH+0.08;
 
-const colW=(CW-PAD*2-0.16)/3, colH=1.62;
+const colW=(CW-PAD*2-0.16)/3, colH=1.65;
 
 const gc=PAD;
-slide.addShape(pptx.shapes.RECTANGLE, { x:gc, y, w:colW, h:colH, fill:{color:LIGHT}, line:{color:BORDER, width:1} });
-slide.addShape(pptx.shapes.OVAL, { x:gc+0.08, y:y+0.09, w:0.3, h:0.3, fill:{color:NAVY}, line:{color:NAVY} });
-slide.addShape(pptx.shapes.OVAL, { x:gc+0.12, y:y+0.13, w:0.22, h:0.22, fill:{color:WHITE, transparency:100}, line:{color:GOLD, width:1} });
-slide.addShape(pptx.shapes.OVAL, { x:gc+0.17, y:y+0.18, w:0.12, h:0.12, fill:{color:GOLD}, line:{color:GOLD} });
+slide.addShape('rect', { x:gc, y, w:colW, h:colH, fill:{color:LIGHT}, line:{color:BORDER, width:1} });
+slide.addShape('oval', { x:gc+0.08, y:y+0.09, w:0.3, h:0.3, fill:{color:NAVY}, line:{color:NAVY} });
+slide.addShape('oval', { x:gc+0.12, y:y+0.13, w:0.22, h:0.22, fill:{color:WHITE, transparency:100}, line:{color:GOLD, width:1} });
+slide.addShape('oval', { x:gc+0.17, y:y+0.18, w:0.12, h:0.12, fill:{color:GOLD}, line:{color:GOLD} });
 slide.addText('PROJECT GOAL', { x:gc+0.44, y:y+0.12, w:colW-0.52, h:0.17, fontSize:6.5, bold:true, color:NAVY, charSpacing:1.5, margin:0 });
 const goalRows = [
 { text:(s.goal||'No goal defined.').substring(0,120), options:{fontSize:7.5, bold:true, color:DARK, breakLine:true} },
@@ -2899,21 +2644,21 @@ const goalRows = [
 if(goalRows.length) slide.addText(goalRows, { x:gc+0.08, y:y+0.46, w:colW-0.16, h:colH-0.56, margin:0 });
 
 const dc=PAD+colW+0.08;
-slide.addShape(pptx.shapes.RECTANGLE, { x:dc, y, w:colW, h:colH, fill:{color:LIGHT}, line:{color:BORDER, width:1} });
-slide.addShape(pptx.shapes.OVAL, { x:dc+0.08, y:y+0.09, w:0.3, h:0.3, fill:{color:NAVY}, line:{color:NAVY} });
-slide.addShape(pptx.shapes.RECTANGLE, { x:dc+0.11, y:y+0.13, w:0.24, h:0.18, fill:{color:WHITE, transparency:100}, line:{color:GOLD, width:1.2} });
-slide.addShape(pptx.shapes.LINE, { x:dc+0.11, y:y+0.18, w:0.24, h:0, line:{color:GOLD, width:1.2} });
+slide.addShape('rect', { x:dc, y, w:colW, h:colH, fill:{color:LIGHT}, line:{color:BORDER, width:1} });
+slide.addShape('oval', { x:dc+0.08, y:y+0.09, w:0.3, h:0.3, fill:{color:NAVY}, line:{color:NAVY} });
+slide.addShape('rect', { x:dc+0.11, y:y+0.13, w:0.24, h:0.18, fill:{color:WHITE, transparency:100}, line:{color:GOLD, width:1.2} });
+slide.addShape('line', { x:dc+0.11, y:y+0.18, w:0.24, h:0, line:{color:GOLD, width:1.2} });
 slide.addText('PROPOSED DELIVERABLES', { x:dc+0.44, y:y+0.12, w:colW-0.52, h:0.17, fontSize:6.5, bold:true, color:NAVY, charSpacing:1.5, margin:0 });
 const delRows = (s.deliverables||[]).slice(0,4).map((d,i)=>({ text:(i+1)+'. '+d.substring(0,68), options:{fontSize:7.5, color:DARK, breakLine:true} }));
 if(delRows.length) slide.addText(delRows, { x:dc+0.08, y:y+0.46, w:colW-0.16, h:colH-0.56, margin:0 });
 else slide.addText('No deliverables listed.', { x:dc+0.08, y:y+0.46, w:colW-0.16, h:0.2, fontSize:7.5, color:'94a3b8', margin:0 });
 
 const sc2=PAD+(colW+0.08)*2;
-slide.addShape(pptx.shapes.RECTANGLE, { x:sc2, y, w:colW, h:colH, fill:{color:LIGHT}, line:{color:BORDER, width:1} });
-slide.addShape(pptx.shapes.OVAL, { x:sc2+0.08, y:y+0.09, w:0.3, h:0.3, fill:{color:NAVY}, line:{color:NAVY} });
-slide.addShape(pptx.shapes.RECTANGLE, { x:sc2+0.11, y:y+0.12, w:0.24, h:0.2, fill:{color:WHITE, transparency:100}, line:{color:GOLD, width:1.2} });
-slide.addShape(pptx.shapes.LINE, { x:sc2+0.11, y:y+0.19, w:0.24, h:0, line:{color:GOLD, width:1} });
-slide.addShape(pptx.shapes.LINE, { x:sc2+0.20, y:y+0.12, w:0, h:0.2, line:{color:GOLD, width:1} });
+slide.addShape('rect', { x:sc2, y, w:colW, h:colH, fill:{color:LIGHT}, line:{color:BORDER, width:1} });
+slide.addShape('oval', { x:sc2+0.08, y:y+0.09, w:0.3, h:0.3, fill:{color:NAVY}, line:{color:NAVY} });
+slide.addShape('rect', { x:sc2+0.11, y:y+0.12, w:0.24, h:0.2, fill:{color:WHITE, transparency:100}, line:{color:GOLD, width:1.2} });
+slide.addShape('line', { x:sc2+0.11, y:y+0.19, w:0.24, h:0, line:{color:GOLD, width:1} });
+slide.addShape('line', { x:sc2+0.20, y:y+0.12, w:0, h:0.2, line:{color:GOLD, width:1} });
 slide.addText('SCOPE', { x:sc2+0.44, y:y+0.12, w:colW-0.52, h:0.17, fontSize:6.5, bold:true, color:NAVY, charSpacing:1.5, margin:0 });
 const scopeRows = [
 { text:'IN SCOPE', options:{fontSize:7, bold:true, color:'16a34a', breakLine:true} },
@@ -2922,76 +2667,74 @@ const scopeRows = [
 ...(s.scopeOut||[]).slice(0,3).map(x=>({ text:'\u2022 '+x.substring(0,52), options:{fontSize:7, color:DARK, breakLine:true} }))
 ];
 slide.addText(scopeRows, { x:sc2+0.08, y:y+0.46, w:colW-0.16, h:colH-0.56, margin:0 });
-y += colH+0.1;
+y += colH+0.08;
 
-const bW=(CW-PAD*2-0.24)/4, bH=H-y-0.1;
+const bW=(CW-PAD*2-0.24)/4, bH=H-y-0.12;
 const textY = y+0.42;
 
 let bx=PAD;
-slide.addShape(pptx.shapes.RECTANGLE, { x:bx, y, w:bW, h:bH, fill:{color:LIGHT}, line:{color:BORDER, width:1} });
-slide.addShape(pptx.shapes.OVAL, { x:bx+0.08, y:y+0.08, w:0.28, h:0.28, fill:{color:NAVY}, line:{color:NAVY} });
-slide.addShape(pptx.shapes.RECTANGLE, { x:bx+0.12, y:y+0.22, w:0.04, h:0.1, fill:{color:GOLD}, line:{color:GOLD} });
-slide.addShape(pptx.shapes.RECTANGLE, { x:bx+0.18, y:y+0.16, w:0.04, h:0.16, fill:{color:GOLD}, line:{color:GOLD} });
-slide.addShape(pptx.shapes.RECTANGLE, { x:bx+0.24, y:y+0.12, w:0.04, h:0.2, fill:{color:GOLD}, line:{color:GOLD} });
-slide.addText('KEY INSIGHT', { x:bx+0.42, y:y+0.11, w:bW-0.5, h:0.17, fontSize:6, bold:true, color:NAVY, charSpacing:1.2, margin:0 });
-const insightRows = [...(s.risks||[]).map(r=>r.text), ...(s.constraints||[])].slice(0,4).map(x=>({ text:'\u2022 '+x.substring(0,72), options:{fontSize:7, color:DARK, breakLine:true} }));
+slide.addShape('rect', { x:bx, y, w:bW, h:bH, fill:{color:LIGHT}, line:{color:BORDER, width:1} });
+slide.addShape('oval', { x:bx+0.08, y:y+0.08, w:0.28, h:0.28, fill:{color:NAVY}, line:{color:NAVY} });
+slide.addShape('rect', { x:bx+0.12, y:y+0.22, w:0.04, h:0.1, fill:{color:GOLD}, line:{color:GOLD} });
+slide.addShape('rect', { x:bx+0.18, y:y+0.16, w:0.04, h:0.16, fill:{color:GOLD}, line:{color:GOLD} });
+slide.addShape('rect', { x:bx+0.24, y:y+0.12, w:0.04, h:0.2, fill:{color:GOLD}, line:{color:GOLD} });
+slide.addText('KEY INSIGHTS', { x:bx+0.42, y:y+0.11, w:bW-0.5, h:0.17, fontSize:6, bold:true, color:NAVY, charSpacing:1.2, margin:0 });
+const insightRows = [...(s.constraints||[])].slice(0,4).map(x=>({ text:'\u2022 '+x.substring(0,72), options:{fontSize:7, color:DARK, breakLine:true} }));
 if(insightRows.length) slide.addText(insightRows, { x:bx+0.08, y:textY, w:bW-0.16, h:bH-0.52, margin:0 });
 
 bx=PAD+bW+0.08;
-slide.addShape(pptx.shapes.RECTANGLE, { x:bx, y, w:bW, h:bH, fill:{color:LIGHT}, line:{color:BORDER, width:1} });
-slide.addShape(pptx.shapes.OVAL, { x:bx+0.08, y:y+0.08, w:0.28, h:0.28, fill:{color:NAVY}, line:{color:NAVY} });
-slide.addShape(pptx.shapes.OVAL, { x:bx+0.13, y:y+0.11, w:0.1, h:0.1, fill:{color:WHITE, transparency:100}, line:{color:GOLD, width:1} });
-slide.addShape(pptx.shapes.RECTANGLE, { x:bx+0.12, y:y+0.21, w:0.12, h:0.1, fill:{color:WHITE, transparency:100}, line:{color:GOLD, width:1} });
-slide.addShape(pptx.shapes.OVAL, { x:bx+0.2, y:y+0.12, w:0.08, h:0.08, fill:{color:WHITE, transparency:100}, line:{color:GOLD, width:1} });
-slide.addShape(pptx.shapes.RECTANGLE, { x:bx+0.19, y:y+0.2, w:0.1, h:0.08, fill:{color:WHITE, transparency:100}, line:{color:GOLD, width:1} });
+slide.addShape('rect', { x:bx, y, w:bW, h:bH, fill:{color:LIGHT}, line:{color:BORDER, width:1} });
+slide.addShape('oval', { x:bx+0.08, y:y+0.08, w:0.28, h:0.28, fill:{color:NAVY}, line:{color:NAVY} });
+slide.addShape('oval', { x:bx+0.13, y:y+0.11, w:0.1, h:0.1, fill:{color:WHITE, transparency:100}, line:{color:GOLD, width:1} });
+slide.addShape('rect', { x:bx+0.12, y:y+0.21, w:0.12, h:0.1, fill:{color:WHITE, transparency:100}, line:{color:GOLD, width:1} });
+slide.addShape('oval', { x:bx+0.2, y:y+0.12, w:0.08, h:0.08, fill:{color:WHITE, transparency:100}, line:{color:GOLD, width:1} });
+slide.addShape('rect', { x:bx+0.19, y:y+0.2, w:0.1, h:0.08, fill:{color:WHITE, transparency:100}, line:{color:GOLD, width:1} });
 slide.addText('STAKEHOLDERS', { x:bx+0.42, y:y+0.11, w:bW-0.5, h:0.17, fontSize:6, bold:true, color:NAVY, charSpacing:1.2, margin:0 });
-const teamRows = [
-{ text:'Manager: '+(s.metadata.poc||'—'), options:{fontSize:7, color:DARK, breakLine:true} },
-{ text:'Sponsor: '+(s.metadata.sponsor||'—'), options:{fontSize:7, color:DARK, breakLine:true} },
-{ text:'Team: '+((s.stakeholders||[]).slice(0,3).map(st=>st.name).join(', ')||'—'), options:{fontSize:7, color:DARK} }
-];
-slide.addText(teamRows, { x:bx+0.08, y:textY, w:bW-0.16, h:bH-0.52, margin:0 });
+const teamRows = (s.stakeholders||[]).slice(0,4).map(st=>({ text:'\u2022 '+st.name, options:{fontSize:7, color:DARK, breakLine:true} }));
+if(teamRows.length) slide.addText(teamRows, { x:bx+0.08, y:textY, w:bW-0.16, h:bH-0.52, margin:0 });
 
 bx=PAD+(bW+0.08)*2;
-slide.addShape(pptx.shapes.RECTANGLE, { x:bx, y, w:bW, h:bH, fill:{color:LIGHT}, line:{color:BORDER, width:1} });
-slide.addShape(pptx.shapes.OVAL, { x:bx+0.08, y:y+0.08, w:0.28, h:0.28, fill:{color:NAVY}, line:{color:NAVY} });
-slide.addShape(pptx.shapes.OVAL, { x:bx+0.155, y:y+0.155, w:0.13, h:0.13, fill:{color:WHITE, transparency:100}, line:{color:GOLD, width:1.2} });
-slide.addShape(pptx.shapes.OVAL, { x:bx+0.18, y:y+0.18, w:0.08, h:0.08, fill:{color:GOLD}, line:{color:GOLD} });
-slide.addShape(pptx.shapes.RECTANGLE, { x:bx+0.195, y:y+0.1, w:0.05, h:0.06, fill:{color:GOLD}, line:{color:GOLD} });
-slide.addShape(pptx.shapes.RECTANGLE, { x:bx+0.195, y:y+0.28, w:0.05, h:0.06, fill:{color:GOLD}, line:{color:GOLD} });
-slide.addShape(pptx.shapes.RECTANGLE, { x:bx+0.1, y:y+0.195, w:0.06, h:0.05, fill:{color:GOLD}, line:{color:GOLD} });
-slide.addShape(pptx.shapes.RECTANGLE, { x:bx+0.28, y:y+0.195, w:0.06, h:0.05, fill:{color:GOLD}, line:{color:GOLD} });
-slide.addText('ASSUMPTIONS', { x:bx+0.42, y:y+0.11, w:bW-0.5, h:0.17, fontSize:6, bold:true, color:NAVY, charSpacing:1.2, margin:0 });
-const assumRows = (s.assumptions||[]).slice(0,4).map(a=>({ text:'\u2022 '+a.substring(0,72), options:{fontSize:7, color:DARK, breakLine:true} }));
+slide.addShape('rect', { x:bx, y, w:bW, h:bH, fill:{color:LIGHT}, line:{color:BORDER, width:1} });
+slide.addShape('oval', { x:bx+0.08, y:y+0.08, w:0.28, h:0.28, fill:{color:NAVY}, line:{color:NAVY} });
+slide.addShape('oval', { x:bx+0.155, y:y+0.155, w:0.13, h:0.13, fill:{color:WHITE, transparency:100}, line:{color:GOLD, width:1.2} });
+slide.addShape('oval', { x:bx+0.18, y:y+0.18, w:0.08, h:0.08, fill:{color:GOLD}, line:{color:GOLD} });
+slide.addShape('rect', { x:bx+0.195, y:y+0.1, w:0.05, h:0.06, fill:{color:GOLD}, line:{color:GOLD} });
+slide.addShape('rect', { x:bx+0.195, y:y+0.28, w:0.05, h:0.06, fill:{color:GOLD}, line:{color:GOLD} });
+slide.addShape('rect', { x:bx+0.1, y:y+0.195, w:0.06, h:0.05, fill:{color:GOLD}, line:{color:GOLD} });
+slide.addShape('rect', { x:bx+0.28, y:y+0.195, w:0.06, h:0.05, fill:{color:GOLD}, line:{color:GOLD} });
+slide.addText('RISKS & ASSUMPTIONS', { x:bx+0.42, y:y+0.11, w:bW-0.5, h:0.17, fontSize:6, bold:true, color:NAVY, charSpacing:1.2, margin:0 });
+const assumRows = [...(s.risks||[]).map(r=>r.text), ...(s.assumptions||[])].slice(0,4).map(a=>({ text:'\u2022 '+a.substring(0,72), options:{fontSize:7, color:DARK, breakLine:true} }));
 if(assumRows.length) slide.addText(assumRows, { x:bx+0.08, y:textY, w:bW-0.16, h:bH-0.52, margin:0 });
 
 bx=PAD+(bW+0.08)*3;
-slide.addShape(pptx.shapes.RECTANGLE, { x:bx, y, w:bW, h:bH, fill:{color:LIGHT}, line:{color:BORDER, width:1} });
-slide.addShape(pptx.shapes.OVAL, { x:bx+0.08, y:y+0.08, w:0.28, h:0.28, fill:{color:NAVY}, line:{color:NAVY} });
-slide.addShape(pptx.shapes.PENTAGON, { x:bx+0.12, y:y+0.11, w:0.2, h:0.22, fill:{color:WHITE, transparency:100}, line:{color:GOLD, width:1.5}, rotate:180 });
-slide.addShape(pptx.shapes.LINE, { x:bx+0.155, y:y+0.205, w:0.05, h:0.06, line:{color:GOLD, width:1.5} });
-slide.addShape(pptx.shapes.LINE, { x:bx+0.205, y:y+0.265, w:0.09, h:-0.1, line:{color:GOLD, width:1.5} });
+slide.addShape('rect', { x:bx, y, w:bW, h:bH, fill:{color:LIGHT}, line:{color:BORDER, width:1} });
+slide.addShape('oval', { x:bx+0.08, y:y+0.08, w:0.28, h:0.28, fill:{color:NAVY}, line:{color:NAVY} });
+slide.addShape('pentagon', { x:bx+0.12, y:y+0.11, w:0.2, h:0.22, fill:{color:WHITE, transparency:100}, line:{color:GOLD, width:1.5}, rotate:180 });
+slide.addShape('line', { x:bx+0.155, y:y+0.205, w:0.05, h:0.06, line:{color:GOLD, width:1.5} });
+slide.addShape('line', { x:bx+0.205, y:y+0.265, w:0.09, h:-0.1, line:{color:GOLD, width:1.5} });
 slide.addText('PROJECT AUTHORITY', { x:bx+0.42, y:y+0.11, w:bW-0.5, h:0.17, fontSize:6, bold:true, color:NAVY, charSpacing:1.2, margin:0 });
-const approvalRows = (s.stakeholders||[]).slice(0,3).flatMap(a=>[
-{ text:a.title+':', options:{fontSize:6.5, bold:true, color:NAVY, breakLine:true} },
-{ text:a.name, options:{fontSize:7, color:DARK, breakLine:true} }
-]);
+const approvalRows = [
+{ text:'Project Lead:', options:{fontSize:6.5, bold:true, color:NAVY, breakLine:true} },
+{ text:(s.metadata.poc||'Lead Name'), options:{fontSize:7, color:DARK, breakLine:true} }
+];
+(s.metadata.sponsors||[]).forEach(sp => {
+approvalRows.push({ text:'Project Sponsor:', options:{fontSize:6.5, bold:true, color:NAVY, breakLine:true} });
+approvalRows.push({ text:sp, options:{fontSize:7, color:DARK, breakLine:true} });
+});
 if(approvalRows.length) slide.addText(approvalRows, { x:bx+0.08, y:textY, w:bW-0.16, h:bH-0.52, margin:0 });
 
-const fn = (s.metadata.name||'Project_Charter').replace(/\s+/g,'_')+'_Infographic_Charter.pptx';
+const fn = (s.metadata.name||'Project_Charter').replace(/\\s+/g,'_')+'_Infographic_Charter.pptx';
 
-const b64 = await pptx.write({ outputType:'base64' });
-const byteChars = atob(b64);
-const byteNums = new Uint8Array(byteChars.length);
-for(let i=0;i<byteChars.length;i++) byteNums[i]=byteChars.charCodeAt(i);
-const dlBlob = new Blob([byteNums],{type:'application/vnd.openxmlformats-officedocument.presentationml.presentation'});
-const dlUrl = URL.createObjectURL(dlBlob);
-const a = document.createElement('a');
-a.href=dlUrl; a.download=fn; a.style.display='none';
-document.body.appendChild(a); a.click();
-setTimeout(()=>{ URL.revokeObjectURL(dlUrl); document.body.removeChild(a); },4000);
-btn.textContent = '\u2705 Downloaded!';
-setTimeout(()=>{ btn.textContent='\ud83d\udcca Export as PowerPoint'; btn.disabled=false; }, 2500);
+// Direct robust write inside PptxGenJS (fixes the "Cannot read file" error!)
+pptx.writeFile({ fileName: fn }).then(() => {
+    btn.textContent = '\u2705 Downloaded!';
+    setTimeout(()=>{ btn.textContent='\ud83d\udcca Export as PowerPoint'; btn.disabled=false; }, 2500);
+}).catch(err => {
+    console.error(err);
+    btn.textContent = '\u274c Error \u2014 see console';
+    btn.disabled = false;
+});
+
 } catch(e) {
 console.error(e);
 btn.textContent = '\u274c Error \u2014 see console';
